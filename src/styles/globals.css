@@ -3,25 +3,23 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer components {
+  html {
+    @apply text-zinc-700;
   }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  .flex-between-centered {
+    @apply flex justify-between items-center;
+  }
+  .flex-start-centered {
+    @apply flex justify-start items-center;
+  }
+  .nav-links > li {
+    @apply mr-2 lg:mr-4 pt-6 pb-4 border-b border-transparent hover:border-b-indigo-700 hover:text-indigo-700;
+  }
+  .h-search-box {
+    @apply max-h-[300px];
+  }
 }
