@@ -9,6 +9,8 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
   const inputRef = useRef(null);
 
   const refineQuery = query.trim();
+  const limitedSuggestions =
+    suggestions?.length > 10 ? suggestions.slice(0, 10) : suggestions;
 
   const handleInputChange = (e) => {
     const inputText = e.target.value;
@@ -74,7 +76,6 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
   return (
     <div
       className={`mx-48 relative flex items-center border rounded-lg bg-white`}
-      onBlur={() => handleBlur()}
     >
       <input
         type="text"
@@ -86,10 +87,10 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
         ref={inputRef}
         className="w-full rounded-lg focus:outline-none p-4"
       />
-      {isFocused && refineQuery && suggestions.length > 0 && (
-        <div className="absolute w-full top-16 shadow rounded-lg h-search-box p-4 overflow-auto bg-white">
+      {isFocused && refineQuery && limitedSuggestions?.length > 0 && (
+        <div className="absolute w-full top-16 shadow rounded-lg  p-4 overflow-auto bg-white">
           <ul>
-            {suggestions.map((suggestion, index) => (
+            {limitedSuggestions.map((suggestion, index) => (
               <li
                 key={index}
                 onClick={() => {
@@ -108,11 +109,12 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
       )}
       <button
         className="bg-indigo-700 p-4 rounded-r-lg"
-        onClick={() =>
+        onClick={() => {
           selectedSuggestion
             ? handleSearchUsingSuggestion(selectedSuggestion)
-            : query && onSearch()
-        }
+            : query && onSearch();
+          handleBlur();
+        }}
       >
         <HiSearch className="w-6 h-6 fill-zinc-50" />
       </button>

@@ -2,6 +2,7 @@ import Navbar from "@/components/NavBar";
 import SearchBox from "@/components/SearchBox";
 import { useState } from "react";
 import sampleSkills from "@/json/sample-skills.json";
+import ProfileCard from "@/components/ProfileCard";
 export default function Home() {
   const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
@@ -11,13 +12,14 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
-      <SearchBox
+      {/* <Navbar /> */}
+      {/* <SearchBox
         searchArray={skills}
         query={searchQuery}
         setQuery={setSearchQuery}
         onSearch={handleSearch}
-      />
+      /> */}
+      <ProfileCard />
     </>
   );
 }
