@@ -13,12 +13,12 @@ export default function Home() {
   return (
     <>
       {/* <Navbar /> */}
-      {/* <SearchBox
+      <SearchBox
         searchArray={skills}
         query={searchQuery}
         setQuery={setSearchQuery}
         onSearch={handleSearch}
-      /> */}
+      />
       <ProfileCard />
     </>
   );

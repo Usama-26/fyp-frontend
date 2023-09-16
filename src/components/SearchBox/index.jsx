@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { HiSearch } from "react-icons/hi";
+import { HiSearch, HiX } from "react-icons/hi";
 
 export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
   const [suggestions, setSuggestions] = useState(null);
@@ -33,6 +33,9 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
     setIsFocused(false);
   };
 
+  const clearQuery = () => {
+    setQuery("");
+  };
   const handleKeyPress = (e) => {
     if (!isFocused) {
       handleFocus();
@@ -87,6 +90,14 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
         ref={inputRef}
         className="w-full rounded-lg focus:outline-none p-4"
       />
+      {query && (
+        <button
+          onClick={clearQuery}
+          className="mx-4 p-1 rounded-full hover:bg-zinc-100"
+        >
+          <HiX className="w-4 h-4" />
+        </button>
+      )}
       {isFocused && refineQuery && limitedSuggestions?.length > 0 && (
         <div className="absolute w-full top-16 shadow rounded-lg  p-4 overflow-auto bg-white">
           <ul>
