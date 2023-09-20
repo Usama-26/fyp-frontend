@@ -93,7 +93,7 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
       {query && (
         <button
           onClick={clearQuery}
-          className="mx-4 p-1 rounded-full hover:bg-zinc-100"
+          className="mx-4 p-1 rounded-full hover:bg-neutral-100"
         >
           <HiX className="w-4 h-4" />
         </button>
@@ -107,8 +107,8 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
                 onClick={() => {
                   handleSearchUsingSuggestion(suggestion), handleBlur();
                 }}
-                className={`p-2 rounded-md cursor-pointer hover:bg-indigo-50 ${
-                  selectedItemIndex === index ? "bg-indigo-50" : ""
+                className={`p-2 rounded-md cursor-pointer hover:bg-primary-50 ${
+                  selectedItemIndex === index ? "bg-primary-50" : ""
                 }`}
                 dangerouslySetInnerHTML={{
                   __html: highlightMatchedCharacters(suggestion, refineQuery),
@@ -119,7 +119,7 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
         </div>
       )}
       <button
-        className="bg-indigo-700 p-4 rounded-r-lg"
+        className="bg-primary-700 p-4 rounded-r-lg"
         onClick={() => {
           selectedSuggestion
             ? handleSearchUsingSuggestion(selectedSuggestion)

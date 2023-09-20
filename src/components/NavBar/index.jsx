@@ -36,13 +36,13 @@ function Logo() {
   return (
     <Link href={"/"}>
       <div>
-        <h1 className="text-2xl text-indigo-700 flex items-center">
+        <h1 className="text-2xl text-primary-700 flex items-center">
           <span>
             <SiHiveBlockchain className="inline w-8 h-8 mr-1" />
           </span>
           <b>
             <span>Chain</span>
-            <span className="text-zinc-700">Work</span>
+            <span className="text-neutral-700">Work</span>
           </b>
         </h1>
       </div>
@@ -52,7 +52,7 @@ function Logo() {
 
 function Navigation({ isOpen, onOpen, onClose }) {
   return (
-    <nav className=" hidden md:block text-zinc-600 font-medium">
+    <nav className=" hidden md:block text-neutral-700 font-medium">
       <ul className="flex-between-centered nav-links">
         <li onMouseEnter={onOpen} onMouseLeave={onClose}>
           <button>
@@ -77,22 +77,22 @@ function Navigation({ isOpen, onOpen, onClose }) {
 
 function HeaderCTA() {
   return (
-    <div className="flex-between-centered gap-4 font-medium">
+    <div className="flex-between-centered  gap-4 font-medium">
       <Link
         href={"/login"}
-        className="text-indigo-700 hover:underline underline-offset-8"
+        className="text-neutral-700 hover:underline underline-offset-8"
       >
         Login
       </Link>
       <Link
         href={"/signup"}
-        className="bg-indigo-700 hover:bg-violet-700 text-zinc-200  px-4 py-2 rounded transition"
+        className="bg-primary-600 hover:bg-primary-700 text-neutral-200  px-4 py-2 rounded transition"
       >
         Sign up
       </Link>
       <Link
         href={"/freelancer/join"}
-        className=" hover:text-indigo-700 text-zinc-700 underline-offset-2 "
+        className=" hover:text-primary-700 text-neutral-700 underline-offset-2 "
       >
         Apply as Freelancer
       </Link>

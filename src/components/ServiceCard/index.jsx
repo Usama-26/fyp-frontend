@@ -5,7 +5,7 @@ import { HiClock, HiStar } from "react-icons/hi";
 export default function ServiceCard({ title }) {
   return (
     <Link href={"#"}>
-      <div className="rounded-md shadow mx-auto space-y-4 hover:bg-zinc-100">
+      <div className="rounded-md shadow mx-auto space-y-4 hover:bg-neutral-100">
         {/* Service Image and Title */}
 
         <div>
@@ -14,7 +14,7 @@ export default function ServiceCard({ title }) {
             width={1024}
             height={768}
             alt="Service Image"
-            className="object-cover rounded-t-md aspect-video"
+            className="w-full object-cover rounded-t-md aspect-video"
           />
         </div>
 
@@ -33,7 +33,9 @@ export default function ServiceCard({ title }) {
             <HiStar className=" w-5 h-5 fill-amber-500" />
             &nbsp;
             <span>5.0 &nbsp;</span>
-            <span className="text-zinc-500 font-normal">{"(24 Reviews)"}</span>
+            <span className="text-neutral-500 font-normal">
+              {"(24 Reviews)"}
+            </span>
           </span>
           <span className="inline-flex gap-1">
             <HiClock className="inline w-5 h-5 " />
@@ -54,7 +56,7 @@ export default function ServiceCard({ title }) {
             />
             <div className="px-2">
               <Link href={"#"}>
-                <h4 className="font-semibold text-indigo-700 hover:underline underline-offset-2">
+                <h4 className="font-semibold text-primary-700 hover:underline underline-offset-2">
                   Jordan K.
                 </h4>
               </Link>
@@ -63,7 +65,7 @@ export default function ServiceCard({ title }) {
           </div>
           <div className="font-medium text-end">
             <h5 className="">0.015 ETH</h5>
-            <h6 className="text-zinc-500 ">$25</h6>
+            <h6 className="text-neutral-500 ">$25</h6>
           </div>
         </div>
       </div>

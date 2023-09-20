@@ -25,18 +25,20 @@ export default function ProfileCard() {
               className="w-16 h-16 rounded-full object-cover"
             />
             <span
-              className={`absolute w-4 h-4 border-2 border-white rounded-full bottom-0 right-0 ${"bg-zinc-500"}`}
+              className={`absolute w-4 h-4 border-2 border-white rounded-full bottom-0 right-0 ${"bg-neutral-500"}`}
             ></span>
           </div>
         </div>
         <div className="w-full flex justify-between ">
           <div>
-            <h3 className="font-semibold text-lg text-indigo-700">Jordan K.</h3>
-            <p className="text-sm text-zinc-500">
+            <h3 className="font-semibold text-lg text-primary-400">
+              Jordan K.
+            </h3>
+            <p className="text-sm text-neutral-500">
               Expert Laravel, PHP Developer
             </p>
             <span className="inline-flex items-center space-x-1">
-              <HiOutlineLocationMarker className="inline w-4 h-4 stroke-zinc-700" />
+              <HiOutlineLocationMarker className="inline w-4 h-4 stroke-neutral-700" />
               &nbsp;
               <span className="text-xs">Ohio, United States</span>
             </span>
@@ -60,12 +62,12 @@ export default function ProfileCard() {
           <HiStar className=" w-5 h-5 fill-amber-500" />
           &nbsp;
           <span>5.0 &nbsp;</span>
-          <span className="text-zinc-500 font-normal">{"(24 Reviews)"}</span>
+          <span className="text-neutral-500 font-normal">{"(24 Reviews)"}</span>
         </span>
         <div className="font-medium text-end">
           <span>0.015 ETH/hr</span>
           <br />
-          <span className="text-zinc-500">$25/hr</span>
+          <span className="text-neutral-500">$25/hr</span>
         </div>
       </div>
       {/* Portfolio Description */}
@@ -92,7 +94,7 @@ function ViewProfileBtn({ path }) {
   return (
     <Link
       href={path}
-      className="px-6 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-700 text-sm font-medium "
+      className="px-6 py-2 rounded-md bg-primary-500 text-white hover:bg-primary-700 text-sm font-medium "
     >
       View Profile
     </Link>
@@ -108,7 +110,7 @@ function AddToFavouriteBtn() {
     <button
       onClick={toggleFavourite}
       className={`border rounded-md p-2  ${
-        isFavourite ? "bg-indigo-500" : "hover:bg-zinc-100"
+        isFavourite ? "bg-primary-500" : "hover:bg-neutral-100"
       }`}
     >
       <HiOutlineHeart

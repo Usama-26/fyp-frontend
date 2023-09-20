@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require("tailwindcss/colors");
 module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,6 +10,13 @@ module.exports = {
     extend: {
       fontFamily: {
         inter: ["var(--font-inter)"],
+      },
+      colors: {
+        primary: colors.indigo,
+        neutral: colors.gray,
+        danger: colors.red,
+        success: colors.green,
+        warning: colors.yellow,
       },
     },
   },

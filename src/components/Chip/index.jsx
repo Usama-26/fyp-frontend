@@ -4,7 +4,7 @@ export default function Chip({ value }) {
   return (
     <Link
       href={value.toLowerCase()}
-      className="px-2 py-1 border rounded-md text-zinc-500 text-xs hover:border-indigo-700 hover:text-indigo-700"
+      className="px-2 py-1 border rounded-md text-neutral-500 text-xs hover:border-primary-700 hover:text-primary-700"
     >
       <span>{value}</span>
     </Link>

@@ -27,7 +27,7 @@ export default function MegaMenu({ isOpen, onOpen, onClose }) {
     <section
       onMouseEnter={onOpen}
       onMouseLeave={onClose}
-      className={`absolute z-50 w-full py-4 px-12 bg-zinc-50 ${
+      className={`absolute z-50 w-full py-4 px-12 bg-neutral-50 ${
         isOpen ? "block" : "hidden"
       }`}
     >
@@ -42,15 +42,15 @@ export default function MegaMenu({ isOpen, onOpen, onClose }) {
               <Link href={path}>
                 <div
                   className={`w-full p-4 rounded ${
-                    activeTab === id && "bg-indigo-50"
-                  } hover:bg-indigo-50 transition duration-200 flex-between-centered`}
+                    activeTab === id && "bg-primary-50"
+                  } hover:bg-primary-50 transition duration-200 flex-between-centered`}
                 >
                   <div>
-                    <h6 className="text-indigo-700 font-semibold">{title}</h6>
+                    <h6 className="text-primary-700 font-semibold">{title}</h6>
                     <p className="text-sm">{meaning}</p>
                   </div>
                   <HiOutlineArrowNarrowRight
-                    className={`w-6 h-6 stroke-indigo-700 transition ${
+                    className={`w-6 h-6 stroke-primary-700 transition ${
                       activeTab === id
                         ? " visible translate-x-0"
                         : "invisible -translate-x-5"
@@ -75,7 +75,7 @@ function TalentMenu() {
   return (
     <div className="w-full px-8 self-start">
       <div>
-        <h2 className="text-2xl font-semibold text-indigo-700">
+        <h2 className="text-2xl font-semibold text-primary-700">
           Explore the Talent
         </h2>
         <p className="font-medium">
