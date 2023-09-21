@@ -1,0 +1,249 @@
+{
+  "services": [
+    {
+      "category": "Programming & Development",
+      "sub_categories": [
+        {
+          "sub_category": "Web Development",
+          "services": [
+            "Business Websites",
+            "E-Commerce Websites",
+            "Portfolio Websites",
+            "Landing Pages",
+            "Custom Web Applications",
+            "Content Management Systems",
+            "Website Maintenance"
+          ]
+        },
+        {
+          "sub_category": "Software Development",
+          "services": [
+            "Web Applications",
+            "Desktop Applications",
+            "API Integration",
+            "Mobile App Development",
+            "Database Management",
+            "Software Testing"
+          ]
+        },
+        {
+          "sub_category": "Game Development",
+          "services": [
+            "Unity Game Development",
+            "2D Game Development",
+            "3D Game Development",
+            "Game Art and Design",
+            "Multiplayer Game Development"
+          ]
+        },
+        {
+          "sub_category": "Cybersecurity",
+          "services": [
+            "Network Security",
+            "Penetration Testing",
+            "Security Auditing",
+            "Data Encryption",
+            "Incident Response"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Design",
+      "sub_categories": [
+        {
+          "sub_category": "Graphic Design",
+          "services": [
+            "Logo Design",
+            "Brand Style Guide",
+            "Business Cards",
+            "Brochure Design",
+            "Poster Design",
+            "Illustration Services",
+            "Print Design"
+          ]
+        },
+        {
+          "sub_category": "Web Design",
+          "services": [
+            "Website Mockups",
+            "UI/UX Design",
+            "Responsive Design",
+            "Mobile App Design",
+            "Wireframing"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Digital Marketing",
+      "sub_categories": [
+        {
+          "sub_category": "Search",
+          "services": [
+            "Search Engine Optimization",
+            "Search Engine Marketing",
+            "Local SEO",
+            "E-Commerce SEO",
+            "Video SEO",
+            "Keyword Research"
+          ]
+        },
+        {
+          "sub_category": "Social Media Marketing",
+          "services": [
+            "Social Media Advertising",
+            "Content Marketing",
+            "Influencer Marketing",
+            "Community Management",
+            "Social Media Analytics"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Content Writing",
+      "sub_categories": [
+        {
+          "sub_category": "Blog Writing",
+          "services": [
+            "SEO-Optimized Blog Posts",
+            "Guest Blogging",
+            "Topic Research",
+            "Editing and Proofreading",
+            "Content Strategy",
+            "Long-Form Articles",
+            "Technical Writing"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Video Production",
+      "sub_categories": [
+        {
+          "sub_category": "Video Editing",
+          "services": [
+            "Video Montage",
+            "Color Correction",
+            "Motion Graphics",
+            "Subtitling",
+            "Special Effects"
+          ]
+        },
+        {
+          "sub_category": "Animation",
+          "services": [
+            "2D Animation",
+            "3D Animation",
+            "Explainer Videos",
+            "Character Animation",
+            "Storyboarding",
+            "Voiceovers"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "E-commerce",
+      "sub_categories": [
+        {
+          "sub_category": "Online Store Setup",
+          "services": [
+            "Platform Selection",
+            "Product Listing",
+            "Payment Integration",
+            "Shopping Cart Setup",
+            "Inventory Management"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Data Science",
+      "sub_categories": [
+        {
+          "sub_category": "Data Analysis",
+          "services": [
+            "Data Visualization",
+            "Statistical Modeling",
+            "Data Cleansing",
+            "Predictive Analytics",
+            "Machine Learning",
+            "Data Reporting"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Mobile App Development",
+      "sub_categories": [
+        {
+          "sub_category": "iOS App Development",
+          "services": [
+            "iPhone App Development",
+            "iPad App Development",
+            "App Store Submission",
+            "Swift Programming",
+            "UI/UX Optimization"
+          ]
+        },
+        {
+          "sub_category": "Android App Development",
+          "services": [
+            "Android App Design",
+            "Google Play Submission",
+            "Java/Kotlin Programming",
+            "App Testing",
+            "Firebase Integration"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Photography",
+      "sub_categories": [
+        {
+          "sub_category": "Portrait Photography",
+          "services": [
+            "Family Portraits",
+            "Headshots",
+            "Outdoor Portraits",
+            "Studio Photography",
+            "Retouching"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Legal Services",
+      "sub_categories": [
+        {
+          "sub_category": "Business Law",
+          "services": [
+            "Contract Drafting",
+            "Legal Consultation",
+            "Intellectual Property",
+            "Employment Law",
+            "Business Licensing"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Financial Services",
+      "sub_categories": [
+        {
+          "sub_category": "Accounting",
+          "services": [
+            "Bookkeeping",
+            "Tax Preparation",
+            "Financial Planning",
+            "Auditing",
+            "Payroll Services"
+          ]
+        }
+      ]
+    }
+  ]
+}

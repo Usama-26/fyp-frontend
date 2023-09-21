@@ -14,7 +14,7 @@ export default function Navbar() {
   };
   return (
     <>
-      <header className="border-b p-4 md:p-0">
+      <header className=" p-4 md:p-0">
         <div className="container mx-auto flex-between-centered">
           <div className=" flex-start-centered lg:gap-8 gap-4">
             <Logo />
