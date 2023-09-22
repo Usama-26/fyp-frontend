@@ -86,7 +86,7 @@ function HeaderCTA() {
       </Link>
       <Link
         href={"/signup"}
-        className="bg-primary-600 hover:bg-primary-700 text-neutral-200  px-4 py-2 rounded transition"
+        className="bg-primary-600 hover:bg-primary-700 text-neutral-100  px-4 py-2 rounded transition"
       >
         Sign up
       </Link>
