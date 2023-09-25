@@ -1,50 +1,47 @@
-import { convertToPath } from "@/utils/generic";
 import Link from "next/link";
 
 export default function ServicesMegaMenu({
-  selectedCategory,
+  categories,
   isOpen,
   onOpen,
   onClose,
 }) {
-  const { category, sub_categories } = selectedCategory;
   return (
     <>
-      {selectedCategory && (
+      {categories && (
         <div
           onMouseEnter={onOpen}
           onMouseLeave={onClose}
-          className={`border border-t-0 absolute w-full p-4 ${
+          className={`border border-t-0 absolute w-full p-4 bg-white shadow ${
             isOpen ? "block" : "hidden"
           }`}
         >
           <div className="flex flex-wrap">
-            {sub_categories?.map(({ sub_category, services }, index) => (
-              <ul key={index} className="w-1/4 space-y-2">
-                <Link
-                  href={`/category/${convertToPath(category)}/${convertToPath(
-                    sub_category
-                  )}`}
-                  className="font-semibold hover:underline underline-offset-2"
-                >
-                  {sub_category}
-                </Link>
-                {services.map((service, index) => (
-                  <li key={index}>
-                    <Link
-                      href={`/category/${convertToPath(
-                        category
-                      )}/${convertToPath(sub_category)}/${convertToPath(
-                        service
-                      )}`}
-                      className="text-sm hover:underline underline-offset-2"
-                    >
-                      {service}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ))}
+            {categories?.map(
+              (
+                { sub_category_name, path: sub_category_path, services },
+                index
+              ) => (
+                <ul key={index} className="w-1/4 space-y-2">
+                  <Link
+                    href={`/services/${sub_category_path}`}
+                    className="font-semibold hover:underline underline-offset-2"
+                  >
+                    {sub_category_name}
+                  </Link>
+                  {services.map(({ name, path: service_path }, index) => (
+                    <li key={index}>
+                      <Link
+                        href={`/services/${sub_category_path}/${service_path}`}
+                        className="text-sm hover:underline underline-offset-2"
+                      >
+                        {name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )
+            )}
           </div>
         </div>
       )}

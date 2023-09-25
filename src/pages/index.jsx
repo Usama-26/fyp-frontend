@@ -13,6 +13,12 @@ export default function Home() {
   return (
     <>
       <Navbar />
+      {/* <SearchBox
+        onSearch={handleSearch}
+        query={searchQuery}
+        setQuery={setSearchQuery}
+        searchArray={skills}
+      /> */}
       <ServiceExplorer />
     </>
   );

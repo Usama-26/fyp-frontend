@@ -1,246 +1,352 @@
 {
-  "services": [
+  "categories": [
     {
-      "category": "Programming & Development",
+      "category_name": "Programming & Development",
+      "heading": "Unleash Your Digital Vision with Expert Development",
+      "path": "programming-and-development",
+      "background_image": "https://images.unsplash.com/photo-1629904869392-ae2a682d4d01?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1476&q=80",
       "sub_categories": [
         {
-          "sub_category": "Web Development",
+          "sub_category_name": "Web Development",
+          "path": "web-development",
+          "background_image": "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80",
           "services": [
-            "Business Websites",
-            "E-Commerce Websites",
-            "Portfolio Websites",
-            "Landing Pages",
-            "Custom Web Applications",
-            "Content Management Systems",
-            "Website Maintenance"
+            { "name": "Business Websites", "path": "business-websites" },
+            { "name": "E-Commerce Websites", "path": "e-commerce-websites" },
+            { "name": "Portfolio Websites", "path": "portfolio-websites" },
+            { "name": "Landing Pages", "path": "landing-pages" },
+            {
+              "name": "Custom Web Applications",
+              "path": "custom-web-applications"
+            },
+            {
+              "name": "Content Management Systems",
+              "path": "content-management-systems"
+            },
+            { "name": "Website Maintenance", "path": "website-maintenance" }
           ]
         },
         {
-          "sub_category": "Software Development",
+          "sub_category_name": "Software Development",
+          "path": "software-development",
+          "background_image": "https://images.unsplash.com/photo-1582736317407-371893d9e146?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80",
           "services": [
-            "Web Applications",
-            "Desktop Applications",
-            "API Integration",
-            "Mobile App Development",
-            "Database Management",
-            "Software Testing"
+            { "name": "Web Applications", "path": "web-applications" },
+            { "name": "Desktop Applications", "path": "desktop-applications" },
+            { "name": "API Integration", "path": "api-integration" },
+            {
+              "name": "Mobile App Development",
+              "path": "mobile-app-development"
+            },
+            { "name": "Database Management", "path": "database-management" },
+            { "name": "Software Testing", "path": "software-testing" }
           ]
         },
         {
-          "sub_category": "Game Development",
+          "sub_category_name": "Game Development",
+          "path": "game-development",
+          "background_image": "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8dmlkZW8lMjBnYW1lfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60",
           "services": [
-            "Unity Game Development",
-            "2D Game Development",
-            "3D Game Development",
-            "Game Art and Design",
-            "Multiplayer Game Development"
+            {
+              "name": "Unity Game Development",
+              "path": "unity-game-development"
+            },
+            { "name": "2D Game Development", "path": "2d-game-development" },
+            { "name": "3D Game Development", "path": "3d-game-development" },
+            { "name": "Game Art and Design", "path": "game-art-and-design" },
+            {
+              "name": "Multiplayer Game Development",
+              "path": "multiplayer-game-development"
+            }
           ]
         },
         {
-          "sub_category": "Cybersecurity",
+          "sub_category_name": "Cybersecurity",
+          "path": "cybersecurity",
+          "background_image": "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80",
           "services": [
-            "Network Security",
-            "Penetration Testing",
-            "Security Auditing",
-            "Data Encryption",
-            "Incident Response"
+            { "name": "Network Security", "path": "network-security" },
+            { "name": "Penetration Testing", "path": "penetration-testing" },
+            { "name": "Security Auditing", "path": "security-auditing" },
+            { "name": "Data Encryption", "path": "data-encryption" },
+            { "name": "Incident Response", "path": "incident-response" }
           ]
         }
       ]
     },
     {
-      "category": "Design",
+      "category_name": "Design",
+      "heading": "Designing Your Brand's Unique Identity",
+      "path": "design",
+      "background_image": "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
       "sub_categories": [
         {
-          "sub_category": "Graphic Design",
+          "sub_category_name": "Graphic Design",
+          "path": "graphic-design",
           "services": [
-            "Logo Design",
-            "Brand Style Guide",
-            "Business Cards",
-            "Brochure Design",
-            "Poster Design",
-            "Illustration Services",
-            "Print Design"
+            { "name": "Logo Design", "path": "logo-design" },
+            { "name": "Brand Style Guide", "path": "brand-style-guide" },
+            { "name": "Business Cards", "path": "business-cards" },
+            { "name": "Brochure Design", "path": "brochure-design" },
+            { "name": "Poster Design", "path": "poster-design" },
+            {
+              "name": "Illustration Services",
+              "path": "illustration-services"
+            },
+            { "name": "Print Design", "path": "print-design" }
           ]
         },
         {
-          "sub_category": "Web Design",
+          "sub_category_name": "Web Design",
+          "path": "web-design",
+          "background_image": "https://images.unsplash.com/photo-1559028012-481c04fa702d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1472&q=80",
           "services": [
-            "Website Mockups",
-            "UI/UX Design",
-            "Responsive Design",
-            "Mobile App Design",
-            "Wireframing"
+            { "name": "Website Mockups", "path": "website-mockups" },
+            { "name": "UI/UX Design", "path": "ui-ux-design" },
+            { "name": "Responsive Design", "path": "responsive-design" },
+            { "name": "Mobile App Design", "path": "mobile-app-design" },
+            { "name": "Wireframing", "path": "wireframing" }
           ]
         }
       ]
     },
     {
-      "category": "Digital Marketing",
+      "category_name": "Digital Marketing",
+      "heading": "Elevate Your Online Presence with Digital Wizards",
+      "path": "digital-marketing",
+      "background_image": "https://images.unsplash.com/photo-1557838923-2985c318be48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1631&q=80",
       "sub_categories": [
         {
-          "sub_category": "Search",
+          "sub_category_name": "Search",
+          "path": "search",
           "services": [
-            "Search Engine Optimization",
-            "Search Engine Marketing",
-            "Local SEO",
-            "E-Commerce SEO",
-            "Video SEO",
-            "Keyword Research"
+            {
+              "name": "Search Engine Optimization",
+              "path": "search-engine-optimization"
+            },
+            {
+              "name": "Search Engine Marketing",
+              "path": "search-engine-marketing"
+            },
+            { "name": "Local SEO", "path": "local-seo" },
+            { "name": "E-Commerce SEO", "path": "e-commerce-seo" },
+            { "name": "Video SEO", "path": "video-seo" },
+            { "name": "Keyword Research", "path": "keyword-research" }
           ]
         },
         {
-          "sub_category": "Social Media Marketing",
+          "sub_category_name": "Social Media Marketing",
+          "path": "social-media-marketing",
+          "background_image": "https://images.unsplash.com/photo-1611926653670-e18689373857?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
           "services": [
-            "Social Media Advertising",
-            "Content Marketing",
-            "Influencer Marketing",
-            "Community Management",
-            "Social Media Analytics"
+            {
+              "name": "Social Media Advertising",
+              "path": "social-media-advertising"
+            },
+            { "name": "Content Marketing", "path": "content-marketing" },
+            { "name": "Influencer Marketing", "path": "influencer-marketing" },
+            { "name": "Community Management", "path": "community-management" },
+            {
+              "name": "Social Media Analytics",
+              "path": "social-media-analytics"
+            }
           ]
         }
       ]
     },
     {
-      "category": "Content Writing",
+      "category_name": "Content Writing",
+      "heading": "Words that Captivate, Content that Converts",
+      "path": "content-writing",
+      "background_image": "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
       "sub_categories": [
         {
-          "sub_category": "Blog Writing",
+          "sub_category_name": "Blog Writing",
+          "path": "blog-writing",
           "services": [
-            "SEO-Optimized Blog Posts",
-            "Guest Blogging",
-            "Topic Research",
-            "Editing and Proofreading",
-            "Content Strategy",
-            "Long-Form Articles",
-            "Technical Writing"
+            {
+              "name": "SEO-Optimized Blog Posts",
+              "path": "seo-optimized-blog-posts"
+            },
+            { "name": "Guest Blogging", "path": "guest-blogging" },
+            { "name": "Topic Research", "path": "topic-research" },
+            {
+              "name": "Editing and Proofreading",
+              "path": "editing-and-proofreading"
+            },
+            { "name": "Content Strategy", "path": "content-strategy" },
+            { "name": "Long-Form Articles", "path": "long-form-articles" },
+            { "name": "Technical Writing", "path": "technical-writing" }
           ]
         }
       ]
     },
     {
-      "category": "Video Production",
+      "category_name": "Video Production",
+      "heading": "Lights, Camera, Action - Your Vision on Screen",
+      "path": "video-production",
+      "background_image": "https://images.unsplash.com/photo-1601506521937-0121a7fc2a6b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80",
       "sub_categories": [
         {
-          "sub_category": "Video Editing",
+          "sub_category_name": "Video Editing",
+          "path": "video-editing",
           "services": [
-            "Video Montage",
-            "Color Correction",
-            "Motion Graphics",
-            "Subtitling",
-            "Special Effects"
+            { "name": "Video Montage", "path": "video-montage" },
+            { "name": "Color Correction", "path": "color-correction" },
+            { "name": "Motion Graphics", "path": "motion-graphics" },
+            { "name": "Subtitling", "path": "subtitling" },
+            { "name": "Special Effects", "path": "special-effects" }
           ]
         },
         {
-          "sub_category": "Animation",
+          "sub_category_name": "Animation",
+          "path": "animation",
+          "background_image": "https://images.unsplash.com/photo-1578632749014-ca77efd052eb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
           "services": [
-            "2D Animation",
-            "3D Animation",
-            "Explainer Videos",
-            "Character Animation",
-            "Storyboarding",
-            "Voiceovers"
+            { "name": "2D Animation", "path": "2d-animation" },
+            { "name": "3D Animation", "path": "3d-animation" },
+            { "name": "Explainer Videos", "path": "explainer-videos" },
+            { "name": "Character Animation", "path": "character-animation" },
+            { "name": "Storyboarding", "path": "storyboarding" },
+            { "name": "Voiceovers", "path": "voiceovers" }
           ]
         }
       ]
     },
     {
-      "category": "E-commerce",
+      "category_name": "E-commerce",
+      "heading": "Your Gateway to Online Success",
+      "path": "e-commerce",
+      "background_image": "https://images.unsplash.com/photo-1612103198005-b238154f4590?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80",
       "sub_categories": [
         {
-          "sub_category": "Online Store Setup",
+          "sub_category_name": "Online Store Setup",
+          "path": "online-store-setup",
           "services": [
-            "Platform Selection",
-            "Product Listing",
-            "Payment Integration",
-            "Shopping Cart Setup",
-            "Inventory Management"
+            { "name": "Platform Selection", "path": "platform-selection" },
+            { "name": "Product Listing", "path": "product-listing" },
+            { "name": "Payment Integration", "path": "payment-integration" },
+            { "name": "Shopping Cart Setup", "path": "shopping-cart-setup" },
+            { "name": "Inventory Management", "path": "inventory-management" }
           ]
         }
       ]
     },
     {
-      "category": "Data Science",
+      "category_name": "Data Science",
+      "heading": "Decoding Data for Informed Decision-Making",
+      "path": "data-science",
+      "background_image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
       "sub_categories": [
         {
-          "sub_category": "Data Analysis",
+          "sub_category_name": "Data Analysis",
+          "path": "data-analysis",
           "services": [
-            "Data Visualization",
-            "Statistical Modeling",
-            "Data Cleansing",
-            "Predictive Analytics",
-            "Machine Learning",
-            "Data Reporting"
+            { "name": "Data Visualization", "path": "data-visualization" },
+            { "name": "Statistical Modeling", "path": "statistical-modeling" },
+            { "name": "Data Cleansing", "path": "data-cleansing" },
+            { "name": "Predictive Analytics", "path": "predictive-analytics" },
+            { "name": "Machine Learning", "path": "machine-learning" },
+            { "name": "Data Reporting", "path": "data-reporting" }
           ]
         }
       ]
     },
     {
-      "category": "Mobile App Development",
+      "category_name": "Mobile App Development",
+      "heading": "Apps that Redefine User Experiences",
+      "path": "mobile-app-development",
+      "background_image": "https://images.unsplash.com/photo-1630442923896-244dd3717b35?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
       "sub_categories": [
         {
-          "sub_category": "iOS App Development",
+          "sub_category_name": "iOS App Development",
+          "path": "ios-app-development",
           "services": [
-            "iPhone App Development",
-            "iPad App Development",
-            "App Store Submission",
-            "Swift Programming",
-            "UI/UX Optimization"
+            {
+              "name": "iPhone App Development",
+              "path": "iphone-app-development"
+            },
+            { "name": "iPad App Development", "path": "ipad-app-development" },
+            { "name": "App Store Submission", "path": "app-store-submission" },
+            { "name": "Swift Programming", "path": "swift-programming" },
+            { "name": "UI/UX Optimization", "path": "ui-ux-optimization" }
           ]
         },
         {
-          "sub_category": "Android App Development",
+          "sub_category_name": "Android App Development",
+          "path": "android-app-development",
           "services": [
-            "Android App Design",
-            "Google Play Submission",
-            "Java/Kotlin Programming",
-            "App Testing",
-            "Firebase Integration"
+            { "name": "Android App Design", "path": "android-app-design" },
+            {
+              "name": "Google Play Submission",
+              "path": "google-play-submission"
+            },
+            {
+              "name": "Java/Kotlin Programming",
+              "path": "java-kotlin-programming"
+            },
+            { "name": "App Testing", "path": "app-testing" },
+            { "name": "Firebase Integration", "path": "firebase-integration" }
           ]
         }
       ]
     },
     {
-      "category": "Photography",
+      "category_name": "Photography",
+      "heading": "Capturing Moments, Creating Memories",
+      "path": "photography",
+      "background_image": "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
       "sub_categories": [
         {
-          "sub_category": "Portrait Photography",
+          "sub_category_name": "Portrait Photography",
+          "path": "portrait-photography",
           "services": [
-            "Family Portraits",
-            "Headshots",
-            "Outdoor Portraits",
-            "Studio Photography",
-            "Retouching"
+            { "name": "Family Portraits", "path": "family-portraits" },
+            { "name": "Headshots", "path": "headshots" },
+            { "name": "Outdoor Portraits", "path": "outdoor-portraits" },
+            { "name": "Studio Photography", "path": "studio-photography" },
+            { "name": "Retouching", "path": "retouching" }
           ]
         }
       ]
     },
     {
-      "category": "Legal Services",
+      "category_name": "Legal Services",
+      "heading": "Your Legal Partner in Business Success",
+      "path": "legal-services",
+      "background_image": "https://images.unsplash.com/photo-1562564055-71e051d33c19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
       "sub_categories": [
         {
-          "sub_category": "Business Law",
+          "sub_category_name": "Business Law",
+          "path": "business-law",
           "services": [
-            "Contract Drafting",
-            "Legal Consultation",
-            "Intellectual Property",
-            "Employment Law",
-            "Business Licensing"
+            { "name": "Contract Drafting", "path": "contract-drafting" },
+            { "name": "Legal Consultation", "path": "legal-consultation" },
+            {
+              "name": "Intellectual Property",
+              "path": "intellectual-property"
+            },
+            { "name": "Employment Law", "path": "employment-law" },
+            { "name": "Business Licensing", "path": "business-licensing" }
           ]
         }
       ]
     },
     {
-      "category": "Financial Services",
+      "category_name": "Financial Services",
+      "heading": "Your Trusted Financial Advisors",
+      "path": "financial-services",
+      "background_image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
       "sub_categories": [
         {
-          "sub_category": "Accounting",
+          "sub_category_name": "Accounting",
+          "path": "accounting",
           "services": [
-            "Bookkeeping",
-            "Tax Preparation",
-            "Financial Planning",
-            "Auditing",
-            "Payroll Services"
+            { "name": "Bookkeeping", "path": "bookkeeping" },
+            { "name": "Tax Preparation", "path": "tax-preparation" },
+            { "name": "Financial Planning", "path": "financial-planning" },
+            { "name": "Auditing", "path": "auditing" },
+            { "name": "Payroll Services", "path": "payroll-services" }
           ]
         }
       ]
