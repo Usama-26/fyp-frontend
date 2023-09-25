@@ -21,11 +21,12 @@ export default function ServiceExplorer() {
   return (
     <>
       <div className="border">
-        <div className="flex">
+        <div className="container mx-auto flex">
           {services.categories.map(
             ({ category_name, path, sub_categories }, index) => (
-              <a
+              <Link
                 key={category_name}
+                onClick={closeMenu}
                 onMouseEnter={() => {
                   openMenu(),
                     setSubCategories(sub_categories),
@@ -40,7 +41,7 @@ export default function ServiceExplorer() {
                 }`}
               >
                 {category_name}
-              </a>
+              </Link>
             )
           )}
         </div>

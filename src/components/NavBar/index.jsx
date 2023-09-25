@@ -32,7 +32,7 @@ export default function Navbar() {
   );
 }
 
-function Logo() {
+export function Logo() {
   return (
     <Link href={"/"}>
       <div>

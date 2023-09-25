@@ -29,7 +29,7 @@ export default function CategoryPage() {
               Popular Services Under:
               <span className="italic"> {category?.category_name}</span>
             </h1>
-            <div className="flex flex-wrap pt-10">
+            <div className="flex flex-wrap pt-10 max-w-screen-7xl mx-auto">
               {category?.sub_categories.map(
                 ({ sub_category_name, path, background_image }, index) => (
                   <div
@@ -48,7 +48,7 @@ export default function CategoryPage() {
                           height={600}
                           alt="content"
                         />
-                        <div className="absolute h-full w-full top-0 left-0 bg-gradient-to-b from-neutral-900/70 to-transparent">
+                        <div className="absolute h-full w-full rounded top-0 left-0 bg-gradient-to-b from-neutral-900/70 to-transparent">
                           <h3 className="p-4 tracking-wide text-neutral-100 text-xl font-bold title-font">
                             {sub_category_name}
                           </h3>

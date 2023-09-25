@@ -331,25 +331,6 @@
           ]
         }
       ]
-    },
-    {
-      "category_name": "Financial Services",
-      "heading": "Your Trusted Financial Advisors",
-      "path": "financial-services",
-      "background_image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      "sub_categories": [
-        {
-          "sub_category_name": "Accounting",
-          "path": "accounting",
-          "services": [
-            { "name": "Bookkeeping", "path": "bookkeeping" },
-            { "name": "Tax Preparation", "path": "tax-preparation" },
-            { "name": "Financial Planning", "path": "financial-planning" },
-            { "name": "Auditing", "path": "auditing" },
-            { "name": "Payroll Services", "path": "payroll-services" }
-          ]
-        }
-      ]
     }
   ]
 }

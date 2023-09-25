@@ -1,8 +1,6 @@
-import Navbar from "@/components/NavBar";
 import { useState } from "react";
 import sampleSkills from "@/json/sample-skills.json";
-import ServiceExplorer from "@/components/ServiceExplorer";
-
+import WebLayout from "@/layouts/WebLayout";
 export default function Home() {
   const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,14 +10,14 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
-      {/* <SearchBox
+      <WebLayout>
+        {/* <SearchBox
         onSearch={handleSearch}
         query={searchQuery}
         setQuery={setSearchQuery}
         searchArray={skills}
       /> */}
-      <ServiceExplorer />
+      </WebLayout>
     </>
   );
 }
