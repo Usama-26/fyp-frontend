@@ -9,7 +9,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        inter: ["var(--font-inter)"],
+        sans: ["var(--font-inter)"],
+        display: ["var(--font-display)"],
       },
       colors: {
         primary: colors.indigo,
