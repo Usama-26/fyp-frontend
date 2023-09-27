@@ -40,7 +40,7 @@ export default function ServiceExplorer() {
                     : "border-transparent "
                 }`}
               >
-                {category_name}
+                <span>{category_name}</span>
               </Link>
             )
           )}

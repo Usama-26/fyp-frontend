@@ -8,7 +8,7 @@
 
 @layer components {
   html {
-    @apply text-zinc-700;
+    @apply text-neutral-700;
   }
   .flex-between-centered {
     @apply flex justify-between items-center;

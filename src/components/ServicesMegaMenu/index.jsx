@@ -25,6 +25,7 @@ export default function ServicesMegaMenu({
                 <ul key={index} className="w-1/4 space-y-2">
                   <Link
                     href={`/services/${sub_category_path}`}
+                    onClick={onclose}
                     className="font-semibold hover:underline underline-offset-2"
                   >
                     {sub_category_name}
@@ -32,6 +33,7 @@ export default function ServicesMegaMenu({
                   {services.map(({ name, path: service_path }, index) => (
                     <li key={index}>
                       <Link
+                        onClick={onClose}
                         href={`/services/${sub_category_path}/${service_path}`}
                         className="text-sm hover:underline underline-offset-2"
                       >
