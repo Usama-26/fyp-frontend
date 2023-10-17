@@ -10,6 +10,7 @@ export default function CategoryPage() {
   const category = services.categories.find(
     (category) => category.path === router.query.slug
   );
+
   useEffect(() => {
     document.title = `${category?.category_name} Services | ChainWork`;
     return function () {

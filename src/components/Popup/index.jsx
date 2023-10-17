@@ -2,7 +2,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { HiChevronDown } from "react-icons/hi2";
 import { Fragment } from "react";
 
-export default function FilterPopover({ label, children }) {
+export default function Popup({ label, children }) {
   return (
     <div className="relative">
       <Popover>

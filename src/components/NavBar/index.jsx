@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { SiHiveBlockchain } from "react-icons/si";
 import { HiMiniChevronDown } from "react-icons/hi2";
 import { useState } from "react";
 import MegaMenu from "../MegaMenu";
-export default function Navbar() {
+import Logo from "../Logo";
+
+export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const openMenu = () => {
@@ -29,24 +30,6 @@ export default function Navbar() {
       </header>
       <MegaMenu isOpen={isMenuOpen} onOpen={openMenu} onClose={closeMenu} />
     </>
-  );
-}
-
-export function Logo() {
-  return (
-    <Link href={"/"}>
-      <div>
-        <h1 className="text-2xl text-primary-700 flex items-center">
-          <span>
-            <SiHiveBlockchain className="inline w-8 h-8 mr-1" />
-          </span>
-          <b>
-            <span>Chain</span>
-            <span className="text-neutral-700">Work</span>
-          </b>
-        </h1>
-      </div>
-    </Link>
   );
 }
 
@@ -79,7 +62,7 @@ function HeaderCTA() {
   return (
     <div className="flex-between-centered  gap-4 font-medium">
       <Link
-        href={"/login"}
+        href={"/auth/login"}
         className="text-neutral-700 hover:underline underline-offset-8"
       >
         Login

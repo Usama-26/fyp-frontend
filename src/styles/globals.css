@@ -22,4 +22,10 @@
   .h-search-box {
     @apply max-h-[300px];
   }
+  .form-input {
+    @apply w-full p-2 rounded-md border border-neutral-500 focus:border-primary-500 placeholder:text-neutral-400 focus:outline-primary-200 outline-offset-2;
+  }
+  .form-submit-btn {
+    @apply w-full p-2 rounded-md bg-primary-500 hover:bg-primary-700 focus:bg-primary-700 focus:outline-none text-white font-medium tracking-wide;
+  }
 }
