@@ -68,13 +68,13 @@ function HeaderCTA() {
         Login
       </Link>
       <Link
-        href={"/signup"}
+        href={"/auth/signup"}
         className="bg-primary-600 hover:bg-primary-700 text-neutral-100  px-4 py-2 rounded transition"
       >
         Sign up
       </Link>
       <Link
-        href={"/freelancer/join"}
+        href={"/auth/freelancer/join"}
         className=" hover:text-primary-700 text-neutral-700 underline-offset-2 "
       >
         Apply as Freelancer
