@@ -1,8 +1,8 @@
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import WebLayout from "@/layouts/WebLayout";
 import { useRouter } from "next/router";
-import FilterPopover from "@/components/FilterPopover";
 import ServiceCard from "@/components/ServiceCard";
+import Popup from "@/components/Popup";
 const serviceTitles = [
   "I will design a stunning website for your business",
   "Create a professional Shopify store for your brand",
@@ -43,30 +43,30 @@ export default function ServicePage() {
             </div>
             <div className="mt-10">
               <div className="flex gap-4">
-                <FilterPopover label={"Price"}>
+                <Popup label={"Price"}>
                   <p>
                     Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                     Exercitationem eligendi cum natus ducimus quasi eos eius ad
                     assumenda, fugiat laboriosam aperiam officiis, qui saepe.
                     Ipsum, quas nesciunt! Labore, fugit natus.
                   </p>
-                </FilterPopover>
-                <FilterPopover label={"Delivery Time"}>
+                </Popup>
+                <Popup label={"Delivery Time"}>
                   <p>
                     Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                     Exercitationem eligendi cum natus ducimus quasi eos eius ad
                     assumenda, fugiat laboriosam aperiam officiis, qui saepe.
                     Ipsum, quas nesciunt! Labore, fugit natus.
                   </p>
-                </FilterPopover>
-                <FilterPopover label={"Seller Options"}>
+                </Popup>
+                <Popup label={"Seller Options"}>
                   <p>
                     Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                     Exercitationem eligendi cum natus ducimus quasi eos eius ad
                     assumenda, fugiat laboriosam aperiam officiis, qui saepe.
                     Ipsum, quas nesciunt! Labore, fugit natus.
                   </p>
-                </FilterPopover>
+                </Popup>
               </div>
             </div>
             <div className="mt-10">

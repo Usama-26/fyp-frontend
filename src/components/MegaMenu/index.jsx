@@ -27,7 +27,7 @@ export default function MegaMenu({ isOpen, onOpen, onClose }) {
     <section
       onMouseEnter={onOpen}
       onMouseLeave={onClose}
-      className={`absolute z-50 w-full py-4 px-12 bg-neutral-50 ${
+      className={`absolute z-40 w-full py-4 px-12 bg-neutral-50 ${
         isOpen ? "block" : "hidden"
       }`}
     >

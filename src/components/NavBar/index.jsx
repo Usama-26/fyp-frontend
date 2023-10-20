@@ -1,18 +1,24 @@
 import Link from "next/link";
 import { HiMiniChevronDown } from "react-icons/hi2";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import MegaMenu from "../MegaMenu";
 import Logo from "../Logo";
+import { Menu, Transition } from "@headlessui/react";
+import Image from "next/image";
+import { BsGear } from "react-icons/bs";
+import { IoMdExit } from "react-icons/io";
+import WalletConnect from "../WalletConnect";
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const openMenu = () => {
     setIsMenuOpen(true);
   };
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
   return (
     <>
       <header className=" p-4 md:p-0">
@@ -25,7 +31,7 @@ export default function NavBar() {
               onClose={closeMenu}
             />
           </div>
-          <HeaderCTA />
+          {isLoggedIn ? <UserMenu /> : <AuthMenu />}
         </div>
       </header>
       <MegaMenu isOpen={isMenuOpen} onOpen={openMenu} onClose={closeMenu} />
@@ -58,7 +64,7 @@ function Navigation({ isOpen, onOpen, onClose }) {
   );
 }
 
-function HeaderCTA() {
+function AuthMenu() {
   return (
     <div className="flex-between-centered  gap-4 font-medium">
       <Link
@@ -80,5 +86,65 @@ function HeaderCTA() {
         Apply as Freelancer
       </Link>
     </div>
+  );
+}
+
+function UserMenu() {
+  return (
+    <>
+      <WalletConnect />
+      <div className="relative flex-between-centered gap-4">
+        <Menu>
+          <Menu.Button>
+            <span>
+              <Image
+                src={"/images/profiles/profile-2.jpg"}
+                width={1024}
+                height={683}
+                className="w-10 aspect-square object-cover rounded-full"
+                alt="Profile Picture"
+              />
+            </span>
+          </Menu.Button>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items
+              as="ul"
+              className={`z-50 w-48 absolute shadow-custom-sm shadow-neutral-300 right-0 top-12 py-2 rounded-md divide-y text-sm font-medium bg-white`}
+            >
+              <Menu.Item as={"li"} className={"p-3"}>
+                <h4 className="font-medium text-neutral-500">Welcome,</h4>
+                <h3>Benjamin Dunn</h3>
+              </Menu.Item>
+              <Menu.Item as={"li"}>
+                <Link
+                  href={"/user/settings"}
+                  className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
+                >
+                  <BsGear className="w-5 h-5 fill-neutral-500" />
+                  <span>Profile Settings</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item as={"li"}>
+                <Link
+                  href={"/user/settings"}
+                  className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
+                >
+                  <IoMdExit className="w-5 h-5 fill-neutral-500" />
+                  <span>Logout</span>
+                </Link>
+              </Menu.Item>
+            </Menu.Items>
+          </Transition>
+        </Menu>
+      </div>
+    </>
   );
 }

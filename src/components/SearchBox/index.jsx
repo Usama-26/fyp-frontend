@@ -78,7 +78,7 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
 
   return (
     <div
-      className={`mx-48 relative flex items-center border rounded-lg bg-white`}
+      className={`w-full relative flex items-center border rounded-lg bg-white text-neutral-700`}
     >
       <input
         type="text"
@@ -88,7 +88,7 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
         onKeyDown={handleKeyPress}
         onFocus={() => handleFocus()}
         ref={inputRef}
-        className="w-full rounded-lg focus:outline-none p-4"
+        className="w-full rounded-lg focus:outline-none p-4 "
       />
       {query && (
         <button

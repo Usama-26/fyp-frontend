@@ -19,6 +19,9 @@ module.exports = {
         success: colors.green,
         warning: colors.yellow,
       },
+      boxShadow: {
+        "custom-sm": "0px 0px 3px",
+      },
     },
   },
   plugins: [],
