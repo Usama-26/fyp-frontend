@@ -20,7 +20,7 @@ export default function ServiceExplorer() {
 
   return (
     <>
-      <div className="border">
+      <div className="border-b">
         <div className="container mx-auto flex">
           {services.categories.map(
             ({ category_name, path, sub_categories }, index) => (

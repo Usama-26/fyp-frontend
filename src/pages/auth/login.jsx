@@ -20,9 +20,11 @@ export default function Login() {
           <h3 className="text-xl font-semibold tracking-wider text-center mb-4">
             Login
           </h3>
-          <LoginForm />
 
-          <h6 className="text-center text-neutral-400 my-4">OR</h6>
+          <LoginForm />
+          <h6 className="text-center font-semibold text-neutral-400 my-4">
+            OR
+          </h6>
           <div className="flex justify-center">
             <GoogleLogin
               text="continue_with"

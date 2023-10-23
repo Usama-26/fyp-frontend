@@ -11,7 +11,7 @@ import WalletConnect from "../WalletConnect";
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const openMenu = () => {
     setIsMenuOpen(true);
   };
@@ -21,7 +21,7 @@ export default function NavBar() {
 
   return (
     <>
-      <header className=" p-4 md:p-0">
+      <header className="border-b p-4 md:p-0">
         <div className="container mx-auto flex-between-centered">
           <div className=" flex-start-centered lg:gap-8 gap-4">
             <Logo />

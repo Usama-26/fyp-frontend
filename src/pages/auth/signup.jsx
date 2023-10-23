@@ -4,11 +4,13 @@ import Head from "next/head";
 import { GoogleLogin } from "@react-oauth/google";
 import { IoMdEye } from "react-icons/io";
 import Footer from "@/components/Footer";
-export default function Login() {
+import { SignupForm } from "@/components/SignupForm";
+
+export default function Signup() {
   return (
     <>
       <Head>
-        <title>Login | Workchain</title>
+        <title>Signup | Workchain</title>
       </Head>
       <NavBar />
       <main>
@@ -19,9 +21,11 @@ export default function Login() {
           <h3 className="text-xl font-semibold tracking-wider text-center mb-4">
             Join as a Client
           </h3>
-          <SignupForm />
+          <SignupForm userType={"client"} />
 
-          <h6 className="text-center text-neutral-400 my-4">OR</h6>
+          <h6 className="text-center font-semibold text-neutral-400 my-4">
+            OR
+          </h6>
           <div className="flex justify-center">
             <GoogleLogin
               text="continue_with"
@@ -35,59 +39,5 @@ export default function Login() {
       </main>
       <Footer />
     </>
-  );
-}
-
-function SignupForm({}) {
-  return (
-    <form className="space-y-4">
-      <div className="flex md:flex-row flex-col space-between gap-4">
-        <input
-          className="form-input"
-          type="text"
-          name="firstName"
-          id="firstName"
-          placeholder="First Name"
-        />
-        <input
-          className="form-input"
-          type="text"
-          name="lastName"
-          id="lastName"
-          placeholder="Last Name"
-        />
-      </div>
-      <input
-        className="form-input"
-        type="email"
-        name="email"
-        id="email"
-        placeholder="Email"
-      />
-      <div className="flex md:flex-row flex-col space-between gap-4">
-        <div className="relative w-full">
-          <input
-            className="form-input"
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Password"
-          />
-          <button type="button" className="absolute right-2 top-2.5">
-            <IoMdEye className="w-6 h-6 fill-neutral-500" />
-          </button>
-        </div>
-        <input
-          className="form-input"
-          type="password"
-          name="confirmPass"
-          id="confirmPass"
-          placeholder="Confirm Password"
-        />
-      </div>
-      <button type="submit" className="form-submit-btn">
-        Join
-      </button>
-    </form>
   );
 }
