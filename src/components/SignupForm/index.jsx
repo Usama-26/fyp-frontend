@@ -1,7 +1,13 @@
-import { Form, Formik } from "formik";
-import { IoMdEye } from "react-icons/io";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { useState } from "react";
 import * as Yup from "yup";
-export function SignupForm({ userType }) {
+export function SignupForm({setFormData}) {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+  
   return (
     <Formik
       initialValues={{
@@ -12,64 +18,134 @@ export function SignupForm({ userType }) {
         confirmPass: "",
       }}
       validationSchema={Yup.object({
-        firstName: Yup.string().required("First Name is required"),
-        lastName: Yup.string().required("Last Name is required"),
-        email: Yup.string().email().required("Email is required"),
-        password: Yup.string().required("Set a password"),
-        confirmPass: Yup.string().required(
-          "Re-enter your password for confirmation"
-        ),
+        firstName: Yup.string().trim().required("First Name is required"),
+        lastName: Yup.string().trim().required("Last Name is required"),
+        email: Yup.string().trim().email().required("Email is required"),
+        password: Yup.string().trim().required("Set a password"),
+        confirmPass: Yup.string()
+          .trim()
+          .required("Re-enter your password for confirmation")
+          .test("passwords-match", `Passwords don't match.`, function (value) {
+            return this.parent.password === value;
+          }),
       })}
+      onSubmit={(values) => {
+        setFormData(values);
+      }}
     >
-      <Form className="space-y-4">
-        <div className="flex md:flex-row flex-col space-between gap-4">
-          <input
-            className="form-input"
-            type="text"
-            name="firstName"
-            id="firstName"
-            placeholder="First Name"
-          />
-          <input
-            className="form-input"
-            type="text"
-            name="lastName"
-            id="lastName"
-            placeholder="Last Name"
-          />
-        </div>
-        <input
-          className="form-input"
-          type="email"
-          name="email"
-          id="email"
-          placeholder="Email"
-        />
-        <div className="flex md:flex-row flex-col space-between gap-4">
-          <div className="relative w-full">
-            <input
-              className="form-input"
-              type="password"
-              name="password"
-              id="password"
-              placeholder="Password"
-            />
-            <button type="button" className="absolute right-2 top-2.5">
-              <IoMdEye className="w-6 h-6 fill-neutral-500" />
-            </button>
+      {({ errors, touched }) => (
+        <Form className="space-y-4">
+          <div className="flex md:flex-row flex-col space-between gap-4">
+            <div className="w-full">
+              <Field
+                className={`form-input ${
+                  errors.firstName &&
+                  touched.firstName &&
+                  "border-red-500 ring-red-200"
+                }`}
+                type="text"
+                name="firstName"
+                id="firstName"
+                placeholder="First Name"
+              />
+              <ErrorMessage
+                name="firstName"
+                component={"p"}
+                className="text-xs text-danger-600"
+              />
+            </div>
+            <div className="w-full">
+              <Field
+                className={`form-input ${
+                  errors.lastName &&
+                  touched.lastName &&
+                  "border-red-500 ring-red-200"
+                }`}
+                type="text"
+                name="lastName"
+                id="lastName"
+                placeholder="Last Name"
+              />
+              <ErrorMessage
+                name="lastName"
+                component={"p"}
+                className="text-xs text-danger-600"
+              />
+            </div>
           </div>
-          <input
-            className="form-input"
-            type="password"
-            name="confirmPass"
-            id="confirmPass"
-            placeholder="Confirm Password"
-          />
-        </div>
-        <button type="submit" className="form-submit-btn">
-          Join
-        </button>
-      </Form>
+          <div>
+            <Field
+              className={`form-input ${
+                errors.email && touched.email && "border-red-500 ring-red-200"
+              }`}
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Email"
+            />
+            <ErrorMessage
+              name="email"
+              component={"p"}
+              className="text-xs text-danger-600"
+            />
+          </div>
+          <div className="flex md:flex-row flex-col space-between gap-4">
+            <div className="relative w-full">
+              <div>
+                <Field
+                  className={`form-input ${
+                    errors.password &&
+                    touched.password &&
+                    "border-red-500 ring-red-200"
+                  }`}
+                  type={isPasswordVisible ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  placeholder="Password"
+                />
+                <ErrorMessage
+                  name="password"
+                  component={"p"}
+                  className="text-xs text-danger-600"
+                />
+              </div>
+              <button
+                onClick={togglePasswordVisibility}
+                type="button"
+                tabIndex={-1}
+                className="absolute right-2 top-2.5"
+              >
+                {!isPasswordVisible ? (
+                  <IoMdEyeOff className="w-6 h-6 fill-neutral-500" />
+                ) : (
+                  <IoMdEye className="w-6 h-6 fill-neutral-500" />
+                )}
+              </button>
+            </div>
+            <div className="w-full">
+              <Field
+                className={`form-input ${
+                  errors.confirmPass &&
+                  touched.confirmPass &&
+                  "border-red-500 ring-red-200"
+                }`}
+                type={isPasswordVisible ? "text" : "password"}
+                name="confirmPass"
+                id="confirmPass"
+                placeholder="Confirm Password"
+              />
+              <ErrorMessage
+                name="confirmPass"
+                component={"p"}
+                className="text-xs text-danger-600"
+              />
+            </div>
+          </div>
+          <button type="submit" className="form-submit-btn">
+            Join
+          </button>
+        </Form>
+      )}
     </Formik>
   );
 }
