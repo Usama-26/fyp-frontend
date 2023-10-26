@@ -3,6 +3,7 @@ import WebLayout from "@/layouts/WebLayout";
 import { useRouter } from "next/router";
 import ServiceCard from "@/components/ServiceCard";
 import Popup from "@/components/Popup";
+
 const serviceTitles = [
   "I will design a stunning website for your business",
   "Create a professional Shopify store for your brand",
@@ -27,6 +28,8 @@ const serviceTitles = [
 ];
 
 export default function ServicePage() {
+  const router = useRouter();
+  console.log(router.query);
   return (
     <WebLayout>
       <section className="py-8">

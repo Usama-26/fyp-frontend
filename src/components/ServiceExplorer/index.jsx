@@ -19,7 +19,7 @@ export default function ServiceExplorer() {
   };
 
   return (
-    <>
+    <section>
       <div className="border-b">
         <div className="container mx-auto flex">
           {services.categories.map(
@@ -46,15 +46,16 @@ export default function ServiceExplorer() {
           )}
         </div>
       </div>
-
-      {subCategories && (
-        <ServicesMegaMenu
-          isOpen={isMenuOpen}
-          onOpen={openMenu}
-          onClose={closeMenu}
-          categories={subCategories}
-        />
-      )}
-    </>
+      <div className="relative max-w-screen-2xl mx-auto">
+        {subCategories && (
+          <ServicesMegaMenu
+            isOpen={isMenuOpen}
+            onOpen={openMenu}
+            onClose={closeMenu}
+            categories={subCategories}
+          />
+        )}
+      </div>
+    </section>
   );
 }

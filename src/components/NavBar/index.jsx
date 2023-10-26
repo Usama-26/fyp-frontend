@@ -125,7 +125,7 @@ function UserMenu() {
               </Menu.Item>
               <Menu.Item as={"li"}>
                 <Link
-                  href={"/user/settings"}
+                  href={"/profile/settings"}
                   className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
                 >
                   <BsGear className="w-5 h-5 fill-neutral-500" />

@@ -8,7 +8,7 @@ export default function CategoryPage() {
   const router = useRouter();
 
   const category = services.categories.find(
-    (category) => category.path === router.query.slug
+    (category) => category.path === router.query.category
   );
 
   useEffect(() => {
@@ -17,6 +17,7 @@ export default function CategoryPage() {
       document.title = "Workchain | Home";
     };
   }, [category]);
+  console.log(router.query);
   return (
     <WebLayout>
       <section className="">

@@ -12,7 +12,7 @@ export default function ServicesMegaMenu({
         <div
           onMouseEnter={onOpen}
           onMouseLeave={onClose}
-          className={`border border-t-0 absolute z-50 w-full p-4 bg-white shadow ${
+          className={` border border-t-0 absolute z-50 w-full p-4 bg-neutral-50 shadow ${
             isOpen ? "block" : "hidden"
           }`}
         >
