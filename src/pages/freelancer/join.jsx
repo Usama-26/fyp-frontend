@@ -4,7 +4,10 @@ import Head from "next/head";
 import { GoogleLogin } from "@react-oauth/google";
 import Footer from "@/components/Footer";
 import { SignupForm } from "@/components/SignupForm";
+import { useState } from "react";
 export default function FreelancerJoin() {
+  const [userCredentials, setUserCredentials] = useState(null);
+  console.log(userCredentials);
   return (
     <>
       <Head>
@@ -19,7 +22,7 @@ export default function FreelancerJoin() {
           <h3 className="text-xl font-semibold tracking-wider text-center mb-4">
             Join as Freelancer
           </h3>
-          <SignupForm userType={"freelancer"} />
+          <SignupForm setFormData={setUserCredentials} />
 
           <h6 className="text-center font-semibold text-neutral-400 my-4">
             OR

@@ -80,7 +80,7 @@ function AuthMenu() {
         Sign up
       </Link>
       <Link
-        href={"/auth/freelancer/join"}
+        href={"/freelancer/join"}
         className=" hover:text-primary-700 text-neutral-700 underline-offset-2 "
       >
         Apply as Freelancer

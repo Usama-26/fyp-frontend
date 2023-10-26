@@ -4,13 +4,13 @@ import WebLayout from "@/layouts/WebLayout";
 import { Tab } from "@headlessui/react";
 
 const profileTabs = [
-  "Personal Information",
+  "Personal Info",
   "Skills & Experience",
+  "Contact Info",
   "Portfolio",
-  "Notifications",
-  "Certifications",
-  "Billing & Payments",
   "Security",
+  "Billing & Payments",
+  "Notifications",
   "Deactivate Account",
 ];
 export default function Profile() {
@@ -42,7 +42,7 @@ export default function Profile() {
                 <h1 className="font-semibold">Portfolio</h1>
               </Tab.Panel>
               <Tab.Panel>
-                <h1 className="font-semibold">Notifications</h1>
+                <SecuritySettings />
               </Tab.Panel>
               <Tab.Panel>
                 <h1 className="font-semibold">Certifications</h1>
@@ -51,7 +51,7 @@ export default function Profile() {
                 <h1 className="font-semibold">Billing & Payments</h1>
               </Tab.Panel>
               <Tab.Panel>
-                <SecuritySettings />
+                <h1 className="font-semibold">Notifications</h1>
               </Tab.Panel>
               <Tab.Panel>
                 <p className="text-danger-600">
