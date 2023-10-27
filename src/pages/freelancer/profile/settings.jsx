@@ -1,7 +1,9 @@
-import SecuritySettings from "@/components/SecuritySettings";
-import PersonalSettings from "@/components/PersonalSettings";
+import SecuritySettings from "@/components/Freelancer/Settings/SecuritySettings";
+import PersonalSettings from "@/components/Freelancer/Settings/PersonalSettings";
 import WebLayout from "@/layouts/WebLayout";
 import { Tab } from "@headlessui/react";
+import SkillsSettings from "@/components/Freelancer/Settings/SkillsSettings";
+import ContactSettings from "@/components/Freelancer/Settings/ContactSettings";
 
 const profileTabs = [
   "Personal Info",
@@ -36,16 +38,16 @@ export default function Profile() {
                 <PersonalSettings />
               </Tab.Panel>
               <Tab.Panel>
-                <h1 className="font-semibold">Skills & Experiences</h1>
+                <SkillsSettings />
+              </Tab.Panel>
+              <Tab.Panel>
+                <ContactSettings />
               </Tab.Panel>
               <Tab.Panel>
                 <h1 className="font-semibold">Portfolio</h1>
               </Tab.Panel>
               <Tab.Panel>
                 <SecuritySettings />
-              </Tab.Panel>
-              <Tab.Panel>
-                <h1 className="font-semibold">Certifications</h1>
               </Tab.Panel>
               <Tab.Panel>
                 <h1 className="font-semibold">Billing & Payments</h1>

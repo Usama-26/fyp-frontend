@@ -1,16 +1,19 @@
 import Image from "next/image";
+import { HiX } from "react-icons/hi";
 import { MdImage } from "react-icons/md";
 
 const { useState, useEffect } = require("react");
 const { useDropzone } = require("react-dropzone");
 
 export default function Dropzone(props) {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState(null);
+
+  console.log(files);
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
     },
-    maxFiles: 1,
+    multiple: false,
     onDrop: (acceptedFiles) => {
       setFiles(
         acceptedFiles.map((file) =>
@@ -22,7 +25,10 @@ export default function Dropzone(props) {
     },
   });
 
-  const thumbs = files.map((file) => (
+  const clearFile = () => {
+    setFiles(null);
+  };
+  const thumbs = files?.map((file) => (
     <div key={file.name}>
       <div className="w-32">
         <Image
@@ -42,8 +48,8 @@ export default function Dropzone(props) {
 
   useEffect(() => {
     // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, []);
+    return () => files?.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, [files]);
 
   return (
     <section className="container">
@@ -54,16 +60,31 @@ export default function Dropzone(props) {
         })}
       >
         <input {...getInputProps()} />
-        {files.length > 0 ? (
+
+        {files ? (
           thumbs
         ) : (
           <div>
             <MdImage className="w-20 h-20 mx-auto fill-gray-400" />
             <h4>Choose Thumbnail</h4>
             <p className="text-xs">Choose an Image or Drag in here...</p>
+            <p className="text-xs">Accepted Formats .png, .jpg</p>
+            <p className="text-xs">
+              Please upload image in landscape orientation. i.e. 16:9
+            </p>
           </div>
         )}
       </div>
+      {files && (
+        <div className="text-center">
+          <button
+            onClick={clearFile}
+            className=" text-center rounded-full p-1 hover:bg-neutral-200"
+          >
+            <HiX className=" w-8 h-8 fill-neutral-700" />
+          </button>
+        </div>
+      )}
     </section>
   );
 }
