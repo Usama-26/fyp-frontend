@@ -35,6 +35,7 @@ export function SignupForm({ setFormData }) {
       validationSchema={signupSchema}
       onSubmit={(values) => {
         setFormData(values);
+        console.log("onSubmit");
       }}
     >
       {({ errors, touched, submitCount }) => (

@@ -1,19 +1,37 @@
 import Dropzone from "@/components/Dropzone";
 import WebLayout from "@/layouts/WebLayout";
-import { Cloudinary } from "@cloudinary/url-gen";
+import { postData } from "@/utils/api/genericAPI";
+import { uploadImageToCloudinary } from "@/utils/cloudinaryUpload";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
 
-const categorySchema = Yup.object({
-  name: Yup.string().trim().required("Category Name Required"),
-  punchline: Yup.string().trim().required("Punchline Required"),
-  description: Yup.string().trim().max(500).required("Description Required"),
-  imageUrl: Yup.string().trim().url().required("Image Required"),
+const categorySchema = Yup.object().shape({
+  name: Yup.string().required("Name is required"),
+  description: Yup.string().required("Description is required"),
+  punchline: Yup.string().required("Punchline is required"),
 });
+
 export default function AddCategory() {
   const [formData, setFormData] = useState(null);
-  const cld = new Cloudinary({ cloud: { cloudName: "dscbgjlw3" } });
+  const [files, setFiles] = useState(null);
+  const [apiError, setApiError] = useState(null);
+
+  apiError && console.log(apiError);
+
+  const handleSubmit = async (values) => {
+    if (!files) return;
+
+    const response = await uploadImageToCloudinary(files[0]);
+
+    if (response.status !== 200) {
+      setApiError(response.data.error.message);
+      return;
+    }
+
+    const postedCategory = await postData("");
+  };
+
   return (
     <WebLayout>
       <div className="max-w-xl mx-auto mb-4">
@@ -25,11 +43,10 @@ export default function AddCategory() {
             name: "",
             punchline: "",
             description: "",
-            imageUrl: "",
           }}
           validationSchema={categorySchema}
           onSubmit={(values) => {
-            setFormData(values);
+            handleSubmit(values);
           }}
         >
           {({ values, errors, touched, submitCount }) => (
@@ -102,10 +119,20 @@ export default function AddCategory() {
                   />
                 )}
               </div>
-              <Dropzone />
+
+              <Dropzone
+                error={submitCount > 0 && !files}
+                files={files}
+                setFiles={setFiles}
+              />
+              {submitCount > 0 && !files && (
+                <p className="field-error__message">Select Image First</p>
+              )}
+
               <button type="submit" className="form-submit-btn">
                 Add
               </button>
+              <p>{JSON.stringify({ ...values, image: files })}</p>
             </Form>
           )}
         </Formik>

@@ -1,14 +1,10 @@
 import Image from "next/image";
 import { HiX } from "react-icons/hi";
 import { MdImage } from "react-icons/md";
-
 const { useState, useEffect } = require("react");
 const { useDropzone } = require("react-dropzone");
 
-export default function Dropzone(props) {
-  const [files, setFiles] = useState(null);
-
-  console.log(files);
+export default function Dropzone({ error, files, setFiles }) {
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
@@ -39,6 +35,7 @@ export default function Dropzone(props) {
           }}
           width={128}
           height={128}
+          className="w-auto h-auto"
           alt={file.name}
         />
         <p className="text-xs text-gray-400 mt-4">{file.name}</p>
@@ -55,8 +52,9 @@ export default function Dropzone(props) {
     <section className="container">
       <div
         {...getRootProps({
-          className:
-            "dropzone max-w-xs mx-auto text-center border flex justify-center border-dashed p-8 rounded-lg border-gray-400 cursor-pointer",
+          className: `dropzone max-w-xs mx-auto text-center border flex justify-center border-dashed p-8 rounded-lg border-gray-400 cursor-pointer ${
+            error && "border-red-400"
+          }`,
         })}
       >
         <input {...getInputProps()} />
@@ -66,7 +64,7 @@ export default function Dropzone(props) {
         ) : (
           <div>
             <MdImage className="w-20 h-20 mx-auto fill-gray-400" />
-            <h4>Choose Thumbnail</h4>
+            <h4>Choose Image</h4>
             <p className="text-xs">Choose an Image or Drag in here...</p>
             <p className="text-xs">Accepted Formats .png, .jpg</p>
             <p className="text-xs">
