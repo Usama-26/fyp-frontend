@@ -19,6 +19,7 @@ export function getOne(endpoint, id) {
 }
 
 export function postData(endpoint, data) {
+  // console.log(endpoint, data);
   return new Promise((resolve, reject) => {
     axios
       .post(endpoint, data)

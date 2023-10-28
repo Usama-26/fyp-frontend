@@ -28,8 +28,16 @@ export default function AddCategory() {
       setApiError(response.data.error.message);
       return;
     }
-
-    const postedCategory = await postData("");
+    try {
+      const newCategory = await postData(
+        "http://localhost:8000/api/v1/categories/",
+        { ...values, imgUrl: response.data.secure_url }
+      );
+      if (newCategory.status === 200) setFormData(null);
+      console.log(newCategory);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
   };
 
   return (
@@ -46,6 +54,7 @@ export default function AddCategory() {
           }}
           validationSchema={categorySchema}
           onSubmit={(values) => {
+            setFormData(values);
             handleSubmit(values);
           }}
         >
