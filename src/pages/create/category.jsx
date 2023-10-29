@@ -32,6 +32,7 @@ export default function AddCategory() {
         "http://localhost:8000/api/v1/categories/",
         { ...values, imgUrl: response.data.secure_url }
       );
+      console.log(newCategory);
     } catch (error) {
       console.log(error.response.data.message);
     }
