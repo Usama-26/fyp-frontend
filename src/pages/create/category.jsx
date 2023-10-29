@@ -13,7 +13,6 @@ const categorySchema = Yup.object().shape({
 });
 
 export default function AddCategory() {
-  const [formData, setFormData] = useState(null);
   const [files, setFiles] = useState(null);
   const [apiError, setApiError] = useState(null);
 
@@ -33,8 +32,6 @@ export default function AddCategory() {
         "http://localhost:8000/api/v1/categories/",
         { ...values, imgUrl: response.data.secure_url }
       );
-      if (newCategory.status === 200) setFormData(null);
-      console.log(newCategory);
     } catch (error) {
       console.log(error.response.data.message);
     }
@@ -53,9 +50,9 @@ export default function AddCategory() {
             description: "",
           }}
           validationSchema={categorySchema}
-          onSubmit={(values) => {
-            setFormData(values);
+          onSubmit={(values, { resetForm }) => {
             handleSubmit(values);
+            resetForm({ values: null });
           }}
         >
           {({ values, errors, touched, submitCount }) => (
@@ -141,7 +138,6 @@ export default function AddCategory() {
               <button type="submit" className="form-submit-btn">
                 Add
               </button>
-              <p>{JSON.stringify({ ...values, image: files })}</p>
             </Form>
           )}
         </Formik>

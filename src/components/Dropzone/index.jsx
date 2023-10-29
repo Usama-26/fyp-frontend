@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { HiX } from "react-icons/hi";
 import { MdImage } from "react-icons/md";
-const { useState, useEffect } = require("react");
+const { useEffect } = require("react");
 const { useDropzone } = require("react-dropzone");
 
 export default function Dropzone({ error, files, setFiles }) {
