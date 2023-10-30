@@ -29,7 +29,7 @@ export default function AddCategory() {
     }
     try {
       const newCategory = await postData(
-        "http://localhost:8000/api/v1/categories/",
+        "https://workchain-frontend.vercel.app/api/v1/categories/",
         { ...values, imgUrl: response.data.secure_url }
       );
       console.log(newCategory);
