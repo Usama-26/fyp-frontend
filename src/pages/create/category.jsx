@@ -29,7 +29,7 @@ export default function AddCategory() {
     }
     try {
       const newCategory = await postData(
-        "https://workchain-frontend.vercel.app/api/v1/categories/",
+        "https://fyp-backend.up.railway.app/api/v1/categories/",
         { ...values, imgUrl: response.data.secure_url }
       );
       console.log(newCategory);
