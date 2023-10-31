@@ -18,7 +18,7 @@ export default function CategoryPage() {
   const fetchCategory = async () => {
     try {
       const response = await getData(
-        `http://localhost:8000/api/v1/categories/${router.query.category}`
+        `https://fyp-backend.up.railway.app/${router.query.category}`
       );
       setCategory(response.data);
     } catch (err) {

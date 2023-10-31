@@ -31,8 +31,8 @@ export default function AddCategory() {
     }
     try {
       const newCategory = await postData(
-        // "https://fyp-backend.up.railway.app/api/v1/categories/",
-        "http://localhost:8000/api/v1/categories/",
+        "https://fyp-backend.up.railway.app/api/v1/categories/",
+        // "http://localhost:8000/api/v1/categories/",
         { ...values, imgUrl: response.data.secure_url }
       );
       if (newCategory) {

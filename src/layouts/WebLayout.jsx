@@ -15,7 +15,7 @@ export default function WebLayout({ children }) {
     const fetchCategories = async () => {
       try {
         const response = await getData(
-          `http://localhost:8000/api/v1/categories`
+          "https://fyp-backend.up.railway.app/api/v1/categories/"
         );
         setCategories(response.data.categories);
       } catch (err) {
