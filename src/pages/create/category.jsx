@@ -14,17 +14,19 @@ const categorySchema = Yup.object().shape({
 
 export default function AddCategory() {
   const [files, setFiles] = useState(null);
-  const [apiError, setApiError] = useState(null);
-
-  apiError && console.log(apiError);
+  const [message, setMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (values) => {
     if (!files) return;
 
+    setIsLoading(true);
+
     const response = await uploadImageToCloudinary(files[0]);
 
     if (response.status !== 200) {
-      setApiError(response.data.error.message);
+      setMessage("Something went wrong ❌. Please Try Again.");
+      setIsLoading(false);
       return;
     }
     try {
@@ -32,9 +34,15 @@ export default function AddCategory() {
         "https://fyp-backend.up.railway.app/api/v1/categories/",
         { ...values, imgUrl: response.data.secure_url }
       );
-      console.log(newCategory);
+      if (newCategory) {
+        setMessage("Category Created Successfully. ✅");
+        setIsLoading(false);
+      }
     } catch (error) {
-      console.log(error.response.data.message);
+      if (error) {
+        setMessage("Something went wrong ❌. Please Try Again.");
+        setIsLoading(false);
+      }
     }
   };
 
@@ -58,6 +66,11 @@ export default function AddCategory() {
         >
           {({ values, errors, touched, submitCount }) => (
             <Form className="space-y-4">
+              {message && (
+                <p className="bg-primary-200 p-4 rounded-md font-medium">
+                  {message}
+                </p>
+              )}
               <div className="flex md:flex-row flex-col space-between gap-4">
                 <div className="w-full">
                   <Field
@@ -136,8 +149,12 @@ export default function AddCategory() {
                 <p className="field-error__message">Select Image First</p>
               )}
 
-              <button type="submit" className="form-submit-btn">
-                Add
+              <button
+                disabled={isLoading && true}
+                type="submit"
+                className="form-submit-btn disabled:bg-neutral-200 cursor-wait"
+              >
+                {isLoading ? "Please Wait" : "Add"}
               </button>
             </Form>
           )}
