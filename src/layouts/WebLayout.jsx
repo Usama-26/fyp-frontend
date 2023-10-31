@@ -2,34 +2,51 @@ import Footer from "@/components/Footer";
 import NavBar from "@/components/NavBar";
 import { useState, useEffect } from "react";
 import ServiceExplorer from "@/components/ServiceExplorer";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
+import { getData } from "@/utils/api/genericAPI";
 
 export default function WebLayout({ children }) {
-  const [isPageLoading, setIsPageLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const router = useRouter();
+  // const [isPageLoading, setIsPageLoading] = useState(false);
+  // const [progress, setProgress] = useState(0);
+  // const router = useRouter();
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const handleRouteChangeStart = () => {
-      setIsPageLoading(true);
-      setProgress(90);
+    const fetchCategories = async () => {
+      try {
+        const response = await getData(
+          `http://localhost:8000/api/v1/categories`
+        );
+        setCategories(response.data.categories);
+      } catch (err) {
+        return err.response;
+      }
     };
-    const handleRouteComplete = () => {
-      setProgress(100);
-      setIsPageLoading(false);
-    };
-    router.events.on("routeChangeStart", handleRouteChangeStart);
-    router.events.on("routeChangeComplete", handleRouteComplete);
 
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChangeStart);
-      router.events.off("routeChangeComplete", handleRouteComplete);
-    };
-  }, [isPageLoading]);
+    fetchCategories();
+  }, []);
+
+  // useEffect(() => {
+  //   const handleRouteChangeStart = () => {
+  //     setIsPageLoading(true);
+  //     setProgress(90);
+  //   };
+  //   const handleRouteComplete = () => {
+  //     setProgress(100);
+  //     setIsPageLoading(false);
+  //   };
+  //   router.events.on("routeChangeStart", handleRouteChangeStart);
+  //   router.events.on("routeChangeComplete", handleRouteComplete);
+
+  //   return () => {
+  //     router.events.off("routeChangeStart", handleRouteChangeStart);
+  //     router.events.off("routeChangeComplete", handleRouteComplete);
+  //   };
+  // }, [isPageLoading]);
   return (
     <>
       <NavBar />
-      <ServiceExplorer />
+      {categories && <ServiceExplorer data={categories} />}
       {children}
       <Footer />
     </>

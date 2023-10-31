@@ -31,17 +31,20 @@ export default function AddCategory() {
     }
     try {
       const newCategory = await postData(
-        "https://fyp-backend.up.railway.app/api/v1/categories/",
+        // "https://fyp-backend.up.railway.app/api/v1/categories/",
+        "http://localhost:8000/api/v1/categories/",
         { ...values, imgUrl: response.data.secure_url }
       );
       if (newCategory) {
         setMessage("Category Created Successfully. ✅");
         setIsLoading(false);
+        setFiles(null);
       }
     } catch (error) {
       if (error) {
         setMessage("Something went wrong ❌. Please Try Again.");
         setIsLoading(false);
+        console.log(error);
       }
     }
   };
@@ -152,7 +155,9 @@ export default function AddCategory() {
               <button
                 disabled={isLoading && true}
                 type="submit"
-                className="form-submit-btn disabled:bg-neutral-200 cursor-wait"
+                className={`form-submit-btn disabled:bg-neutral-200 ${
+                  isLoading ? "cursor-wait" : "cursor-default"
+                } `}
               >
                 {isLoading ? "Please Wait" : "Add"}
               </button>
