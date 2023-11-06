@@ -3,9 +3,8 @@ import WebLayout from "@/layouts/WebLayout";
 import { useRouter } from "next/router";
 import ServiceCard from "@/components/ServiceCard";
 import Popup from "@/components/Popup";
-import { useServices } from "@/context/ServiceContext";
 import { useEffect, useState } from "react";
-
+import { useServices } from "@/context/ServiceContext";
 const serviceTitles = [
   "I will design a stunning website for your business",
   "Create a professional Shopify store for your brand",
@@ -31,32 +30,29 @@ const serviceTitles = [
 
 export default function ServicePage() {
   const router = useRouter();
-  const [subCategory, setSubCategory] = useState(null);
-  const { getSubCategory, error, dispatch } = useServices();
+  const [service, setService] = useState(null);
+  const { getService, error } = useServices();
 
-  const fetchSubCategory = async () => {
-    const data = await getSubCategory(router.query.service);
-    setSubCategory(data);
+  const fetchService = async () => {
+    const data = await getService(router.query.sub_service);
+    setService(data);
   };
 
   useEffect(() => {
-    fetchSubCategory();
+    fetchService();
   }, [router]);
 
   return (
     <WebLayout>
       <section className="py-8">
-        {subCategory && (
+        {service && (
           <div className=" container mx-auto">
             <div className="px-5 lg:px-10">
               <Breadcrumbs />
               <div className="mt-10">
                 <h1 className="text-4xl font-display font-bold text-primary-950">
-                  {subCategory.name}
+                  {service.name}
                 </h1>
-                <p className="text-lg text-neutral-500">
-                  {subCategory.punchline}
-                </p>
               </div>
               <div className="mt-10">
                 <div className="flex gap-4">

@@ -16,7 +16,7 @@ const signupSchema = Yup.object({
     }),
 });
 
-export function SignupForm({ setFormData }) {
+export function SignupForm({ handleSubmit, isSubmitted }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -33,9 +33,11 @@ export function SignupForm({ setFormData }) {
         confirmPass: "",
       }}
       validationSchema={signupSchema}
-      onSubmit={(values) => {
-        setFormData(values);
-        console.log("onSubmit");
+      onSubmit={(values, { resetForm }) => {
+        handleSubmit(values);
+        if (isSubmitted) {
+          resetForm({ values: null });
+        }
       }}
     >
       {({ errors, touched, submitCount }) => (

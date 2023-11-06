@@ -4,9 +4,12 @@ import "slick-carousel/slick/slick-theme.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleClientSecret from "@/json/client_secret";
 import { Inter, Comfortaa } from "next/font/google";
-import { mainnet, sepolia, createConfig, configureChains } from "wagmi";
+import { mainnet, createConfig, configureChains } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { WagmiConfig } from "wagmi";
+import { AccountsProvider } from "@/context/AccountContext";
+import { ServicesProvider } from "@/context/ServiceContext";
+
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -33,12 +36,16 @@ const config = createConfig({
 export default function App({ Component, pageProps }) {
   const { web } = GoogleClientSecret;
   return (
-    <WagmiConfig config={config}>
+    <main className={`${display.variable} ${inter.variable}`}>
+      {/* <WagmiConfig config={config}>
+      </WagmiConfig> */}
       <GoogleOAuthProvider clientId={web.client_id}>
-        <main className={`${display.variable} ${inter.variable}`}>
-          <Component {...pageProps} />
-        </main>
+        <AccountsProvider>
+          <ServicesProvider>
+            <Component {...pageProps} />
+          </ServicesProvider>
+        </AccountsProvider>
       </GoogleOAuthProvider>
-    </WagmiConfig>
+    </main>
   );
 }

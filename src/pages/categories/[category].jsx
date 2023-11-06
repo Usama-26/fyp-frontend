@@ -4,26 +4,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getData } from "@/utils/api/genericAPI";
+import { BASE_URL } from "@/constants";
+import { useServices } from "@/context/ServiceContext";
 export default function CategoryPage() {
   const router = useRouter();
   const [category, setCategory] = useState("");
+  const { getCategory, error, dispatch } = useServices();
 
   useEffect(() => {
-    document.title = `${category?.category_name} Services | ChainWork`;
+    document.title = `${category?.name} Services | ChainWork`;
     return function () {
       document.title = "Workchain | Home";
     };
   }, [category]);
 
   const fetchCategory = async () => {
-    try {
-      const response = await getData(
-        `https://fyp-backend.up.railway.app/${router.query.category}`
-      );
-      setCategory(response.data);
-    } catch (err) {
-      console.log(err.response);
-    }
+    const data = await getCategory(router.query.category);
+    setCategory(data);
   };
 
   useEffect(() => {
@@ -40,37 +37,25 @@ export default function CategoryPage() {
             image={category.imgUrl}
           />
           <section>
-            <div className="container mx-auto px-5 py-24">
-              <h1 className="font-bold text-2xl ">
-                Popular Services Under:
-                <span className="italic"> {category?.category_name}</span>
+            <div className="container mx-auto px-5 py-24 space-y-10">
+              <h1 className="font-bold text-2xl font-display ">
+                {`Popular Services Under ${category?.name}`}
               </h1>
-              <div className="flex flex-wrap pt-10 max-w-screen-7xl mx-auto">
-                {/* {category?.sub_categories.map(
-                  ({ sub_category_name, path, background_image }, index) => (
-                    <div key={index} className="xl:w-1/4 md:w-1/2 p-4">
-                      <Link
-                        href={`/services/${category?.path}/${path}`}
-                        className=""
-                      >
-                        <div className="bg-gray-100 relative rounded-lg">
-                          <Image
-                            className="h-40 rounded w-full object-cover object-center "
-                            src={background_image}
-                            width={320}
-                            height={600}
-                            alt="content"
-                          />
-                          <div className="absolute h-full w-full group rounded top-0 left-0 bg-gradient-to-b from-neutral-900/70 to-transparent">
-                            <h3 className="p-4 tracking-wide group-hover:underline underline-offset-2 text-neutral-100  text-xl font-bold title-font">
-                              {sub_category_name}
-                            </h3>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
+              <div
+                className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2
+               gap-5"
+              >
+                {category?.sub_categories.map(
+                  ({ name: sub_category_name, path }, index) => (
+                    <Link
+                      href={`/services/${path}`}
+                      className="font-medium px-2 py-4 rounded-md border border-neutral-300 text-neutral-600 hover:border-primary-300 bg-neutral-100 hover:bg-primary-100 hover:text-primary-500 transition duration-200"
+                      key={index}
+                    >
+                      {sub_category_name}
+                    </Link>
                   )
-                )} */}
+                )}
               </div>
             </div>
           </section>

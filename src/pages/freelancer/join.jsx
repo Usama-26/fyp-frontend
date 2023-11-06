@@ -5,9 +5,9 @@ import { GoogleLogin } from "@react-oauth/google";
 import Footer from "@/components/Footer";
 import { SignupForm } from "@/components/SignupForm";
 import { useState } from "react";
+import { useAccounts } from "@/context/AccountContext";
 export default function FreelancerJoin() {
-  const [userCredentials, setUserCredentials] = useState(null);
-  console.log(userCredentials);
+  const { handleSignup } = useAccounts();
   return (
     <>
       <Head>
@@ -22,10 +22,14 @@ export default function FreelancerJoin() {
           <h3 className="text-xl font-semibold tracking-wider text-center mb-4">
             Join as Freelancer
           </h3>
-          <SignupForm setFormData={setUserCredentials} />
+          <SignupForm
+            handleSubmit={(values) =>
+              handleSignup({ ...values, userType: "freelancer" })
+            }
+          />
 
           <h6 className="text-center font-semibold text-neutral-400 my-4">
-            OR
+            s OR
           </h6>
           <div className="flex justify-center">
             <GoogleLogin

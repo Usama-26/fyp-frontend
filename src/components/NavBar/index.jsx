@@ -8,17 +8,19 @@ import Image from "next/image";
 import { BsGear } from "react-icons/bs";
 import { IoMdExit } from "react-icons/io";
 import WalletConnect from "../WalletConnect";
+import { useAccounts } from "@/context/AccountContext";
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, handleLogout } = useAccounts();
+
   const openMenu = () => {
     setIsMenuOpen(true);
   };
+
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
-
   return (
     <>
       <header className="border-b p-4 md:p-0">
@@ -31,7 +33,7 @@ export default function NavBar() {
               onClose={closeMenu}
             />
           </div>
-          {isLoggedIn ? <UserMenu /> : <AuthMenu />}
+          {isLoggedIn ? <UserMenu onLogout={handleLogout} /> : <AuthMenu />}
         </div>
       </header>
       <MegaMenu isOpen={isMenuOpen} onOpen={openMenu} onClose={closeMenu} />
@@ -89,22 +91,27 @@ function AuthMenu() {
   );
 }
 
-function UserMenu() {
+function UserMenu({ onLogout }) {
+  const { user } = useAccounts();
+  const { firstName, lastName } = user?.data;
   return (
     <>
-      <WalletConnect />
+      {/* <WalletConnect /> */}
       <div className="relative flex-between-centered gap-4">
         <Menu>
-          <Menu.Button>
-            <span>
-              <Image
-                src={"/images/profiles/profile-2.jpg"}
-                width={1024}
-                height={683}
-                className="w-10 aspect-square object-cover rounded-full"
-                alt="Profile Picture"
-              />
-            </span>
+          <Menu.Button as={Fragment}>
+            <button className="inline-flex gap-2 items-center hover:bg-primary-100 p-1 rounded-md">
+              <span>
+                <Image
+                  src={"/images/profiles/profile-2.jpg"}
+                  width={1024}
+                  height={683}
+                  className="w-10 aspect-square object-cover rounded-full"
+                  alt="Profile Picture"
+                />
+              </span>
+              <span className=" text-sm font-medium">Hello, {firstName}</span>
+            </button>
           </Menu.Button>
           <Transition
             as={Fragment}
@@ -121,7 +128,7 @@ function UserMenu() {
             >
               <Menu.Item as={"li"} className={"p-3"}>
                 <h4 className="font-medium text-neutral-500">Welcome,</h4>
-                <h3>Benjamin Dunn</h3>
+                <h3>{`${firstName} ${lastName}`}</h3>
               </Menu.Item>
               <Menu.Item as={"li"}>
                 <Link
@@ -133,13 +140,13 @@ function UserMenu() {
                 </Link>
               </Menu.Item>
               <Menu.Item as={"li"}>
-                <Link
-                  href={"/user/settings"}
+                <button
+                  onClick={onLogout}
                   className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
                 >
                   <IoMdExit className="w-5 h-5 fill-neutral-500" />
                   <span>Logout</span>
-                </Link>
+                </button>
               </Menu.Item>
             </Menu.Items>
           </Transition>

@@ -3,28 +3,11 @@ import NavBar from "@/components/NavBar";
 import { useState, useEffect } from "react";
 import ServiceExplorer from "@/components/ServiceExplorer";
 // import { useRouter } from "next/router";
-import { getData } from "@/utils/api/genericAPI";
 
 export default function WebLayout({ children }) {
   // const [isPageLoading, setIsPageLoading] = useState(false);
   // const [progress, setProgress] = useState(0);
   // const router = useRouter();
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getData(
-          "https://fyp-backend.up.railway.app/api/v1/categories/"
-        );
-        setCategories(response.data.categories);
-      } catch (err) {
-        return err.response;
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   // useEffect(() => {
   //   const handleRouteChangeStart = () => {
@@ -46,7 +29,7 @@ export default function WebLayout({ children }) {
   return (
     <>
       <NavBar />
-      {categories && <ServiceExplorer data={categories} />}
+      <ServiceExplorer />
       {children}
       <Footer />
     </>
