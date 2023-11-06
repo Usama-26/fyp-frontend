@@ -4,18 +4,28 @@ import { GoogleLogin } from "@react-oauth/google";
 import { SignupForm } from "@/components/SignupForm";
 import WebLayout from "@/layouts/WebLayout";
 import { useAccounts } from "@/context/AccountContext";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import NavBar from "@/components/NavBar";
+import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
 
 export default function Signup() {
-  const { user, error, handleSignup } = useAccounts();
-
+  const { isLoggedIn, user, error, handleSignup, handleGoogleAuth } =
+    useAccounts();
+  const router = useRouter();
+  console.log(error);
+  useEffect(() => {
+    isLoggedIn && router.push("/");
+  }, []);
   return (
     <>
       <Head>
         <title>Signup | Workchain</title>
       </Head>
+
       <WebLayout>
         <main>
-          <div className="relative my-10 max-w-lg mx-auto border rounded-lg shadow ">
+          <div className="relative my-8 max-w-lg mx-auto border rounded-lg shadow ">
             {error && (
               <div className="w-full absolute top-0 bg-danger-500 rounded-t-md py-2 px-2">
                 <p className="text-sm font-medium text-white">{error}</p>
@@ -40,13 +50,7 @@ export default function Signup() {
                 OR
               </h6>
               <div className="flex justify-center">
-                <GoogleLogin
-                  text="continue_with"
-                  onSuccess={(credentialResponse) =>
-                    console.log(credentialResponse)
-                  }
-                  onError={() => console.log("Failed")}
-                />
+                <GoogleLoginBtn userType={"client"} />
               </div>
             </div>
           </div>

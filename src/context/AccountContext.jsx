@@ -1,4 +1,4 @@
-import { postData } from "@/utils/api/genericAPI";
+import { postData, getData } from "@/utils/api/genericAPI";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { BASE_URL } from "@/constants";
@@ -26,6 +26,9 @@ function reducer(state, action) {
 
     case "loggedIn":
       return { ...state, isLoggedIn: true, isLoading: false, error: "" };
+
+    case "reset":
+      return { ...state, ...initialState };
 
     default:
       throw new Error("Action Type NOT found.");
@@ -63,6 +66,23 @@ function AccountsProvider({ children }) {
     dispatch({ type: "loading" });
     try {
       const response = await postData(`${BASE_URL}/auth/login`, data);
+
+      dispatch({ type: "account/login", payload: response.data });
+    } catch (err) {
+      // console.log(err.response);
+      dispatch({ type: "rejected", payload: err.response.data.message });
+    }
+  };
+
+  const handleGoogleAuth = async (token, userType) => {
+    dispatch({ type: "loading" });
+    try {
+      const response = await getData(`${BASE_URL}/auth/google`, {
+        headers: {
+          "google-auth-token": token,
+          "user-type": userType,
+        },
+      });
 
       dispatch({ type: "account/login", payload: response.data });
     } catch (err) {
@@ -108,6 +128,12 @@ function AccountsProvider({ children }) {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (error) {
+      dispatch({ type: "reset" });
+    }
+  }, [router]);
+
   return (
     <AccountsContext.Provider
       value={{
@@ -118,6 +144,7 @@ function AccountsProvider({ children }) {
         handleSignup,
         handleLogin,
         handleLogout,
+        handleGoogleAuth,
       }}
     >
       {children}

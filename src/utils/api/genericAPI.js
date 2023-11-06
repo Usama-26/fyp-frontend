@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export function getData(endpoint) {
+export function getData(endpoint, options = {}) {
   return new Promise((resolve, reject) => {
     axios
-      .get(endpoint)
+      .get(endpoint, options)
       .then((res) => resolve(res))
       .catch((err) => reject(err));
   });
