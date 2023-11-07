@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children, router }) => {
   let pathAvailable = true;
   const prePath = useRef(true);
   const { isLoggedIn, user } = useAccounts();
-  const [userType, setUserType] = useState({});
+  const [userType, setUserType] = useState("other");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loaded, SetIsLoaded] = useState(false);
 
@@ -16,8 +16,6 @@ const ProtectedRoute = ({ children, router }) => {
     "/",
     "/contact",
     "/about",
-    "/auth/login",
-    "/auth/signup",
     "/projects",
     "/freelancers",
     "/freelancer/join",
@@ -35,7 +33,7 @@ const ProtectedRoute = ({ children, router }) => {
 
   if (loaded) {
     if (isBrowser() && !isAuthenticated && pathIsProtected) {
-      router.push("/auth/login");
+      router.push("/404");
     } else {
       if (
         router.pathname.startsWith("/client") &&
@@ -48,6 +46,14 @@ const ProtectedRoute = ({ children, router }) => {
       if (
         router.pathname.startsWith("/freelancer") &&
         userType !== "freelancer" &&
+        pathIsProtected
+      ) {
+        pathAvailable = false;
+        prePath.current = false;
+      }
+      if (
+        router.pathname.startsWith("/auth") &&
+        userType !== "other" &&
         pathIsProtected
       ) {
         pathAvailable = false;

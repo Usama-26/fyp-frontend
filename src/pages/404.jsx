@@ -23,7 +23,7 @@ export default function NotFound() {
             <button
               className="py-1 px-3 border rounded-md border-primary-500 font-medium hover:bg-primary-200"
               onClick={() => {
-                router.back();
+                router.push("/");
               }}
             >
               Go Back
