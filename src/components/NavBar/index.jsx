@@ -151,7 +151,7 @@ function UserMenu({ onLogout }) {
                 <Menu.Item as={"li"}>
                   {user_type === "freelancer" && (
                     <Link
-                      href={"/client/projects"}
+                      href={"/freelancer/gigs"}
                       className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
                     >
                       <BiSolidOffer className="w-5 h-5 fill-neutral-700" />

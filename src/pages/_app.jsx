@@ -9,9 +9,7 @@ import { publicProvider } from "wagmi/providers/public";
 import { WagmiConfig } from "wagmi";
 import { AccountsProvider } from "@/context/AccountContext";
 import { ServicesProvider } from "@/context/ServiceContext";
-import ProtectedRoute from "@/components/ProtectedRoutes";
 import { useRouter } from "next/router";
-
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -37,7 +35,7 @@ const config = createConfig({
 
 export default function App({ Component, pageProps }) {
   const { web } = GoogleClientSecret;
-  const router = useRouter()
+  const router = useRouter();
   return (
     <main className={`${display.variable} ${inter.variable}`}>
       {/* <WagmiConfig config={config}>
@@ -45,10 +43,7 @@ export default function App({ Component, pageProps }) {
       <GoogleOAuthProvider clientId={web.client_id}>
         <AccountsProvider>
           <ServicesProvider>
-            <ProtectedRoute router={router}>
-
             <Component {...pageProps} />
-            </ProtectedRoute>
           </ServicesProvider>
         </AccountsProvider>
       </GoogleOAuthProvider>

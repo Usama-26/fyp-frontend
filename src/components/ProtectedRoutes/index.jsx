@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children, router }) => {
   let pathAvailable = true;
   const prePath = useRef(true);
   const { isLoggedIn, user } = useAccounts();
-  const [userType, setUserType] = useState("other");
+  const [userType, setUserType] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loaded, SetIsLoaded] = useState(false);
 
@@ -19,7 +19,6 @@ const ProtectedRoute = ({ children, router }) => {
     "/projects",
     "/freelancers",
     "/freelancer/join",
-    "/auth/forgot_password",
   ];
 
   let pathIsProtected = unprotectedRoutes.indexOf(router.pathname) === -1;
@@ -33,7 +32,7 @@ const ProtectedRoute = ({ children, router }) => {
 
   if (loaded) {
     if (isBrowser() && !isAuthenticated && pathIsProtected) {
-      router.push("/404");
+      // router.back();
     } else {
       if (
         router.pathname.startsWith("/client") &&

@@ -1,5 +1,5 @@
 import WebLayout from "@/layouts/WebLayout";
 
-export default function Projects() {
+export default function Gigs() {
   return <WebLayout></WebLayout>;
 }

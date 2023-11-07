@@ -1,6 +1,7 @@
+import withRouteProtect from "@/helpers/withRouteProtect";
 import WebLayout from "@/layouts/WebLayout";
 
-export default function Projects() {
+function Projects() {
   return (
     <WebLayout>
       <section>
@@ -13,3 +14,5 @@ export default function Projects() {
     </WebLayout>
   );
 }
+
+export default withRouteProtect(Projects, ["client"]);
