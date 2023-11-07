@@ -7,20 +7,15 @@ const withRouteProtect = (WrappedComponent, allowedUserTypes) => {
   return function RouteProtect(props) {
     const router = useRouter();
     const [isAvailable, setIsAvailable] = useState(true);
-    const [userType, setUserType] = useState("visitor");
-    const { user } = useAccounts();
 
-    const switchUserType = (type) => {
-      setUserType(type);
-    };
+    const { user } = useAccounts();
 
     useEffect(() => {
       if (!window.localStorage.getItem("token")) {
         router.push("/access_denied");
       }
       if (user) {
-        switchUserType(user.data.user_type);
-        if (!allowedUserTypes.includes(userType)) {
+        if (!allowedUserTypes.includes(user.data.user_type)) {
           router.back();
           setIsAvailable(false);
         }
