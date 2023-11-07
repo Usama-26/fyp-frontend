@@ -13,7 +13,7 @@ export default function Signup() {
   const { isLoggedIn, user, error, handleSignup, handleGoogleAuth } =
     useAccounts();
   const router = useRouter();
-  console.log(error);
+
   useEffect(() => {
     isLoggedIn && router.push("/");
   }, []);

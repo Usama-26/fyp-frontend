@@ -27,11 +27,11 @@ export default function WebLayout({ children }) {
   //   };
   // }, [isPageLoading]);
   return (
-    <>
+    <main className="max-w-screen-2xl container mx-auto">
       <NavBar />
       <ServiceExplorer />
       {children}
       <Footer />
-    </>
+    </main>
   );
 }

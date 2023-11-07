@@ -109,7 +109,20 @@ function AccountsProvider({ children }) {
       });
       dispatch({ type: "account/loaded", payload: response.data });
     } catch (err) {
-      dispatch({ type: "rejected", payload: err.response.data.message });
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
+    }
+  };
+
+  const resetPassword = async (data) => {
+    try {
+      const response = await postData(`${BASE_URL}/auth/resetPassword`, data);
+      console.log(response);
+    } catch (error) {
+      console.log(error.response);
     }
   };
 
@@ -145,6 +158,7 @@ function AccountsProvider({ children }) {
         handleLogin,
         handleLogout,
         handleGoogleAuth,
+        resetPassword,
       }}
     >
       {children}

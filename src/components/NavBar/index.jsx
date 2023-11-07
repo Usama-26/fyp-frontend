@@ -5,7 +5,10 @@ import MegaMenu from "../MegaMenu";
 import Logo from "../Logo";
 import { Menu, Transition } from "@headlessui/react";
 import Image from "next/image";
-import { BsGear } from "react-icons/bs";
+import { BsDot, BsGear } from "react-icons/bs";
+import { GoDotFill } from "react-icons/go";
+import { FcBriefcase } from "react-icons/fc";
+import { BiSolidOffer, BiSolidBriefcaseAlt } from "react-icons/bi";
 import { IoMdExit } from "react-icons/io";
 import WalletConnect from "../WalletConnect";
 import { useAccounts } from "@/context/AccountContext";
@@ -21,6 +24,7 @@ export default function NavBar() {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
   return (
     <>
       <header className="border-b p-4 md:p-0">
@@ -93,7 +97,8 @@ function AuthMenu() {
 
 function UserMenu({ onLogout }) {
   const { user } = useAccounts();
-  const { firstName, lastName } = user?.data;
+  const { firstName, lastName, user_type } = user?.data;
+
   return (
     <>
       {/* <WalletConnect /> */}
@@ -124,12 +129,47 @@ function UserMenu({ onLogout }) {
           >
             <Menu.Items
               as="ul"
-              className={`z-50 w-48 absolute shadow-custom-sm shadow-neutral-300 right-0 top-12 py-2 rounded-md divide-y text-sm font-medium bg-white`}
+              className={`z-50 w-56 absolute shadow-custom-sm shadow-neutral-300 right-0 top-12 py-2 rounded-md divide-y text-sm font-medium bg-white`}
             >
-              <Menu.Item as={"li"} className={"p-3"}>
-                <h4 className="font-medium text-neutral-500">Welcome,</h4>
-                <h3>{`${firstName} ${lastName}`}</h3>
+              <Menu.Item as={"li"}>
+                <div className={"p-3 flex justify-between items-center"}>
+                  <div>
+                    <h4 className="font-medium text-neutral-500">Welcome,</h4>
+                    <h3>{`${firstName} ${lastName}`}</h3>
+                  </div>
+                  <div className="text-center">
+                    <span className="px-2 text-xs border rounded-full text-green-600 border-green-600">
+                      <GoDotFill className="inline" />
+                      online
+                    </span>
+                  </div>
+                </div>
+
+                <span className="capitalize text-xs">{`${user_type} Account`}</span>
               </Menu.Item>
+              {user_type && (
+                <Menu.Item as={"li"}>
+                  {user_type === "freelancer" && (
+                    <Link
+                      href={"/client/projects"}
+                      className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
+                    >
+                      <BiSolidOffer className="w-5 h-5 fill-neutral-700" />
+                      <span>My Offers</span>
+                    </Link>
+                  )}
+                  {user_type === "client" && (
+                    <Link
+                      href={"/client/projects"}
+                      className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
+                    >
+                      <FcBriefcase className="w-5 h-5 fill-neutral-500" />
+                      <span>My Projects</span>
+                    </Link>
+                  )}
+                </Menu.Item>
+              )}
+
               <Menu.Item as={"li"}>
                 <Link
                   href={"/profile/settings"}
@@ -139,6 +179,7 @@ function UserMenu({ onLogout }) {
                   <span>Profile Settings</span>
                 </Link>
               </Menu.Item>
+
               <Menu.Item as={"li"}>
                 <button
                   onClick={onLogout}

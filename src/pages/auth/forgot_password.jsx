@@ -12,7 +12,7 @@ export default function ResetPassword() {
   return (
     <>
       <Head>
-        <title>Reset Password | Workchain</title>
+        <title>Forgot Password | Workchain</title>
       </Head>
       <NavBar />
       <main>
@@ -21,7 +21,7 @@ export default function ResetPassword() {
             <Logo />
           </div>
           <h3 className="text-xl font-semibold tracking-wider text-center mb-2">
-            Reset Password
+            Forgot Password
           </h3>
           <p className="text-sm mb-4 italic text-neutral-500">
             {

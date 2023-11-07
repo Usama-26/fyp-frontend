@@ -10,7 +10,6 @@ import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
 export default function Login() {
   const { isLoggedIn, error, handleLogin } = useAccounts();
   const router = useRouter();
-  console.log(error);
   useEffect(() => {
     isLoggedIn && router.push("/");
   }, []);

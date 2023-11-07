@@ -33,7 +33,11 @@ function ServicesProvider({ children }) {
       const response = await getData(`${BASE_URL}/categories`);
       dispatch({ type: "categories/fetch", payload: response.data });
     } catch (error) {
-      dispatch({ type: "rejected", payload: error.response.data.message });
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
 

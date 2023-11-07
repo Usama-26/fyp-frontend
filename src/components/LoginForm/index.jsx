@@ -78,7 +78,7 @@ export default function LoginForm({ handleSubmit, isSubmitted }) {
           </div>
           <div className="text-end mb-10">
             <Link
-              href={"/auth/reset_password"}
+              href={"/auth/forget_password"}
               className="text-sm italic text-neutral-500 hover:text-primary-500 hover:underline underline-offset-2"
             >
               Forgot password ?
