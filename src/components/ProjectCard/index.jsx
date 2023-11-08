@@ -22,10 +22,6 @@ export default function ProjectCard() {
               </span>
             </div>
             <div className="inline-flex items-center gap-1">
-              <HiOutlineLocationMarker className="w-5 h-5 stroke-neutral-500" />
-              <span>Remote</span>
-            </div>
-            <div className="inline-flex items-center gap-1">
               <FaLevelUpAlt className="w-5 h-5 fill-neutral-500" />
               <span>Intermediate</span>
             </div>

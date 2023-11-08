@@ -4,6 +4,7 @@ import WebLayout from "@/layouts/WebLayout";
 import { Tab } from "@headlessui/react";
 import SkillsSettings from "@/components/Freelancer/Settings/SkillsSettings";
 import ContactSettings from "@/components/Freelancer/Settings/ContactSettings";
+import withRouteProtect from "@/helpers/withRouteProtect";
 
 const profileTabs = [
   "Personal Info",
@@ -15,7 +16,7 @@ const profileTabs = [
   "Notifications",
   "Deactivate Account",
 ];
-export default function Profile() {
+function FreelancerProfileSettings() {
   return (
     <WebLayout>
       <main className="max-w-screen-2xl mx-auto">
@@ -75,3 +76,5 @@ export default function Profile() {
     </WebLayout>
   );
 }
+
+export default withRouteProtect(FreelancerProfileSettings, ["freelancer"]);

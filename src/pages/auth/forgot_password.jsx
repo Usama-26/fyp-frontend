@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
 
 export default function ResetPassword() {
-  const { resetPassword } = useAccounts();
+  const { forgotPassword } = useAccounts();
 
   return (
     <>
@@ -39,7 +39,7 @@ export default function ResetPassword() {
                 .required("Email not provided"),
             })}
             onSubmit={(values, { resetForm }) => {
-              resetPassword(values);
+              forgotPassword(values);
               if (isSubmitted) {
                 resetForm({ values: null });
               }
@@ -58,7 +58,7 @@ export default function ResetPassword() {
                     type="email"
                     name="email"
                     id="email"
-                    placeholder="Enter you email"
+                    placeholder="Enter you email address"
                   />
                   {submitCount > 0 && (
                     <ErrorMessage
@@ -69,7 +69,7 @@ export default function ResetPassword() {
                   )}
                 </div>
                 <button type="submit" className="form-submit-btn">
-                  Reset
+                  Send Email
                 </button>
               </Form>
             )}

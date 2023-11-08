@@ -2,20 +2,17 @@ import SecuritySettings from "@/components/Freelancer/Settings/SecuritySettings"
 import PersonalSettings from "@/components/Freelancer/Settings/PersonalSettings";
 import WebLayout from "@/layouts/WebLayout";
 import { Tab } from "@headlessui/react";
-import SkillsSettings from "@/components/Freelancer/Settings/SkillsSettings";
 import ContactSettings from "@/components/Freelancer/Settings/ContactSettings";
 
 const profileTabs = [
   "Personal Info",
-  "Skills & Experience",
   "Contact Info",
-  "Portfolio",
   "Security",
   "Billing & Payments",
   "Notifications",
   "Deactivate Account",
 ];
-export default function Profile() {
+function ClientProfileSettings() {
   return (
     <WebLayout>
       <main className="max-w-screen-2xl mx-auto">
@@ -38,13 +35,7 @@ export default function Profile() {
                 <PersonalSettings />
               </Tab.Panel>
               <Tab.Panel>
-                <SkillsSettings />
-              </Tab.Panel>
-              <Tab.Panel>
                 <ContactSettings />
-              </Tab.Panel>
-              <Tab.Panel>
-                <h1 className="font-semibold">Portfolio</h1>
               </Tab.Panel>
               <Tab.Panel>
                 <SecuritySettings />
@@ -75,3 +66,5 @@ export default function Profile() {
     </WebLayout>
   );
 }
+
+export default withRouteProtect(ClientProfileSettings, ["client"]);

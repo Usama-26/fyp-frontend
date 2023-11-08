@@ -144,8 +144,9 @@ function UserMenu({ onLogout }) {
                     </span>
                   </div>
                 </div>
-
-                <span className="capitalize text-xs">{`${user_type} Account`}</span>
+                <div className="text-center mx-3 my-2 py-1 rounded-md bg-neutral-100">
+                  <span className="capitalize text-xs">{`${user_type} Account`}</span>
+                </div>
               </Menu.Item>
               {user_type && (
                 <Menu.Item as={"li"}>
@@ -172,7 +173,7 @@ function UserMenu({ onLogout }) {
 
               <Menu.Item as={"li"}>
                 <Link
-                  href={"/profile/settings"}
+                  href={`/${user_type}/profile/settings`}
                   className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
                 >
                   <BsGear className="w-5 h-5 fill-neutral-500" />

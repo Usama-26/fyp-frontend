@@ -117,6 +117,14 @@ function AccountsProvider({ children }) {
     }
   };
 
+  const forgotPassword = async (data) => {
+    try {
+      const response = await postData(`${BASE_URL}/auth/forgotPassword`, data);
+      console.log(response);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
   const resetPassword = async (data) => {
     try {
       const response = await postData(`${BASE_URL}/auth/resetPassword`, data);
@@ -158,6 +166,7 @@ function AccountsProvider({ children }) {
         handleLogin,
         handleLogout,
         handleGoogleAuth,
+        forgotPassword,
         resetPassword,
       }}
     >

@@ -1,7 +1,13 @@
 import React, { useRef, useState } from "react";
 import { HiSearch, HiX } from "react-icons/hi";
 
-export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
+export default function SearchBox({
+  searchArray,
+  query,
+  setQuery,
+  onSearch,
+  placeholder = "Search for skills...",
+}) {
   const [suggestions, setSuggestions] = useState(null);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
@@ -82,7 +88,7 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
     >
       <input
         type="text"
-        placeholder="Search for skills..."
+        placeholder={placeholder}
         value={selectedSuggestion || query}
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
@@ -99,7 +105,7 @@ export default function SearchBox({ searchArray, query, setQuery, onSearch }) {
         </button>
       )}
       {isFocused && refineQuery && limitedSuggestions?.length > 0 && (
-        <div className="absolute w-full top-16 shadow rounded-lg  p-4 overflow-auto bg-white">
+        <div className="absolute w-full top-16 text-left shadow rounded-lg  p-4 overflow-auto bg-white">
           <ul>
             {limitedSuggestions.map((suggestion, index) => (
               <li

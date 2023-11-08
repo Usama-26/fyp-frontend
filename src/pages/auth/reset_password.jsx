@@ -1,14 +1,21 @@
+import { useState } from "react";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import Head from "next/head";
+import * as Yup from "yup";
+
 import Logo from "@/components/Logo";
 import NavBar from "@/components/NavBar";
-import Head from "next/head";
 import Footer from "@/components/Footer";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
 
 export default function ResetPassword() {
   const { resetPassword } = useAccounts();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
   return (
     <>
       <Head>
@@ -21,22 +28,25 @@ export default function ResetPassword() {
             <Logo />
           </div>
           <h3 className="text-xl font-semibold tracking-wider text-center mb-2">
-            Reset Password
+            Set New Password
           </h3>
-          <p className="text-sm mb-4 italic text-neutral-500">
-            {
-              "Provide your email address and we'll send a password reset link to that email address."
-            }
-          </p>
           <Formik
             initialValues={{
-              email: "",
+              password: "",
+              confirmPass: "",
             }}
             validationSchema={Yup.object({
-              email: Yup.string()
+              password: Yup.string().trim().required("Set New password"),
+              confirmPass: Yup.string()
                 .trim()
-                .email("Invalid Email")
-                .required("Email not provided"),
+                .required("Re-enter new password for confirmation")
+                .test(
+                  "passwords-match",
+                  `Passwords don't match.`,
+                  function (value) {
+                    return this.parent.password === value;
+                  }
+                ),
             })}
             onSubmit={(values, { resetForm }) => {
               resetPassword(values);
@@ -47,29 +57,64 @@ export default function ResetPassword() {
           >
             {({ errors, touched, submitCount }) => (
               <Form className="space-y-4">
+                <div className="relative w-full">
+                  <div>
+                    <Field
+                      className={`form-input ${
+                        errors.password &&
+                        touched.password &&
+                        submitCount > 0 &&
+                        "field-error"
+                      }`}
+                      type={isPasswordVisible ? "text" : "password"}
+                      name="password"
+                      id="password"
+                      placeholder="Enter New Password"
+                    />
+                    {submitCount > 0 && (
+                      <ErrorMessage
+                        name="password"
+                        component={"p"}
+                        className="field-error__message"
+                      />
+                    )}
+                  </div>
+                  <button
+                    onClick={togglePasswordVisibility}
+                    type="button"
+                    tabIndex={-1}
+                    className="absolute right-2 top-2.5"
+                  >
+                    {!isPasswordVisible ? (
+                      <IoMdEyeOff className="w-6 h-6 fill-neutral-500" />
+                    ) : (
+                      <IoMdEye className="w-6 h-6 fill-neutral-500" />
+                    )}
+                  </button>
+                </div>
                 <div className="w-full">
                   <Field
                     className={`form-input ${
-                      errors.email &&
-                      touched.email &&
+                      errors.confirmPass &&
+                      touched.confirmPass &&
                       submitCount > 0 &&
                       "field-error"
                     }`}
-                    type="email"
-                    name="email"
-                    id="email"
-                    placeholder="Enter you email"
+                    type={isPasswordVisible ? "text" : "password"}
+                    name="confirmPass"
+                    id="confirmPass"
+                    placeholder="Confirm New Password"
                   />
                   {submitCount > 0 && (
                     <ErrorMessage
-                      name="email"
+                      name="confirmPass"
                       component={"p"}
                       className="field-error__message"
                     />
                   )}
                 </div>
                 <button type="submit" className="form-submit-btn">
-                  Reset
+                  Reset Password
                 </button>
               </Form>
             )}

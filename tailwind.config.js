@@ -21,6 +21,9 @@ module.exports = {
       },
       boxShadow: {
         "custom-sm": "0px 0px 3px",
+        "custom-md": "0px 0px 6px",
+        "custom-lg": "0px 0px 9px",
+        "custom-xl": "0px 0px 12px",
       },
     },
   },

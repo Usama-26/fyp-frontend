@@ -6,19 +6,19 @@ const megaMenuLinks = [
     id: 0,
     title: "Explore the Talent",
     meaning: "Search freelancers and skills",
-    path: "/freelancers",
+    path: "/explore/freelancers",
   },
   {
     id: 1,
     title: "Explore Projects",
     meaning: "Search and bid on projects",
-    path: "/projects",
+    path: "/explore/projects",
   },
   {
     id: 2,
     title: "Explore Offers",
     meaning: "Services offered by freelancers",
-    path: "/gigs",
+    path: "/explore/offers",
   },
 ];
 export default function MegaMenu({ isOpen, onOpen, onClose }) {
