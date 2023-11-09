@@ -1,7 +1,6 @@
 import "@/styles/globals.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "react-datepicker/dist/react-datepicker.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleClientSecret from "@/json/client_secret";
 import { Inter, Comfortaa } from "next/font/google";
