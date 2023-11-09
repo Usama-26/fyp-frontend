@@ -12,11 +12,11 @@ const withAuthRouteProtect = (WrappedComponent) => {
     useEffect(() => {
       if (window.localStorage.getItem("token")) {
         setIsAvailable(false);
-        router.back();
+        router.push("/");
       }
     }, [router]);
 
-    return !user && !isAvailable ? <WrappedComponent {...props} /> : null;
+    return !user && isAvailable ? <WrappedComponent {...props} /> : null;
   };
 };
 
