@@ -10,6 +10,7 @@ import ProfileCard from "@/components/ProfileCard";
 export default function ExploreFreelancers() {
   const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
+
   const handleSearch = (query = searchQuery) => {
     console.log("Actual Query :", query);
   };
@@ -63,12 +64,12 @@ export default function ExploreFreelancers() {
         </div>
       </section>
       <section className="container mx-auto my-10">
-        <grid className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <ProfileCard />
           <ProfileCard />
           <ProfileCard />
           <ProfileCard />
-        </grid>
+        </div>
       </section>
     </WebLayout>
   );

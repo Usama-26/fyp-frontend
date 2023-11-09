@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
+import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 
 function ForgotPassword() {
   const { forgotPassword } = useAccounts();

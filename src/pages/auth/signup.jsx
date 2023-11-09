@@ -9,8 +9,7 @@ import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 
 function Signup() {
-  const { isLoggedIn, user, error, handleSignup } =
-    useAccounts();
+  const { isLoggedIn, user, error, handleSignup } = useAccounts();
   const router = useRouter();
 
   useEffect(() => {
@@ -40,7 +39,7 @@ function Signup() {
               </h3>
               <SignupForm
                 handleSubmit={(values) =>
-                  handleSignup({ ...values, userType: "client" })
+                  handleSignup({ ...values, user_type: "client" })
                 }
                 isSubmitted={user ? true : false}
               />
@@ -59,4 +58,4 @@ function Signup() {
   );
 }
 
-export default withAuthRouteProtect(Signup)
+export default withAuthRouteProtect(Signup);

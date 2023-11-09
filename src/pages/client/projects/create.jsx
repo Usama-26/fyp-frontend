@@ -1,14 +1,11 @@
-import { ProjectInfoForm } from "@/components/ProjectInfoForm";
-import { ProjectPricingForm } from "@/components/ProjectPricingForm";
+import { ProjectInfoForm } from "@/components/ProjectForms/ProjectInfoForm";
+import { ProjectPricingForm } from "@/components/ProjectForms/ProjectPricingForm";
+import { ProjectScopeForm } from "@/components/ProjectForms/ProjectScopeForm";
 import withRouteProtect from "@/helpers/withRouteProtect";
 import WebLayout from "@/layouts/WebLayout";
-import { useFormikContext } from "formik";
 import Head from "next/head";
-import Link from "next/link";
 
 function CreateProject() {
-  const formik = useFormikContext();
-
   return (
     <>
       <Head>
@@ -20,21 +17,37 @@ function CreateProject() {
             <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
               <div className="flex justify-between p-8">
                 <div className="basis-5/12">
-                  <h1 className="text-2xl font-display text-primary-700">
+                  <h1 className="text-2xl font-display text-primary-700 capitalize">
                     {"Let's begin with filling up basic information"}
                   </h1>
-                  <h4 className="text-lg">Tell us what you got in your mind</h4>
+                  <h4>Tell us what you got in your mind</h4>
                 </div>
                 <div className="basis-6/12">
                   <ProjectInfoForm />
                 </div>
               </div>
+
               <div className="flex justify-between p-8">
                 <div className="basis-5/12">
-                  <h1 className="text-2xl font-display text-primary-700">
+                  <h1 className="text-2xl font-display text-primary-700 capitalize">
+                    {"Next, estimate the Scope of your project"}
+                  </h1>
+                  <h4>
+                    Choose among the estimated duration and what level of skills
+                    do you require for your project
+                  </h4>
+                </div>
+                <div className="basis-6/12">
+                  <ProjectScopeForm />
+                </div>
+              </div>
+
+              <div className="flex justify-between p-8">
+                <div className="basis-5/12">
+                  <h1 className="text-2xl font-display text-primary-700 capitalize">
                     {"Time to fill up pricing information"}
                   </h1>
-                  <h4 className="text-lg">
+                  <h4>
                     Tell us about your budget and your expected delivery date.
                   </h4>
                 </div>
@@ -42,8 +55,12 @@ function CreateProject() {
                   <ProjectPricingForm />
                 </div>
               </div>
+
               <div className="px-8 py-4 border-t text-end">
-                <div className="">
+                <div className="flex justify-end gap-2">
+                  <button className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm">
+                    <span>Cancel</span>
+                  </button>
                   <button
                     disabled
                     className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 text-white font-medium  inline-flex gap-2 items-center text-sm"

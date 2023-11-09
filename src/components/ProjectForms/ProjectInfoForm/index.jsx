@@ -6,12 +6,14 @@ import * as Yup from "yup";
 const projectInfoSchema = Yup.object({
   title: Yup.string()
     .trim()
+    .min(20, "Title should be of atleast 20 characters")
     .max(100, "Title can't exceed 100 characters")
     .required("Title is required"),
   description: Yup.string()
     .trim()
+    .min(100, "Write a more clear description of atleast 100 characters long")
     .max(2000, "Description can't exceed 2000 characters")
-    .required("Title is required"),
+    .required("Add project description"),
   category: Yup.string().trim().required("Please Select A Category"),
   sub_category: Yup.string().trim().required("Please Select A Service"),
   service: Yup.string().trim(),
@@ -49,7 +51,7 @@ export function ProjectInfoForm() {
       >
         {({ values, errors, touched, submitCount, setFieldValue }) => {
           return (
-            <Form className="w-11/12 space-y-4">
+            <Form className="w-11/12 space-y-5">
               <div className="w-full">
                 <label htmlFor="title" className="font-medium">
                   Project Title
@@ -71,7 +73,9 @@ export function ProjectInfoForm() {
                   {values.title.length}/100
                 </span>
                 <p className="text-xs italic text-neutral-500">
-                  Example: Create a website for my personal portfolio
+                  {
+                    "Example: Create a website for my personal portfolio. (20 to 100 character)"
+                  }
                 </p>
                 {submitCount > 0 && (
                   <ErrorMessage
@@ -104,7 +108,9 @@ export function ProjectInfoForm() {
                   {values.description.length}/2000
                 </span>
                 <p className="text-xs italic text-neutral-500">
-                  Write a paragraph which explains your project in detail.
+                  {
+                    "Write a paragraph which explains your project in detail. (100 to 2000 characters)"
+                  }
                 </p>
                 {submitCount > 0 && (
                   <ErrorMessage

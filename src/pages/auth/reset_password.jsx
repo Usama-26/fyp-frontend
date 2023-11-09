@@ -127,4 +127,4 @@ function ResetPassword() {
   );
 }
 
-export default withAuthRouteProtect(ResetPassword)
+export default withAuthRouteProtect(ResetPassword);

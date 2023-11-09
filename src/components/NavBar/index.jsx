@@ -5,7 +5,7 @@ import MegaMenu from "../MegaMenu";
 import Logo from "../Logo";
 import { Menu, Transition } from "@headlessui/react";
 import Image from "next/image";
-import { BsDot, BsGear } from "react-icons/bs";
+import { BsGear } from "react-icons/bs";
 import { GoDotFill } from "react-icons/go";
 import { FcBriefcase } from "react-icons/fc";
 import { BiSolidOffer, BiSolidBriefcaseAlt } from "react-icons/bi";
