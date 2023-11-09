@@ -32,7 +32,7 @@
     @apply border-red-500 ring-red-200;
   }
   .field-error__message {
-    @apply text-xs text-danger-600;
+    @apply text-sm text-danger-600;
   }
   .profile-tabs > li,
   .profile-tabs button {

@@ -35,7 +35,7 @@ const config = createConfig({
 
 export default function App({ Component, pageProps }) {
   const { web } = GoogleClientSecret;
-  const router = useRouter();
+
   return (
     <main className={`${display.variable} ${inter.variable}`}>
       {/* <WagmiConfig config={config}>

@@ -1,14 +1,13 @@
 import { useServices } from "@/context/ServiceContext";
-import { ErrorMessage, Field, Form } from "formik";
+import { ErrorMessage, Field } from "formik";
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import * as Yup from "yup";
 
 export function ProjectInfoForm({ formData }) {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const { categories: fetchedCategories } = useServices();
-  const { values, errors, touched, submitCount } = formData;
+  const { values, errors, touched, submitCount, setFieldValue } = formData;
 
   useEffect(() => {
     if (fetchedCategories) {
@@ -25,7 +24,7 @@ export function ProjectInfoForm({ formData }) {
 
   return (
     <>
-      <Form className="w-11/12 space-y-5">
+      <div className="w-11/12 space-y-5">
         <div className="w-full">
           <label htmlFor="title" className="font-medium">
             Project Title
@@ -41,11 +40,15 @@ export function ProjectInfoForm({ formData }) {
             placeholder="Enter Title"
           />
           <span className="text-sm float-right">{values.title.length}/100</span>
-          <p className="text-sm italic text-neutral-500">
-            {"Example: Create a website for my personal portfolio. (20 to 100 character)"}
-          </p>
-          {submitCount > 0 && (
+
+          {errors.title && touched.title && submitCount > 0 ? (
             <ErrorMessage name="title" component={"p"} className="field-error__message" />
+          ) : (
+            <p className="text-sm italic text-neutral-500">
+              {
+                "Example: Create a website for my personal portfolio. (20 to 100 character)"
+              }
+            </p>
           )}
         </div>
         <div className="w-full">
@@ -68,17 +71,19 @@ export function ProjectInfoForm({ formData }) {
             placeholder="Enter Description"
           />
           <span className="text-sm float-right">{values.description.length}/2000</span>
-          <p className="text-sm italic text-neutral-500">
-            {
-              "Write a paragraph which explains your project in detail. (100 to 2000 characters)"
-            }
-          </p>
-          {submitCount > 0 && (
+
+          {errors.description && touched.description && submitCount > 0 ? (
             <ErrorMessage
               name="description"
               component={"p"}
               className="field-error__message"
             />
+          ) : (
+            <p className="text-sm italic text-neutral-500">
+              {
+                "Write a paragraph which explains your project in detail. (100 to 2000 characters)"
+              }
+            </p>
           )}
         </div>
         <div className="w-full flex gap-4">
@@ -160,7 +165,7 @@ export function ProjectInfoForm({ formData }) {
             )}
           </Field>
         </div>
-      </Form>
+      </div>
     </>
   );
 }

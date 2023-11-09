@@ -1,8 +1,5 @@
 import Logo from "@/components/Logo";
-import NavBar from "@/components/NavBar";
 import Head from "next/head";
-import { GoogleLogin } from "@react-oauth/google";
-import Footer from "@/components/Footer";
 import { SignupForm } from "@/components/SignupForm";
 import { useAccounts } from "@/context/AccountContext";
 import { useRouter } from "next/router";
@@ -10,13 +7,13 @@ import { useEffect } from "react";
 import WebLayout from "@/layouts/WebLayout";
 import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
- function FreelancerJoin() {
-  const { isLoggedIn, error, handleSignup } = useAccounts();
+function FreelancerJoin() {
+  const { isLoggedIn, handleSignup } = useAccounts();
   const router = useRouter();
-  console.log(error);
+
   useEffect(() => {
     isLoggedIn && router.push("/");
-  }, []);
+  }, [isLoggedIn]);
   return (
     <>
       <Head>
@@ -43,9 +40,7 @@ import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
                 }
               />
 
-              <h6 className="text-center font-semibold text-neutral-400 my-4">
-                OR
-              </h6>
+              <h6 className="text-center font-semibold text-neutral-400 my-4">OR</h6>
               <div className="flex justify-center">
                 <GoogleLoginBtn userType={"freelancer"} />
               </div>
@@ -57,4 +52,4 @@ import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
   );
 }
 
-export default withAuthRouteProtect(FreelancerJoin)
+export default withAuthRouteProtect(FreelancerJoin);

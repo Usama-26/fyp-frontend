@@ -1,11 +1,13 @@
-import { ProjectInfoForm } from "@/components/ProjectForms/ProjectInfoForm";
-import { ProjectPricingForm } from "@/components/ProjectForms/ProjectPricingForm";
-import { ProjectScopeForm } from "@/components/ProjectForms/ProjectScopeForm";
-import withRouteProtect from "@/helpers/withRouteProtect";
-import WebLayout from "@/layouts/WebLayout";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import Head from "next/head";
 import * as Yup from "yup";
+
+import WebLayout from "@/layouts/WebLayout";
+import withRouteProtect from "@/helpers/withRouteProtect";
+import { ProjectInfoForm } from "@/components/ProjectForms/ProjectInfoForm";
+import { ProjectScopeForm } from "@/components/ProjectForms/ProjectScopeForm";
+import { ProjectPricingForm } from "@/components/ProjectForms/ProjectPricingForm";
+import { useRouter } from "next/router";
 
 const projectSchema = Yup.object({
   title: Yup.string()
@@ -41,9 +43,10 @@ const projectInitialValues = {
   skills_level: "beginner",
   pricing_type: "fixed",
   budget: 0,
-  deadline: new Date(),
+  deadline: "",
 };
 function CreateProject() {
+  const router = useRouter();
   return (
     <>
       <Head>
@@ -52,9 +55,15 @@ function CreateProject() {
       <WebLayout>
         <section>
           <div className="max-w-7xl mx-auto m-4 rounded-md">
-            <Formik initialValues={projectInitialValues} validationSchema={projectSchema}>
+            <Formik
+              initialValues={projectInitialValues}
+              validationSchema={projectSchema}
+              onSubmit={(values) => {
+                console.log(values);
+              }}
+            >
               {(formikValues) => (
-                <>
+                <Form>
                   <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
                     <div className="flex justify-between p-8">
                       <div className="basis-5/12">
@@ -98,11 +107,15 @@ function CreateProject() {
 
                     <div className="px-8 py-4 border-t text-end">
                       <div className="flex justify-end gap-2">
-                        <button className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm">
+                        <button
+                          onClick={() => router.back()}
+                          className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm"
+                        >
                           <span>Cancel</span>
                         </button>
                         <button
-                          disabled
+                          type="submit"
+                          disabled={!formikValues.isValid}
                           className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 text-white font-medium  inline-flex gap-2 items-center text-sm"
                         >
                           <span>Continue</span>
@@ -110,7 +123,7 @@ function CreateProject() {
                       </div>
                     </div>
                   </div>
-                </>
+                </Form>
               )}
             </Formik>
           </div>
