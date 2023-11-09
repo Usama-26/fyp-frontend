@@ -8,7 +8,7 @@ import WebLayout from "@/layouts/WebLayout";
 import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 function FreelancerJoin() {
-  const { isLoggedIn, handleSignup } = useAccounts();
+  const { isLoggedIn, error, handleSignup } = useAccounts();
   const router = useRouter();
 
   useEffect(() => {
