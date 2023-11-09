@@ -69,10 +69,10 @@ export function ProjectInfoForm() {
                   maxLength={100}
                   placeholder="Enter Title"
                 />
-                <span className="text-xs float-right">
+                <span className="text-sm float-right">
                   {values.title.length}/100
                 </span>
-                <p className="text-xs italic text-neutral-500">
+                <p className="text-sm italic text-neutral-500">
                   {
                     "Example: Create a website for my personal portfolio. (20 to 100 character)"
                   }
@@ -104,10 +104,10 @@ export function ProjectInfoForm() {
                   maxLength={2000}
                   placeholder="Enter Description"
                 />
-                <span className="text-xs float-right">
+                <span className="text-sm float-right">
                   {values.description.length}/2000
                 </span>
-                <p className="text-xs italic text-neutral-500">
+                <p className="text-sm italic text-neutral-500">
                   {
                     "Write a paragraph which explains your project in detail. (100 to 2000 characters)"
                   }

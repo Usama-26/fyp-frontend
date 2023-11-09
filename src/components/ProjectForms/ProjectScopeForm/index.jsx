@@ -1,17 +1,11 @@
-import { Listbox, RadioGroup, Transition } from "@headlessui/react";
-import axios from "axios";
+import { RadioGroup } from "@headlessui/react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { useEffect, useState } from "react";
-
+import { useState } from "react";
 import * as Yup from "yup";
-import { GoDotFill } from "react-icons/go";
 import { TbCircleCheck } from "react-icons/tb";
 
 const projectScopeSchema = Yup.object({
-  skills_level: Yup.string()
-    .trim()
-    .required("Choose a pricing type")
-    .default("basic"),
+  skills_level: Yup.string().trim().required("Choose a pricing type").default("basic"),
   scope: Yup.string().trim().required("Set project scope").default("small"),
 });
 
@@ -53,9 +47,7 @@ const skillsLevels = [
 
 export function ProjectScopeForm() {
   const [selectedScope, setSelectedScope] = useState(projectScopes[0]);
-  const [selectedSkillsLevel, setSelectedSkillsLevel] = useState(
-    projectScopes[0]
-  );
+  const [selectedSkillsLevel, setSelectedSkillsLevel] = useState(skillsLevels[0]);
 
   return (
     <>
@@ -77,13 +69,10 @@ export function ProjectScopeForm() {
                 <RadioGroup
                   value={selectedScope}
                   onChange={(scope) => {
-                    setSelectedScope(scope),
-                      setFieldValue("scope", scope.value);
+                    setSelectedScope(scope), setFieldValue("scope", scope.value);
                   }}
                 >
-                  <RadioGroup.Label className="sr-only">
-                    Project Scope
-                  </RadioGroup.Label>
+                  <RadioGroup.Label className="sr-only">Project Scope</RadioGroup.Label>
                   <div className="space-y-2">
                     {projectScopes.map((scope) => (
                       <RadioGroup.Option
@@ -94,11 +83,7 @@ export function ProjectScopeForm() {
                             active
                               ? "ring-2 ring-white/60 ring-offset-2 ring-offset-primary-300"
                               : ""
-                          } ${
-                            checked
-                              ? "bg-primary-700/75 text-white"
-                              : "bg-white"
-                          }`
+                          } ${checked ? "bg-primary-700/75 text-white" : "bg-white"}`
                         }
                       >
                         {({ active, checked }) => (
@@ -109,19 +94,15 @@ export function ProjectScopeForm() {
                                   <RadioGroup.Label
                                     as="p"
                                     className={`font-medium  ${
-                                      checked
-                                        ? "text-white"
-                                        : "text-neutral-700"
+                                      checked ? "text-white" : "text-neutral-700"
                                     }`}
                                   >
                                     {scope.name}
                                   </RadioGroup.Label>
                                   <RadioGroup.Description
                                     as="p"
-                                    className={`text-xs italic  ${
-                                      checked
-                                        ? "text-primary-100"
-                                        : "text-neutral-500"
+                                    className={`text-sm italic  ${
+                                      checked ? "text-primary-100" : "text-neutral-500"
                                     }`}
                                   >
                                     {scope.description}
@@ -149,8 +130,7 @@ export function ProjectScopeForm() {
                 <RadioGroup
                   value={selectedSkillsLevel}
                   onChange={(level) => {
-                    setSelectedSkillsLevel(level),
-                      setFieldValue("scope", level.value);
+                    setSelectedSkillsLevel(level), setFieldValue("scope", level.value);
                   }}
                 >
                   <RadioGroup.Label className="sr-only">
@@ -166,11 +146,7 @@ export function ProjectScopeForm() {
                             active
                               ? "ring-2 ring-white/60 ring-offset-2 ring-offset-primary-300"
                               : ""
-                          } ${
-                            checked
-                              ? "bg-primary-700/75 text-white"
-                              : "bg-white"
-                          }`
+                          } ${checked ? "bg-primary-700/75 text-white" : "bg-white"}`
                         }
                       >
                         {({ active, checked }) => (
@@ -181,19 +157,15 @@ export function ProjectScopeForm() {
                                   <RadioGroup.Label
                                     as="p"
                                     className={`font-medium  ${
-                                      checked
-                                        ? "text-white"
-                                        : "text-neutral-700"
+                                      checked ? "text-white" : "text-neutral-700"
                                     }`}
                                   >
                                     {level.name}
                                   </RadioGroup.Label>
                                   <RadioGroup.Description
                                     as="p"
-                                    className={`text-xs italic  ${
-                                      checked
-                                        ? "text-primary-100"
-                                        : "text-neutral-500"
+                                    className={`text-sm italic  ${
+                                      checked ? "text-primary-100" : "text-neutral-500"
                                     }`}
                                   >
                                     {level.description}

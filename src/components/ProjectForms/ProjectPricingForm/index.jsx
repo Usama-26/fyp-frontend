@@ -61,7 +61,7 @@ export function ProjectPricingForm() {
         {({ values, errors, touched, submitCount, setFieldValue }) => {
           return (
             <Form className="w-11/12 flex justify-between">
-              <div className="basis-5/12 space-y-5">
+              <div className="basis-6/12 space-y-5">
                 <div className="inline-block relative">
                   <label
                     htmlFor="pricing_type"
@@ -150,7 +150,7 @@ export function ProjectPricingForm() {
                   <span className="ml-2 text-lg font-medium">
                     {values.pricing_type === "hourly" ? "$/hr" : "$"}
                   </span>
-                  <p className="text-xs italic text-neutral-500">
+                  <p className="text-sm italic text-neutral-500">
                     Enter your budget between $10 to $1000
                   </p>
 
