@@ -25,7 +25,7 @@ const pricingTypes = [
     label: "Hourly Rate",
   },
 ];
-export function ProjectPricingForm() {
+export function ProjectPricingForm({ formData }) {
   const [inEthereum, setInEthereum] = useState(0);
   const [apiError, setApiError] = useState("");
   const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);

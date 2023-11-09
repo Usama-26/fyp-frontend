@@ -45,7 +45,7 @@ const skillsLevels = [
   },
 ];
 
-export function ProjectScopeForm() {
+export function ProjectScopeForm({ formData }) {
   const [selectedScope, setSelectedScope] = useState(projectScopes[0]);
   const [selectedSkillsLevel, setSelectedSkillsLevel] = useState(skillsLevels[0]);
 
