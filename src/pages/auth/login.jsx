@@ -6,8 +6,9 @@ import { useAccounts } from "@/context/AccountContext";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
+import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 
-export default function Login() {
+function Login() {
   const { isLoggedIn, error, handleLogin } = useAccounts();
   const router = useRouter();
   useEffect(() => {
@@ -50,3 +51,4 @@ export default function Login() {
     </>
   );
 }
+export default withAuthRouteProtect(Login);

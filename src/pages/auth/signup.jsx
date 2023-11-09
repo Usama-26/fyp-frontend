@@ -1,16 +1,15 @@
 import Logo from "@/components/Logo";
 import Head from "next/head";
-import { GoogleLogin } from "@react-oauth/google";
 import { SignupForm } from "@/components/SignupForm";
 import WebLayout from "@/layouts/WebLayout";
 import { useAccounts } from "@/context/AccountContext";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import NavBar from "@/components/NavBar";
 import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
+import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 
-export default function Signup() {
-  const { isLoggedIn, user, error, handleSignup, handleGoogleAuth } =
+function Signup() {
+  const { isLoggedIn, user, error, handleSignup } =
     useAccounts();
   const router = useRouter();
 
@@ -59,3 +58,5 @@ export default function Signup() {
     </>
   );
 }
+
+export default withAuthRouteProtect(Signup)

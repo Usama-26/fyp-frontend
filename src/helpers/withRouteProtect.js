@@ -1,4 +1,3 @@
-// userTypeGuard.js
 import { useAccounts } from "@/context/AccountContext";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";

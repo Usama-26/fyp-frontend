@@ -6,7 +6,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
 
-export default function ResetPassword() {
+function ForgotPassword() {
   const { forgotPassword } = useAccounts();
 
   return (
@@ -80,3 +80,5 @@ export default function ResetPassword() {
     </>
   );
 }
+
+export default withAuthRouteProtect(ForgotPassword);

@@ -8,8 +8,9 @@ import Logo from "@/components/Logo";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { useAccounts } from "@/context/AccountContext";
+import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 
-export default function ResetPassword() {
+function ResetPassword() {
   const { resetPassword } = useAccounts();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -125,3 +126,5 @@ export default function ResetPassword() {
     </>
   );
 }
+
+export default withAuthRouteProtect(ResetPassword)
