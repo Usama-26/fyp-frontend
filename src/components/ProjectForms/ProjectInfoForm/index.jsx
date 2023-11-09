@@ -46,6 +46,9 @@ export function ProjectInfoForm() {
           category: "",
           sub_category: "",
           service: "",
+          pricing_type: "fixed",
+          budget: 0,
+          deadline: new Date(),
         }}
         validationSchema={projectInfoSchema}
       >
@@ -58,10 +61,7 @@ export function ProjectInfoForm() {
                 </label>
                 <Field
                   className={`form-input ${
-                    errors.title &&
-                    touched.title &&
-                    submitCount > 0 &&
-                    "field-error"
+                    errors.title && touched.title && submitCount > 0 && "field-error"
                   }`}
                   type="text"
                   name="title"
@@ -69,9 +69,7 @@ export function ProjectInfoForm() {
                   maxLength={100}
                   placeholder="Enter Title"
                 />
-                <span className="text-sm float-right">
-                  {values.title.length}/100
-                </span>
+                <span className="text-sm float-right">{values.title.length}/100</span>
                 <p className="text-sm italic text-neutral-500">
                   {
                     "Example: Create a website for my personal portfolio. (20 to 100 character)"

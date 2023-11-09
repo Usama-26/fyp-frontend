@@ -28,9 +28,7 @@ const pricingTypes = [
 export function ProjectPricingForm() {
   const [inEthereum, setInEthereum] = useState(0);
   const [apiError, setApiError] = useState("");
-  const [selectedPricingType, setSelectedPricingType] = useState(
-    pricingTypes[0]
-  );
+  const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
   const fetchCurrencyRate = async () => {
     try {
       const response = await axios.get(
@@ -38,9 +36,7 @@ export function ProjectPricingForm() {
       );
       setInEthereum(response.data.ethereum.usd);
     } catch (error) {
-      setApiError(
-        "Can't load currency exchange rates right now. Try again later"
-      );
+      setApiError("Can't load currency exchange rates right now. Try again later");
     }
   };
 
@@ -63,10 +59,7 @@ export function ProjectPricingForm() {
             <Form className="w-11/12 flex justify-between">
               <div className="basis-6/12 space-y-5">
                 <div className="inline-block relative">
-                  <label
-                    htmlFor="pricing_type"
-                    className="block font-medium mb-2"
-                  >
+                  <label htmlFor="pricing_type" className="block font-medium mb-2">
                     Choose A Pricing Type
                   </label>
                   <Field name="pricing_type" id="pricing_type">
@@ -82,9 +75,7 @@ export function ProjectPricingForm() {
                           <>
                             <Listbox.Button
                               className={`w-32 p-2 rounded-md border text-left  focus:ring-2 focus:border-primary-500 ${
-                                open
-                                  ? "border-primary-500 ring-2"
-                                  : "border-neutral-500"
+                                open ? "border-primary-500 ring-2" : "border-neutral-500"
                               } font-medium placeholder:text-neutral-400 outline-none text-sm capitalize`}
                             >
                               <span className="w-full justify-between flex items-center gap-2">
@@ -163,10 +154,7 @@ export function ProjectPricingForm() {
                 </div>
               </div>
               <div className="basis-6/12">
-                <label
-                  htmlFor="delivery_date"
-                  className="block mb-2 font-medium"
-                >
+                <label htmlFor="delivery_date" className="block mb-2 font-medium">
                   Set A Delivery Date
                 </label>
 
