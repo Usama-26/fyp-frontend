@@ -3,6 +3,7 @@ import PersonalSettings from "@/components/Freelancer/Settings/PersonalSettings"
 import WebLayout from "@/layouts/WebLayout";
 import { Tab } from "@headlessui/react";
 import ContactSettings from "@/components/Freelancer/Settings/ContactSettings";
+import withRouteProtect from "@/helpers/withRouteProtect";
 
 const profileTabs = [
   "Personal Info",
@@ -22,9 +23,7 @@ function ClientProfileSettings() {
               {profileTabs.map((tab, index) => (
                 <Tab key={index} as="li">
                   {({ selected }) => (
-                    <button className={selected && "profile-tab__selected"}>
-                      {tab}
-                    </button>
+                    <button className={selected && "profile-tab__selected"}>{tab}</button>
                   )}
                 </Tab>
               ))}

@@ -9,7 +9,8 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import WebLayout from "@/layouts/WebLayout";
 import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
-export default function FreelancerJoin() {
+import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
+ function FreelancerJoin() {
   const { isLoggedIn, error, handleSignup } = useAccounts();
   const router = useRouter();
   console.log(error);
@@ -55,3 +56,5 @@ export default function FreelancerJoin() {
     </>
   );
 }
+
+export default withAuthRouteProtect(FreelancerJoin)
