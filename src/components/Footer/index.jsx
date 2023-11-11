@@ -2,7 +2,10 @@ import Link from "next/link";
 
 import services from "@/json/services";
 import Logo from "../Logo";
+import { useServices } from "@/context/ServiceContext";
 export default function Footer() {
+  const { categories } = useServices();
+
   return (
     <>
       <footer className="w-fullbg-white border-t">
@@ -18,14 +21,12 @@ export default function Footer() {
               <h2 className="title-font font-medium mb-4">Categories</h2>
               <nav className=" mb-10">
                 <ul className="space-y-2">
-                  {services?.categories?.map((category) => (
+                  {categories?.data.map((category) => (
                     <li
-                      key={category.category_name}
+                      key={category.name}
                       className="hover:underline underline-offset-2"
                     >
-                      <Link href={`/categories/${category.path}`}>
-                        {category.category_name}
-                      </Link>
+                      <Link href={`/categories/${category.path}`}>{category.name}</Link>
                     </li>
                   ))}
                 </ul>
