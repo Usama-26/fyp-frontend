@@ -7,28 +7,28 @@ import { createContext, useContext, useReducer, useEffect } from "react";
 function reducer(state, action) {
   switch (action.type) {
     case "account/loaded":
-      return { ...state, user: action.payload, isLoggedIn: true };
+      return { ...state, user: action.payload, isLoggedIn: true, isLoading: false };
 
     case "account/login":
-      return { ...state, user: action.payload };
+      return { ...state, user: action.payload, isLoading: false };
 
     case "account/logout":
-      return { ...state, user: null, isLoggedIn: false, error: "" };
+      return { ...state, user: null, isLoggedIn: false, error: "", isLoading: false };
 
     case "account/created":
-      return { ...state, user: action.payload };
+      return { ...state, user: action.payload, isLoading: false };
 
     case "account/forgotPassword":
-      return { ...state, emailSuccessMessage: action.payload };
+      return { ...state, emailSuccessMessage: action.payload, isLoading: false };
 
     case "account/resetPassword":
-      return { ...state, resetPassSuccessMessage: action.payload };
+      return { ...state, resetPassSuccessMessage: action.payload, isLoading: false };
 
     case "loading":
       return { ...state, isLoading: true, error: "" };
 
     case "rejected":
-      return { ...state, error: action.payload };
+      return { ...state, error: action.payload, isLoading: false };
 
     case "loggedIn":
       return { ...state, isLoggedIn: true, isLoading: false, error: "" };
@@ -66,7 +66,11 @@ function AccountsProvider({ children }) {
 
       dispatch({ type: "account/created", payload: response.data });
     } catch (err) {
-      dispatch({ type: "rejected", payload: err.response.data.message });
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
 
@@ -76,7 +80,11 @@ function AccountsProvider({ children }) {
       const response = await postData(`${BASE_URL}/auth/login`, data);
       dispatch({ type: "account/login", payload: response.data });
     } catch (err) {
-      dispatch({ type: "rejected", payload: err.response.data.message });
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
 
@@ -92,11 +100,16 @@ function AccountsProvider({ children }) {
 
       dispatch({ type: "account/login", payload: response.data });
     } catch (err) {
-      dispatch({ type: "rejected", payload: err.response.data.message });
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
 
   const handleLogout = () => {
+    dispatch({ type: "loading" });
     if (!window.localStorage.getItem("token")) {
       return;
     }
@@ -107,6 +120,7 @@ function AccountsProvider({ children }) {
   };
 
   const loadAccount = async (token) => {
+    dispatch({ type: "loading" });
     try {
       const response = await axios.get(`${BASE_URL}/auth/getCurrentUser`, {
         headers: {
@@ -115,7 +129,6 @@ function AccountsProvider({ children }) {
       });
       dispatch({ type: "account/loaded", payload: response.data });
     } catch (err) {
-      console.log(err);
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
       } else {
@@ -131,15 +144,24 @@ function AccountsProvider({ children }) {
 
       dispatch({ type: "account/forgotPassword", payload: response.data.message });
     } catch (error) {
-      dispatch({ type: "rejected", payload: error?.response?.data?.message });
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
   const resetPassword = async (data) => {
+    dispatch({ type: "loading" });
     try {
       const response = await postData(`${BASE_URL}/auth/resetPassword`, data);
       dispatch({ type: "account/resetPassword", payload: response?.data?.message });
     } catch (error) {
-      dispatch({ type: "rejected", payload: error?.response?.data?.message });
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
 

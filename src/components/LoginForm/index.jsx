@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import * as Yup from "yup";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-export default function LoginForm({ handleSubmit, isSubmitted }) {
+export default function LoginForm({ handleSubmit, isSubmitted, isLoading }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -78,8 +78,12 @@ export default function LoginForm({ handleSubmit, isSubmitted }) {
               Forgot password ?
             </Link>
           </div>
-          <button type="submit" className="form-submit-btn">
-            Login
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="form-submit-btn disabled:bg-neutral-100   disabled:text-neutral-500 "
+          >
+            {isLoading ? "Loading..." : "Login"}
           </button>
         </Form>
       )}

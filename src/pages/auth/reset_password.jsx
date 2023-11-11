@@ -12,7 +12,7 @@ import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 import { useRouter } from "next/router";
 
 function ResetPassword() {
-  const { resetPassword, resetPassSuccessMessage } = useAccounts();
+  const { resetPassword, error, isLoading, resetPassSuccessMessage } = useAccounts();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [resetToken, setResetToken] = useState("");
 
@@ -29,8 +29,8 @@ function ResetPassword() {
     if (resetPassSuccessMessage) {
       router.push("/auth/login");
     }
-  }, [router]);
-
+  }, [router, resetPassSuccessMessage]);
+  console.log(resetPassSuccessMessage);
   return (
     <>
       <Head>
@@ -38,7 +38,7 @@ function ResetPassword() {
       </Head>
       <NavBar />
       <main>
-        <div className="my-10 max-w-sm mx-auto border rounded-lg shadow">
+        <div className="relative my-10 max-w-sm mx-auto border rounded-lg shadow">
           {resetPassSuccessMessage && (
             <div className="w-full bg-success-200 rounded-t-md py-2 px-2">
               <p className="text-sm font-medium text-success-700">
@@ -69,9 +69,9 @@ function ResetPassword() {
               })}
               onSubmit={(values, { resetForm }) => {
                 resetPassword({ password: values.password, token: resetToken });
-                // if (isSubmitted) {
-                //   resetForm({ values: null });
-                // }
+                if (resetPassSuccessMessage) {
+                  resetForm({ values: null });
+                }
               }}
             >
               {({ errors, touched, submitCount }) => (
@@ -132,8 +132,12 @@ function ResetPassword() {
                       />
                     )}
                   </div>
-                  <button type="submit" className="form-submit-btn">
-                    Reset Password
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="form-submit-btn disabled:bg-neutral-100   disabled:text-neutral-500 "
+                  >
+                    {isLoading ? "Loading..." : "Reset Password"}
                   </button>
                 </Form>
               )}

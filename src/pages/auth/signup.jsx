@@ -9,7 +9,7 @@ import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 
 function Signup() {
-  const { isLoggedIn, user, error, handleSignup } = useAccounts();
+  const { isLoggedIn, user, error, isLoading, handleSignup } = useAccounts();
   const router = useRouter();
 
   useEffect(() => {
@@ -25,8 +25,8 @@ function Signup() {
         <main>
           <div className="relative my-8 max-w-lg mx-auto border rounded-lg shadow ">
             {error && (
-              <div className="w-full absolute top-0 bg-danger-500 rounded-t-md py-2 px-2">
-                <p className="text-sm font-medium text-white">{error}</p>
+              <div className="w-full absolute top-0 bg-danger-200 rounded-t-md py-2 px-2">
+                <p className="text-sm text-danger-700">{error}</p>
               </div>
             )}
 
@@ -42,11 +42,10 @@ function Signup() {
                   handleSignup({ ...values, user_type: "client" })
                 }
                 isSubmitted={user ? true : false}
+                isLoading={isLoading}
               />
 
-              <h6 className="text-center font-semibold text-neutral-400 my-4">
-                OR
-              </h6>
+              <h6 className="text-center font-semibold text-neutral-400 my-4">OR</h6>
               <div className="flex justify-center">
                 <GoogleLoginBtn userType={"client"} />
               </div>

@@ -9,10 +9,10 @@ export function getData(endpoint, options = {}) {
   });
 }
 
-export function getOne(endpoint, id) {
+export function getOne(endpoint, id, options = {}) {
   return new Promise((resolve, reject) => {
     axios
-      .get(`${endpoint}/${id}`)
+      .get(`${endpoint}/${id}`, options)
       .then((res) => resolve(res))
       .catch((err) => reject(err));
   });
@@ -27,19 +27,19 @@ export function postData(endpoint, data, options = {}) {
   });
 }
 
-export function deleteData(endpoint, id) {
+export function deleteData(endpoint, id, options = {}) {
   return new Promise((resolve, reject) => {
     axios
-      .delete(`${endpoint}/${id}`)
+      .delete(`${endpoint}/${id}`, options)
       .then((res) => resolve(res))
       .catch((err) => reject(err));
   });
 }
 
-export function updateData(endpoint, id, data) {
+export function updateData(endpoint, id, data, options = {}) {
   return new Promise((resolve, reject) => {
     axios
-      .patch(`${endpoint}/${id}`, data)
+      .patch(`${endpoint}/${id}`, data, options)
       .then((res) => resolve(res))
       .catch((err) => reject(err));
   });

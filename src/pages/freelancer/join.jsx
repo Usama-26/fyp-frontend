@@ -24,7 +24,7 @@ function FreelancerJoin() {
           <div className="relative my-8 max-w-lg mx-auto border rounded-lg shadow">
             {error && (
               <div className="w-full absolute top-0 bg-danger-200 rounded-t-md py-2 px-2">
-                <p className="text-sm font-medium text-danger-700">{error}</p>
+                <p className="text-sm text-danger-700">{error}</p>
               </div>
             )}
             <div className="p-8 pt-12">

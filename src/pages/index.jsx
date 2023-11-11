@@ -2,6 +2,7 @@ import { useState } from "react";
 import sampleSkills from "@/json/sample-skills.json";
 import WebLayout from "@/layouts/WebLayout";
 import SearchBox from "@/components/SearchBox";
+import Image from "next/image";
 export default function Home() {
   return (
     <>
@@ -27,8 +28,8 @@ function Hero() {
             Empower Your Freelance Future: Join the Decentralized Revolution!
           </h1>
           <p className="mb-8 leading-relaxed">
-            Experience Freedom in the Gig Economy: Decentralized Freelancing,
-            Your Way to Success!
+            Experience Freedom in the Gig Economy: Decentralized Freelancing, Your Way to
+            Success!
           </p>
 
           <SearchBox
@@ -38,7 +39,9 @@ function Hero() {
             searchArray={skills}
           />
         </div>
-        <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6"></div>
+        <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
+          <Image src="/images/home/hero.svg" width={1024} height={720} alt="Banner" />
+        </div>
       </div>
     </section>
   );

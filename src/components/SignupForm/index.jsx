@@ -16,7 +16,7 @@ const signupSchema = Yup.object({
     }),
 });
 
-export function SignupForm({ handleSubmit, isSubmitted }) {
+export function SignupForm({ handleSubmit, isSubmitted, isLoading }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -67,10 +67,7 @@ export function SignupForm({ handleSubmit, isSubmitted }) {
             <div className="w-full">
               <Field
                 className={`form-input ${
-                  errors.lastName &&
-                  touched.lastName &&
-                  submitCount > 0 &&
-                  "field-error"
+                  errors.lastName && touched.lastName && submitCount > 0 && "field-error"
                 }`}
                 type="text"
                 name="lastName"
@@ -89,10 +86,7 @@ export function SignupForm({ handleSubmit, isSubmitted }) {
           <div>
             <Field
               className={`form-input ${
-                errors.email &&
-                touched.email &&
-                submitCount > 0 &&
-                "field-error"
+                errors.email && touched.email && submitCount > 0 && "field-error"
               }`}
               type="email"
               name="email"
@@ -165,8 +159,12 @@ export function SignupForm({ handleSubmit, isSubmitted }) {
               )}
             </div>
           </div>
-          <button type="submit" className="form-submit-btn">
-            Join
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="form-submit-btn disabled:bg-neutral-100 disabled:text-neutral-500 "
+          >
+            {isLoading ? "Loading..." : "Send Email"}
           </button>
         </Form>
       )}

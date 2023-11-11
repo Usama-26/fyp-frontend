@@ -51,7 +51,7 @@ export default function ProjectCard({
             <Chip value={"React"} />
           </div>
         </div>
-        <div className="basis-3/12 px-4 flex flex-col gap-4 text-end">
+        <div className="basis-2/12 flex flex-col gap-4 text-end">
           <div>
             <span className="text-3xl font-bold text-primary-700">${budget}</span>
             <small className="uppercase text-neutral-500 block">{pricing_type}</small>

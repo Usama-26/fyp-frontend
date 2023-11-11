@@ -41,7 +41,7 @@ function ClientProjects() {
 
   return (
     <WebLayout>
-      <section className="h-screen">
+      <section className="min-h-screen">
         <div className="max-w-7xl mx-auto m-4 p-4 rounded-md  ">
           <h1 className="text-2xl font-display font-bold text-primary-950">
             My Projects

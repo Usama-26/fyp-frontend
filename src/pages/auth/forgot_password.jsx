@@ -8,7 +8,7 @@ import { useAccounts } from "@/context/AccountContext";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 
 function ForgotPassword() {
-  const { forgotPassword, error, emailSuccessMessage } = useAccounts();
+  const { forgotPassword, isLoading, error, emailSuccessMessage } = useAccounts();
 
   return (
     <>
@@ -17,10 +17,15 @@ function ForgotPassword() {
       </Head>
       <NavBar />
       <main>
-        <div className="my-10 max-w-sm mx-auto border rounded-lg shadow">
+        <div className="relative my-10 max-w-sm mx-auto border rounded-lg shadow">
           {error && (
-            <div className="w-full bg-danger-500 rounded-t-md py-2 px-2">
-              <p className="text-sm font-medium text-white">{error}</p>
+            <div className="w-full absolute top-0 bg-danger-200 rounded-t-md py-2 px-2">
+              <p className="text-sm text-danger-700">{error}</p>
+            </div>
+          )}
+          {emailSuccessMessage && (
+            <div className="w-full absolute top-0 bg-success-200 rounded-t-md py-2 px-2">
+              <p className="text-sm text-success-700">{emailSuccessMessage}</p>
             </div>
           )}
           <div className="p-8 pt-12">
@@ -32,9 +37,9 @@ function ForgotPassword() {
             </h3>
 
             <p className="text-sm mb-4 italic text-neutral-500">
-              {emailSuccessMessage
-                ? emailSuccessMessage
-                : "Provide your email address and we'll send a password reset link to that email address."}
+              {
+                "Provide your email address and we'll send a password reset link to that email address."
+              }
             </p>
             <Formik
               initialValues={{
@@ -48,9 +53,9 @@ function ForgotPassword() {
               })}
               onSubmit={(values, { resetForm }) => {
                 forgotPassword(values);
-                // if (isSubmitted) {
-                //   resetForm({ values: null });
-                // }
+                if (emailSuccessMessage) {
+                  resetForm({ values: null });
+                }
               }}
             >
               {({ errors, touched, submitCount }) => (
@@ -73,8 +78,12 @@ function ForgotPassword() {
                       />
                     )}
                   </div>
-                  <button type="submit" className="form-submit-btn">
-                    Send Email
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="form-submit-btn disabled:bg-neutral-100   disabled:text-neutral-500 "
+                  >
+                    {isLoading ? "Loading..." : "Send Email"}
                   </button>
                 </Form>
               )}

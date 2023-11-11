@@ -94,22 +94,27 @@ function AuthMenu() {
 function UserMenu({ onLogout }) {
   const { user, error } = useAccounts();
   const { firstName, lastName, user_type } = user?.data;
-  
+
   return (
     <>
-      {/* <WalletConnect /> */}
       <div className="relative flex-between-centered gap-4">
         <Menu>
           <Menu.Button as={Fragment}>
-            <button className="inline-flex gap-2 items-center hover:bg-primary-100 p-1 rounded-md">
+            <button className="flex gap-2 items-center hover:bg-primary-100 p-2 rounded-md">
               <span>
-                <Image
-                  src={"/images/profiles/profile-2.jpg"}
-                  width={1024}
-                  height={683}
-                  className="w-10 aspect-square object-cover rounded-full"
-                  alt="Profile Picture"
-                />
+                {user?.profile_photo ? (
+                  <Image
+                    src={"/images/profiles/profile-2.jpg"}
+                    width={1024}
+                    height={683}
+                    className="w-10 aspect-square object-cover rounded-full"
+                    alt="Profile Picture"
+                  />
+                ) : (
+                  <span className=" px-3 py-1.5 rounded-full text-xl text-center text-white font-semibold bg-primary-500">
+                    {firstName[0]}
+                  </span>
+                )}
               </span>
               <span className=" text-sm font-medium">Hello, {firstName}</span>
             </button>
@@ -136,7 +141,7 @@ function UserMenu({ onLogout }) {
                   <div className="text-center">
                     <span className="px-2 text-xs border rounded-full text-green-600 border-green-600">
                       <GoDotFill className="inline" />
-                      online
+                      <span>online</span>
                     </span>
                   </div>
                 </div>
@@ -152,7 +157,7 @@ function UserMenu({ onLogout }) {
                       className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
                     >
                       <BiSolidOffer className="w-5 h-5 fill-neutral-700" />
-                      <span>My Offers</span>
+                      <span>My Gigs</span>
                     </Link>
                   )}
                   {user_type === "client" && (
