@@ -13,7 +13,7 @@ function FreelancerJoin() {
 
   useEffect(() => {
     isLoggedIn && router.push("/");
-  }, [isLoggedIn]);
+  }, [isLoggedIn, router]);
   return (
     <>
       <Head>

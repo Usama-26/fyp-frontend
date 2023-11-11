@@ -6,7 +6,8 @@ function reducer(state, action) {
   switch (action.type) {
     case "categories/fetch":
       return { ...state, categories: action.payload };
-
+    case "loading":
+      return { ...state, isLoading: true };
     case "rejected":
       return { ...state, error: action.payload };
     case "reset":
@@ -23,10 +24,7 @@ const initialState = {
 const ServicesContext = createContext();
 
 function ServicesProvider({ children }) {
-  const [{ categories, isLoading, error }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [{ categories, isLoading, error }, dispatch] = useReducer(reducer, initialState);
 
   const fetchCategories = async () => {
     try {
@@ -43,9 +41,7 @@ function ServicesProvider({ children }) {
 
   const getCategory = async (category) => {
     try {
-      const response = await getData(
-        `${BASE_URL}/categories/get_by_path/${category}`
-      );
+      const response = await getData(`${BASE_URL}/categories/get_by_path/${category}`);
       return response.data.data;
     } catch (error) {
       console.log(error);
@@ -54,8 +50,29 @@ function ServicesProvider({ children }) {
 
   const getSubCategory = async (path) => {
     try {
+      const response = await getData(`${BASE_URL}/subCategories/get_by_path/${path}`);
+      return response.data.data;
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
+  const getSubCategoriesByCategory = async (categoryId) => {
+    dispatch({ type: "loading" });
+    try {
       const response = await getData(
-        `${BASE_URL}/subCategories/get_by_path/${path}`
+        `${BASE_URL}/subCategories/find_by_category/${categoryId}`
+      );
+      return response.data.data;
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+  const getServicesByCategory = async (subCategoryId) => {
+    dispatch({ type: "loading" });
+    try {
+      const response = await getData(
+        `${BASE_URL}/services/find_by_subcategory/${subCategoryId}`
       );
       return response.data.data;
     } catch (error) {
@@ -65,9 +82,7 @@ function ServicesProvider({ children }) {
 
   const getService = async (path) => {
     try {
-      const response = await getData(
-        `${BASE_URL}/services/get_by_path/${path}`
-      );
+      const response = await getData(`${BASE_URL}/services/get_by_path/${path}`);
       return response.data.data;
     } catch (error) {
       dispatch({ type: "rejected", payload: error.response.data.message });
@@ -88,6 +103,8 @@ function ServicesProvider({ children }) {
         getCategory,
         getSubCategory,
         getService,
+        getSubCategoriesByCategory,
+        getServicesByCategory
       }}
     >
       {children}

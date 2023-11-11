@@ -1,3 +1,4 @@
+import { useServices } from "@/context/ServiceContext";
 import { RadioGroup } from "@headlessui/react";
 import { useState } from "react";
 import { TbCircleCheck } from "react-icons/tb";
@@ -38,10 +39,10 @@ const skillsLevels = [
   },
 ];
 
-export function ProjectScopeForm({ formData }) {
+export function ProjectScopeForm({ formikData }) {
   const [selectedScope, setSelectedScope] = useState(projectScopes[0]);
   const [selectedSkillsLevel, setSelectedSkillsLevel] = useState(skillsLevels[0]);
-  const { setFieldValue } = formData;
+  const { setFieldValue } = formikData;
 
   return (
     <>
@@ -64,11 +65,11 @@ export function ProjectScopeForm({ formData }) {
                   key={scope.value}
                   value={scope}
                   className={({ active, checked }) =>
-                    ` relative flex cursor-pointer rounded-lg px-5 py-4 shadow-custom-md shadow-neutral-300 focus:outline-none ${
+                    ` relative flex cursor-pointer rounded-lg px-5 py-4 shadow-custom-md shadow-neutral-200 focus:outline-none ${
                       active
                         ? "ring-2 ring-white/60 ring-offset-2 ring-offset-primary-300"
                         : ""
-                    } ${checked ? "bg-primary-700/75 text-white" : "bg-white"}`
+                    } ${checked ? "bg-primary-600/75 text-white" : "bg-white"}`
                   }
                 >
                   {({ checked }) => (
@@ -125,11 +126,11 @@ export function ProjectScopeForm({ formData }) {
                   key={level.value}
                   value={level}
                   className={({ active, checked }) =>
-                    ` relative flex cursor-pointer rounded-lg px-5 py-4 shadow-custom-md shadow-neutral-300 focus:outline-none ${
+                    ` relative flex cursor-pointer rounded-lg px-5 py-4 shadow-custom-md shadow-neutral-200 focus:outline-none ${
                       active
                         ? "ring-2 ring-white/60 ring-offset-2 ring-offset-primary-300"
                         : ""
-                    } ${checked ? "bg-primary-700/75 text-white" : "bg-white"}`
+                    } ${checked ? "bg-primary-600/75 text-white" : "bg-white"}`
                   }
                 >
                   {({ checked }) => (

@@ -18,10 +18,10 @@ export function getOne(endpoint, id) {
   });
 }
 
-export function postData(endpoint, data) {
+export function postData(endpoint, data, options = {}) {
   return new Promise((resolve, reject) => {
     axios
-      .post(endpoint, data)
+      .post(endpoint, data, options)
       .then((res) => resolve(res))
       .catch((err) => reject(err));
   });

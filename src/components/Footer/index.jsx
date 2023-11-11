@@ -5,7 +5,7 @@ import Logo from "../Logo";
 export default function Footer() {
   return (
     <>
-      <footer className=" border-t">
+      <footer className="w-fullbg-white border-t">
         <div className="container px-5 py-24  mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
           <div className="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
             <Logo />

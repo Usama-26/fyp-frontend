@@ -15,11 +15,10 @@ const pricingTypes = [
     label: "Hourly Rate",
   },
 ];
-export function ProjectPricingForm({ formData }) {
-  const [inEthereum, setInEthereum] = useState(0);
+export function ProjectPricingForm({ formikData, inEthereum, setInEthereum }) {
   const [apiError, setApiError] = useState("");
   const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
-  const { values, errors, touched, submitCount, setFieldValue } = formData;
+  const { values, errors, touched, submitCount, setFieldValue } = formikData;
   const [deliveryDate, setDeliveryDate] = useState({});
 
   const fetchCurrencyRate = async () => {
@@ -119,7 +118,6 @@ export function ProjectPricingForm({ formData }) {
               id="budget"
               min={10}
               max={1000}
-              defaultValue={10}
               className=" w-32 p-2 border border-neutral-500 rounded-md text-left  focus:ring-2 focus:border-primary-500 font-medium placeholder:text-neutral-400 outline-none text-sm capitalize"
             />
             <span className="ml-2 text-lg font-medium">

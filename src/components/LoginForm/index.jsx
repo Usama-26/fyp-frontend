@@ -26,10 +26,7 @@ export default function LoginForm({ handleSubmit, isSubmitted }) {
           <div>
             <Field
               className={`form-input ${
-                errors.email &&
-                touched.email &&
-                submitCount > 0 &&
-                "field-error"
+                errors.email && touched.email && submitCount > 0 && "field-error"
               }`}
               type="email"
               name="email"
@@ -47,10 +44,7 @@ export default function LoginForm({ handleSubmit, isSubmitted }) {
           <div className="relative">
             <Field
               className={`form-input ${
-                errors.password &&
-                touched.password &&
-                submitCount > 0 &&
-                "field-error"
+                errors.password && touched.password && submitCount > 0 && "field-error"
               }`}
               type={isPasswordVisible ? "text" : "password"}
               name="password"
@@ -78,7 +72,7 @@ export default function LoginForm({ handleSubmit, isSubmitted }) {
           </div>
           <div className="text-end mb-10">
             <Link
-              href={"/auth/forget_password"}
+              href={"/auth/forgot_password"}
               className="text-sm italic text-neutral-500 hover:text-primary-500 hover:underline underline-offset-2"
             >
               Forgot password ?

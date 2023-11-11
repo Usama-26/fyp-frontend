@@ -18,6 +18,12 @@ function reducer(state, action) {
     case "account/created":
       return { ...state, user: action.payload };
 
+    case "account/forgotPassword":
+      return { ...state, emailSuccessMessage: action.payload };
+
+    case "account/resetPassword":
+      return { ...state, resetPassSuccessMessage: action.payload };
+
     case "loading":
       return { ...state, isLoading: true, error: "" };
 
@@ -40,16 +46,18 @@ const initialState = {
   isLoggedIn: false,
   error: "",
   user: null,
+  emailSuccessMessage: "",
+  resetPassSuccessMessage: "",
 };
 
 const AccountsContext = createContext();
 
 function AccountsProvider({ children }) {
   const router = useRouter();
-  const [{ isLoading, isLoggedIn, error, user }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [
+    { isLoading, isLoggedIn, error, user, emailSuccessMessage, resetPassSuccessMessage },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   const handleSignup = async (data) => {
     dispatch({ type: "loading" });
@@ -66,10 +74,8 @@ function AccountsProvider({ children }) {
     dispatch({ type: "loading" });
     try {
       const response = await postData(`${BASE_URL}/auth/login`, data);
-
       dispatch({ type: "account/login", payload: response.data });
     } catch (err) {
-      // console.log(err.response);
       dispatch({ type: "rejected", payload: err.response.data.message });
     }
   };
@@ -118,19 +124,21 @@ function AccountsProvider({ children }) {
   };
 
   const forgotPassword = async (data) => {
+    dispatch({ type: "loading" });
     try {
-      const response = await postData(`${BASE_URL}/auth/forgotPassword`, data);
-      console.log(response);
+      const response = await postData(`${BASE_URL}/auth/forgetPassword`, data);
+
+      dispatch({ type: "account/forgotPassword", payload: response.data.message });
     } catch (error) {
-      console.log(error.response);
+      dispatch({ type: "rejected", payload: error?.response?.data?.message });
     }
   };
   const resetPassword = async (data) => {
     try {
       const response = await postData(`${BASE_URL}/auth/resetPassword`, data);
-      console.log(response);
+      dispatch({ type: "account/resetPassword", payload: response?.data?.message });
     } catch (error) {
-      console.log(error.response);
+      dispatch({ type: "rejected", payload: error?.response?.data?.message });
     }
   };
 
@@ -162,6 +170,8 @@ function AccountsProvider({ children }) {
         isLoggedIn,
         isLoading,
         error,
+        emailSuccessMessage,
+        resetPassSuccessMessage,
         handleSignup,
         handleLogin,
         handleLogout,

@@ -3,11 +3,28 @@ import { ErrorMessage, Field } from "formik";
 import { useEffect, useState } from "react";
 import Select from "react-select";
 
-export function ProjectInfoForm({ formData }) {
+export function ProjectInfoForm({
+  formikData,
+  selectedCategory,
+  setSelectedCategory,
+  selectedSubCategory,
+  setSelectedSubCategory,
+  selectedService,
+  setSelectedService,
+}) {
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const { categories: fetchedCategories } = useServices();
-  const { values, errors, touched, submitCount, setFieldValue } = formData;
+  const [subCategories, setSubCategories] = useState([]);
+  const [services, setServices] = useState([]);
+
+  const {
+    categories: fetchedCategories,
+    getSubCategoriesByCategory,
+    error,
+    isLoading,
+    getServicesByCategory,
+  } = useServices();
+
+  const { values, errors, touched, submitCount, setFieldValue } = formikData;
 
   useEffect(() => {
     if (fetchedCategories) {
@@ -21,6 +38,42 @@ export function ProjectInfoForm({ formData }) {
       setCategories(newCategoriesList);
     }
   }, [fetchedCategories]);
+
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      if (selectedCategory) {
+        const data = await getSubCategoriesByCategory(selectedCategory.value);
+        const newSubCategoriesList = data?.map((el) => {
+          const { _id: value, name: label } = el;
+          return {
+            value,
+            label,
+          };
+        });
+
+        setSubCategories(newSubCategoriesList);
+      }
+    };
+    fetchSubCategories();
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      if (selectedSubCategory) {
+        const data = await getServicesByCategory(selectedSubCategory.value);
+        const newServicesList = data?.map((el) => {
+          const { _id: value, name: label } = el;
+          return {
+            value,
+            label,
+          };
+        });
+
+        setServices(newServicesList);
+      }
+    };
+    fetchServices();
+  }, [selectedSubCategory]);
 
   return (
     <>
@@ -120,12 +173,13 @@ export function ProjectInfoForm({ formData }) {
                 </label>
                 <Select
                   {...field}
-                  options={categories ? categories : null}
+                  options={subCategories ? subCategories : null}
+                  isDisabled={subCategories ? false : true}
                   classNames={"form-input"}
-                  value={selectedCategory}
+                  value={selectedSubCategory}
                   placeholder="Select a Service"
                   onChange={(selected) => {
-                    setSelectedCategory(selected);
+                    setSelectedSubCategory(selected);
                     setFieldValue("sub_category", selected.value);
                   }}
                 />
@@ -143,16 +197,17 @@ export function ProjectInfoForm({ formData }) {
             {({ field }) => (
               <div className="w-full">
                 <label htmlFor="service" className="font-medium">
-                  Be More Specific (optional)
+                  Be More Specific
                 </label>
                 <Select
                   {...field}
-                  options={categories ? categories : null}
+                  options={services ? services : null}
+                  isDisabled={services ? false : true}
                   classNames={"form-input"}
-                  value={selectedCategory}
-                  placeholder="Refine your result (optional)"
+                  value={selectedService}
+                  placeholder="Refine your result"
                   onChange={(selected) => {
-                    setSelectedCategory(selected);
+                    setSelectedService(selected);
                     setFieldValue("service", selected.value);
                   }}
                 />

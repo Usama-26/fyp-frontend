@@ -3,14 +3,33 @@ import SearchBox from "@/components/SearchBox";
 import WebLayout from "@/layouts/WebLayout";
 
 import sampleSkills from "@/json/sample-skills.json";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getData } from "@/utils/api/genericAPI";
+import { BASE_URL } from "@/constants";
 
 export default function ExploreProjects() {
+  const [projects, setProjects] = useState([]);
+  const [error, setError] = useState("");
   const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearch = (query = searchQuery) => {
     console.log("Actual Query :", query);
   };
+
+  const fetchProjects = async () => {
+    try {
+      const response = await getData(`${BASE_URL}/projects`);
+
+      setProjects(response?.data?.data);
+    } catch (error) {
+      setError("Something went wrong while loading projects.");
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
   return (
     <WebLayout>
       <section className="bg-gradient-to-br from-primary-500 to-primary-700 py-12 text-center text-white">
@@ -34,10 +53,18 @@ export default function ExploreProjects() {
             <h2 className="text-xl font-semibold">Filters</h2>
           </div>
           <div className="basis-9/12 space-y-2">
-            <ProjectCard />
-            <ProjectCard />
-            <ProjectCard />
-            <ProjectCard />
+            {projects?.map(
+              ({ title, description, budget, skills_level, pricing_type }, index) => (
+                <ProjectCard
+                  key={index}
+                  title={title}
+                  description={description}
+                  budget={budget}
+                  skills_level={skills_level}
+                  pricing_type={pricing_type}
+                />
+              )
+            )}
           </div>
         </div>
       </section>
