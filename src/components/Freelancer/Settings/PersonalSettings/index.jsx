@@ -1,14 +1,8 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
 import * as Yup from "yup";
-import { Listbox, Transition } from "@headlessui/react";
-import { BsChevronDown } from "react-icons/bs";
 import { useAccounts } from "@/context/AccountContext";
-import Image from "next/image";
-import { HiChevronUp } from "react-icons/hi";
-import { HiChevronUpDown } from "react-icons/hi2";
 
 export default function PersonalSettings() {
   const [countries, setCountries] = useState([]);
@@ -48,108 +42,39 @@ export default function PersonalSettings() {
           <Form>
             <div className="space-y-4 max-w-md">
               <div className="flex gap-4">
-                <div className="w-full">
-                  <Field
-                    className={`form-input ${
-                      errors.firstName && touched.firstName && "field-error"
-                    }`}
-                    type="text"
-                    name="firstName"
-                    id="firstName"
-                    placeholder="First Name"
-                  />
-                  <ErrorMessage
-                    name="firstName"
-                    component={"p"}
-                    className="field-error__message"
-                  />
-                </div>
-                <div className="w-full">
-                  <Field
-                    className={`form-input ${
-                      errors.lastName && touched.lastName && "field-error"
-                    }`}
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    placeholder="Last Name"
-                  />
-                  <ErrorMessage
-                    name="lastName"
-                    component={"p"}
-                    className="field-error__message"
-                  />
-                </div>
-              </div>
-              <div className="w-full relative">
-                <h1 className="font-semibold mb-2">Country</h1>
-                <Field name="country" id="country">
-                  {({ field }) => (
-                    <Listbox
-                      value={selectedCountry}
-                      onChange={(value) => {
-                        setFieldValue("country", value.name.common);
-                        setSelectedCountry(value);
-                      }}
-                    >
-                      {({ open }) => (
-                        <>
-                          <Listbox.Button
-                            className={`w-full p-2 rounded-md border text-left focus:ring-2 focus:border-primary-500 ${
-                              open ? "border-primary-500 ring-2" : "border-neutral-500"
-                            } font-medium placeholder:text-neutral-400 outline-none text-sm`}
-                          >
-                            <div className="flex gap-2 justify-between items-center">
-                              <span>
-                                <Image
-                                  src={selectedCountry.flags.svg}
-                                  width={20}
-                                  height={20}
-                                  alt={selectedCountry.flags.alt}
-                                  className="inline mr-2"
-                                />
-                                <span>{selectedCountry.name.common}</span>
-                              </span>
-                              <HiChevronUpDown className="w-4 h-4" />
-                            </div>
-                          </Listbox.Button>
-
-                          <Listbox.Options
-                            className={
-                              "w-full h-48 overflow-auto rounded-md shadow-custom-md shadow-neutral-300 mt-2 absolute bg-white divide-y"
-                            }
-                          >
-                            {countries?.map((country, index) => (
-                              <Listbox.Option
-                                key={index}
-                                value={country}
-                                className={
-                                  " text-sm cursor-pointer hover:bg-primary-100 p-2 capitalize"
-                                }
-                              >
-                                <Image
-                                  src={country.flags.svg}
-                                  width={20}
-                                  height={20}
-                                  alt={country.flags.alt}
-                                  className="inline mr-2"
-                                />
-                                <span>{country.name.common}</span>
-                              </Listbox.Option>
-                            ))}
-                          </Listbox.Options>
-                        </>
-                      )}
-                    </Listbox>
-                  )}
-                </Field>
+                <Field
+                  className={`form-input ${
+                    errors.firstName && touched.firstName && "field-error"
+                  }`}
+                  type="text"
+                  name="firstName"
+                  id="firstName"
+                  placeholder="First Name"
+                />
                 <ErrorMessage
-                  name="country"
+                  name="firstName"
+                  component={"p"}
+                  className="field-error__message"
+                />
+              </div>
+              <div className="w-full">
+                <Field
+                  className={`form-input ${
+                    errors.lastName && touched.lastName && "field-error"
+                  }`}
+                  type="text"
+                  name="lastName"
+                  id="lastName"
+                  placeholder="Last Name"
+                />
+                <ErrorMessage
+                  name="lastName"
                   component={"p"}
                   className="field-error__message"
                 />
               </div>
             </div>
+
             <div className="space-x-2 text-end">
               <button
                 type="submit"
@@ -164,7 +89,6 @@ export default function PersonalSettings() {
                 Update
               </button>
             </div>
-            <p>{JSON.stringify(values)}</p>
           </Form>
         )}
       </Formik>

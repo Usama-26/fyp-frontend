@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import * as Yup from "yup";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import Spinner from "../Spinner";
 export default function LoginForm({ handleSubmit, isSubmitted, isLoading }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
@@ -83,7 +84,7 @@ export default function LoginForm({ handleSubmit, isSubmitted, isLoading }) {
             disabled={isLoading}
             className="form-submit-btn disabled:bg-neutral-100   disabled:text-neutral-500 "
           >
-            {isLoading ? "Loading..." : "Login"}
+            {isLoading ? <Spinner /> : "Send Email"}
           </button>
         </Form>
       )}

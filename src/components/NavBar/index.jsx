@@ -111,7 +111,7 @@ function UserMenu({ onLogout }) {
                     alt="Profile Picture"
                   />
                 ) : (
-                  <span className=" px-3 py-1.5 rounded-full text-xl text-center text-white font-semibold bg-primary-500">
+                  <span className="w-10 h-10 flex justify-center items-center  rounded-full text-xl text-center text-white font-semibold bg-primary-500">
                     {firstName[0]}
                   </span>
                 )}

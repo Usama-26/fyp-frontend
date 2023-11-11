@@ -65,7 +65,7 @@ function AccountsProvider({ children }) {
       const response = await postData(`${BASE_URL}/auth/signup`, data);
 
       dispatch({ type: "account/created", payload: response.data });
-    } catch (err) {
+    } catch (error) {
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
       } else {
@@ -79,7 +79,7 @@ function AccountsProvider({ children }) {
     try {
       const response = await postData(`${BASE_URL}/auth/login`, data);
       dispatch({ type: "account/login", payload: response.data });
-    } catch (err) {
+    } catch (error) {
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
       } else {
@@ -99,7 +99,7 @@ function AccountsProvider({ children }) {
       });
 
       dispatch({ type: "account/login", payload: response.data });
-    } catch (err) {
+    } catch (error) {
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
       } else {
@@ -128,7 +128,7 @@ function AccountsProvider({ children }) {
         },
       });
       dispatch({ type: "account/loaded", payload: response.data });
-    } catch (err) {
+    } catch (error) {
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
       } else {

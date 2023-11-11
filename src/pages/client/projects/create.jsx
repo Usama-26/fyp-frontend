@@ -21,7 +21,7 @@ const projectSchema = Yup.object({
     .required("Title is required"),
   description: Yup.string()
     .trim()
-    .min(100, "Write a more clear description of atleast 100 characters long")
+    .min(50, "Write a more clear description of atleast 50 characters long")
     .max(2000, "Description can't exceed 2000 characters")
     .required("Add project description"),
   category: Yup.string().trim().required("Please Select A Category"),
@@ -49,14 +49,29 @@ const projectInitialValues = {
   budget: 0,
   deadline: "",
 };
+
+const pricingTypes = [
+  {
+    value: "fixed",
+    label: "Fixed Budget",
+  },
+  {
+    value: "hourly",
+    label: "Hourly Rate",
+  },
+];
 function CreateProject() {
   const [formStep, setFormStep] = useState(0);
   const [formData, setFormData] = useState({});
   const [inEthereum, setInEthereum] = useState(0);
 
+  const [deliveryDate, setDeliveryDate] = useState({});
+  const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
+
   const [selectedCategory, setSelectedCategory] = useState({});
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [selectedService, setSelectedService] = useState({});
+  const [newProject, setNewProject] = useState({});
 
   const [error, setError] = useState();
 
@@ -64,7 +79,7 @@ function CreateProject() {
 
   const postProject = async () => {
     const token = window.localStorage.getItem("token");
-    console.log(formData);
+
     setError("");
     try {
       const response = await postData(`${BASE_URL}/projects/`, formData, {
@@ -72,7 +87,7 @@ function CreateProject() {
           authorization: `Bearer ${token}`,
         },
       });
-      console.log(response);
+      router.push("/client/projects");
     } catch (error) {
       setError(error?.response?.data?.message);
       console.log(error);
@@ -90,9 +105,10 @@ function CreateProject() {
             <Formik
               initialValues={projectInitialValues}
               validationSchema={projectSchema}
-              onSubmit={(values) => {
+              onSubmit={(values, { resetForm }) => {
                 setFormStep(1);
                 setFormData(values);
+                newProject && resetForm({ values: null });
               }}
             >
               {(formikValues) => (
@@ -147,6 +163,11 @@ function CreateProject() {
                             formikData={formikValues}
                             inEthereum={inEthereum}
                             setInEthereum={setInEthereum}
+                            setDeliveryDate={setDeliveryDate}
+                            deliveryDate={deliveryDate}
+                            selectedPricingType={selectedPricingType}
+                            setSelectedPricingType={setSelectedPricingType}
+                            pricingTypes={pricingTypes}
                           />
                         </div>
                       </div>
@@ -178,112 +199,16 @@ function CreateProject() {
             </Formik>
 
             {formStep === 1 && (
-              <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
-                {error ? (
-                  <div className="p-4 bg-danger-200 text-danger-700">
-                    <p>{error}</p>
-                  </div>
-                ) : (
-                  ""
-                )}
-                <div className=" p-8 flex divide-x">
-                  <div className="w-1/3">
-                    <h1 className="text-2xl font-display text-primary-700 capitalize">
-                      {"Let's take final look"}
-                    </h1>
-                  </div>
-                  <div className="w-1/3 px-2 space-y-4">
-                    <h1 className="font-display font-bold text-xl">Basic Info</h1>
-                    <div>
-                      <label htmlFor="title" className="font-medium">
-                        Title
-                      </label>
-                      <p>{formData?.title}</p>
-                    </div>
-                    <div>
-                      <label htmlFor="description" className="font-medium">
-                        Description
-                      </label>
-                      <p>{formData?.description}</p>
-                    </div>
-                    <div>
-                      <label htmlFor="category" className="font-medium">
-                        Category
-                      </label>
-                      <p>{selectedCategory?.label}</p>
-                    </div>
-                    <div>
-                      <label htmlFor="service" className="font-medium">
-                        Service
-                      </label>
-                      <p>{selectedSubCategory?.label}</p>
-                    </div>
-                    <div>
-                      <label htmlFor="focused" className="font-medium">
-                        Specific Service
-                      </label>
-                      <p>{selectedService?.label}</p>
-                    </div>
-                  </div>
-                  <div className="w-1/3 px-2 space-y-4">
-                    <h1 className="font-display font-bold text-xl">Project Scope</h1>
-                    <div>
-                      <label htmlFor="service" className="font-medium">
-                        Scope
-                      </label>
-                      <p className="capitalize">{formData?.scope}</p>
-                    </div>
-                    <div>
-                      <label htmlFor="service" className="font-medium">
-                        Skills Level
-                      </label>
-                      <p className="capitalize">{formData?.skills_level}</p>
-                    </div>
-                    <h1 className="font-display font-bold text-xl">
-                      Pricing and Deadline
-                    </h1>
-                    <div>
-                      <label htmlFor="pricing_type" className="font-medium">
-                        Pricing Type
-                      </label>
-                      <p className="capitalize">{formData?.pricing_type}</p>
-                    </div>
-                    <div>
-                      <label htmlFor="budget" className="font-medium">
-                        Budget
-                      </label>
-                      <p className="capitalize">{` ${
-                        formData.pricing_type === "fixed" ? "$" : "$/hr"
-                      }${formData?.budget} (${inEthereum} ETH)`}</p>
-                    </div>
-                    <div>
-                      <label htmlFor="service" className="font-medium">
-                        Delivery Date
-                      </label>
-                      <p className="capitalize">{formData?.deadline}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="px-8 py-4 border-t text-end">
-                  <div className="flex justify-end gap-2">
-                    <button
-                      onClick={() => setFormStep(0)}
-                      className="px-4 py-2 rounded-md border font-medium  inline-flex gap-2 items-center text-sm"
-                    >
-                      <span>
-                        <BiArrowBack />
-                      </span>
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      onClick={postProject}
-                      className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 text-white font-medium  inline-flex gap-2 items-center text-sm"
-                    >
-                      <span>Post Project</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProjectReviewTab
+                formData={formData}
+                error={error}
+                postProject={postProject}
+                selectedCategory={selectedCategory}
+                selectedSubCategory={selectedSubCategory}
+                selectedService={selectedService}
+                inEthereum={inEthereum}
+                setFormStep={setFormStep}
+              />
             )}
           </div>
         </section>
@@ -293,3 +218,121 @@ function CreateProject() {
 }
 
 export default withRouteProtect(CreateProject, ["client"]);
+
+function ProjectReviewTab({
+  formData,
+  error,
+  postProject,
+  selectedCategory,
+  selectedSubCategory,
+  selectedService,
+  inEthereum,
+  setFormStep,
+}) {
+  return (
+    <div className="min-h-screen rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
+      {error ? (
+        <div className="p-4 bg-danger-200 text-danger-700">
+          <p>{error}</p>
+        </div>
+      ) : (
+        ""
+      )}
+      <div className=" p-8 flex divide-x">
+        <div className="w-1/3">
+          <h1 className="text-2xl font-display text-primary-700 capitalize">
+            {"Let's take a final look"}
+          </h1>
+        </div>
+        <div className="w-1/3 px-2 space-y-4">
+          <h1 className="font-display font-bold text-xl">Basic Info</h1>
+          <div>
+            <label htmlFor="title" className="font-medium">
+              Title
+            </label>
+            <p>{formData?.title}</p>
+          </div>
+          <div>
+            <label htmlFor="description" className="font-medium">
+              Description
+            </label>
+            <p>{formData?.description}</p>
+          </div>
+          <div>
+            <label htmlFor="category" className="font-medium">
+              Category
+            </label>
+            <p>{selectedCategory?.label}</p>
+          </div>
+          <div>
+            <label htmlFor="service" className="font-medium">
+              Service
+            </label>
+            <p>{selectedSubCategory?.label}</p>
+          </div>
+          <div>
+            <label htmlFor="focused" className="font-medium">
+              Specific Service
+            </label>
+            <p>{selectedService?.label}</p>
+          </div>
+        </div>
+        <div className="w-1/3 px-2 space-y-4">
+          <h1 className="font-display font-bold text-xl">Project Scope</h1>
+          <div>
+            <label htmlFor="service" className="font-medium">
+              Scope
+            </label>
+            <p className="capitalize">{formData?.scope}</p>
+          </div>
+          <div>
+            <label htmlFor="service" className="font-medium">
+              Skills Level
+            </label>
+            <p className="capitalize">{formData?.skills_level}</p>
+          </div>
+          <h1 className="font-display font-bold text-xl">Pricing and Deadline</h1>
+          <div>
+            <label htmlFor="pricing_type" className="font-medium">
+              Pricing Type
+            </label>
+            <p className="capitalize">{formData?.pricing_type}</p>
+          </div>
+          <div>
+            <label htmlFor="budget" className="font-medium">
+              Budget
+            </label>
+            <p className="capitalize">{` ${formData?.budget} ${
+              formData.pricing_type === "fixed" ? "$" : "$/hr"
+            } (${inEthereum} ETH)`}</p>
+          </div>
+          <div>
+            <label htmlFor="service" className="font-medium">
+              Delivery Date
+            </label>
+            <p className="capitalize">{formData?.deadline}</p>
+          </div>
+        </div>
+      </div>
+      <div className="px-8 py-4 border-t text-end">
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={() => setFormStep(0)}
+            className="px-4 py-2 rounded-md border font-medium  inline-flex gap-2 items-center text-sm"
+          >
+            <span>
+              <BiArrowBack />
+            </span>
+            <span>Edit</span>
+          </button>
+          <button
+            onClick={postProject}
+            className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 text-white font-medium  inline-flex gap-2 items-center text-sm"
+          >
+            <span>Post Project</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -8,7 +8,7 @@ import WebLayout from "@/layouts/WebLayout";
 import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 function FreelancerJoin() {
-  const { isLoggedIn, error, handleSignup } = useAccounts();
+  const { isLoggedIn, error, isLoading, handleSignup } = useAccounts();
   const router = useRouter();
 
   useEffect(() => {
@@ -38,6 +38,7 @@ function FreelancerJoin() {
                 handleSubmit={(values) =>
                   handleSignup({ ...values, user_type: "freelancer" })
                 }
+                isLoading={isLoading}
               />
 
               <h6 className="text-center font-semibold text-neutral-400 my-4">OR</h6>

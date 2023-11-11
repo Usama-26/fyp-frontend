@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import { useAccounts } from "@/context/AccountContext";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 import { useRouter } from "next/router";
+import Spinner from "@/components/Spinner";
 
 function ResetPassword() {
   const { resetPassword, error, isLoading, resetPassSuccessMessage } = useAccounts();
@@ -137,7 +138,7 @@ function ResetPassword() {
                     disabled={isLoading}
                     className="form-submit-btn disabled:bg-neutral-100   disabled:text-neutral-500 "
                   >
-                    {isLoading ? "Loading..." : "Reset Password"}
+                    {isLoading ? <Spinner /> : "Send Email"}
                   </button>
                 </Form>
               )}

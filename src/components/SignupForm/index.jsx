@@ -2,6 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
 import * as Yup from "yup";
+import Spinner from "../Spinner";
 
 const signupSchema = Yup.object({
   firstName: Yup.string().trim().required("First Name is required"),
@@ -162,9 +163,9 @@ export function SignupForm({ handleSubmit, isSubmitted, isLoading }) {
           <button
             type="submit"
             disabled={isLoading}
-            className="form-submit-btn disabled:bg-neutral-100 disabled:text-neutral-500 "
+            className="form-submit-btn disabled:bg-neutral-100   disabled:text-neutral-500 "
           >
-            {isLoading ? "Loading..." : "Send Email"}
+            {isLoading ? <Spinner /> : "Send Email"}
           </button>
         </Form>
       )}

@@ -3,9 +3,14 @@ import sampleSkills from "@/json/sample-skills.json";
 import WebLayout from "@/layouts/WebLayout";
 import SearchBox from "@/components/SearchBox";
 import Image from "next/image";
+import Head from "next/head";
+
 export default function Home() {
   return (
     <>
+      <Head>
+        <title>Home | ChainWork</title>
+      </Head>
       <WebLayout>
         <Hero />
       </WebLayout>
@@ -24,10 +29,10 @@ function Hero() {
     <section className="bg-gradient-to-br from-primary-500 to-primary-700">
       <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
         <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center text-neutral-50">
-          <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium font-display">
-            Empower Your Freelance Future: Join the Decentralized Revolution!
+          <h1 className="title-font sm:text-4xl text-3xl mb-4 font-bold font-display">
+            Empower Your Freelance Future: <br /> Join the Decentralized Revolution!
           </h1>
-          <p className="mb-8 leading-relaxed">
+          <p className="mb-8 text-lg font-display leading-relaxed">
             Experience Freedom in the Gig Economy: Decentralized Freelancing, Your Way to
             Success!
           </p>

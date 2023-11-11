@@ -134,7 +134,7 @@ export function ProjectInfoForm({
           ) : (
             <p className="text-sm italic text-neutral-500">
               {
-                "Write a paragraph which explains your project in detail. (100 to 2000 characters)"
+                "Write a paragraph which explains your project in detail. (50 to 2000 characters)"
               }
             </p>
           )}

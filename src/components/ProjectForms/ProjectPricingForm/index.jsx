@@ -5,21 +5,18 @@ import { useEffect, useState } from "react";
 import { BsChevronDown } from "react-icons/bs";
 import Datepicker from "react-tailwindcss-datepicker";
 
-const pricingTypes = [
-  {
-    value: "fixed",
-    label: "Fixed Budget",
-  },
-  {
-    value: "hourly",
-    label: "Hourly Rate",
-  },
-];
-export function ProjectPricingForm({ formikData, inEthereum, setInEthereum }) {
-  const [apiError, setApiError] = useState("");
-  const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
+export function ProjectPricingForm({
+  formikData,
+  inEthereum,
+  setInEthereum,
+  deliveryDate,
+  setDeliveryDate,
+  selectedPricingType,
+  setSelectedPricingType,
+  pricingTypes,
+}) {
   const { values, errors, touched, submitCount, setFieldValue } = formikData;
-  const [deliveryDate, setDeliveryDate] = useState({});
+  const [apiError, setApiError] = useState("");
 
   const fetchCurrencyRate = async () => {
     try {

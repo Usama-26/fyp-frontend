@@ -1,3 +1,4 @@
+import Spinner from "@/components/Spinner";
 import { BASE_URL } from "@/constants";
 import { useAccounts } from "@/context/AccountContext";
 import withRouteProtect from "@/helpers/withRouteProtect";
@@ -42,7 +43,7 @@ function ClientProjects() {
   return (
     <WebLayout>
       <section className="min-h-screen">
-        <div className="max-w-7xl mx-auto m-4 p-4 rounded-md  ">
+        <div className="container mx-auto m-4 p-4 rounded-md  ">
           <h1 className="text-2xl font-display font-bold text-primary-950">
             My Projects
           </h1>
@@ -59,10 +60,9 @@ function ClientProjects() {
             </Link>
           </div>
           {isLoading && (
-            <div className="">
-              <h4 className="text-center my-16 font-medium text-neutral-500 text-lg">
-                Loading...
-              </h4>
+            <div className="text-center">
+              <Spinner />
+              <span className="font-medium ml-2 text-neutral-500">Loading...</span>
             </div>
           )}
           {error && (
@@ -80,7 +80,8 @@ function ClientProjects() {
             </div>
           )}
           <div className="grid grid-cols-3">
-            {projects &&
+            {!isLoading &&
+              projects &&
               projects.map((project, index) => (
                 <div
                   key={index}
@@ -96,9 +97,10 @@ function ClientProjects() {
                       <span>Deadline: {project.deadline}</span>
                     </span>
                     <span className="text-end ">
-                      <span className=" font-semibold">{project.budget}$</span>
+                      <span className=" font-semibold">{` ${project.budget}${
+                        project.pricing_type === "fixed" ? "$" : "$/hr"
+                      }`}</span>
                       <br />
-                      <span className="capitalize">{project.pricing_type}</span>
                     </span>
                   </div>
                   <p className="text-sm line-clamp-4">{project.description}</p>

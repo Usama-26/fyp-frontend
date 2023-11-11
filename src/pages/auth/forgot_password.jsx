@@ -6,6 +6,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
+import Spinner from "@/components/Spinner";
 
 function ForgotPassword() {
   const { forgotPassword, isLoading, error, emailSuccessMessage } = useAccounts();
@@ -83,7 +84,7 @@ function ForgotPassword() {
                     disabled={isLoading}
                     className="form-submit-btn disabled:bg-neutral-100   disabled:text-neutral-500 "
                   >
-                    {isLoading ? "Loading..." : "Send Email"}
+                    {isLoading ? <Spinner /> : "Send Email"}
                   </button>
                 </Form>
               )}
