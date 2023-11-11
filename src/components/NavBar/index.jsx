@@ -31,11 +31,7 @@ export default function NavBar() {
         <div className="container mx-auto flex-between-centered">
           <div className=" flex-start-centered lg:gap-8 gap-4">
             <Logo />
-            <Navigation
-              isOpen={isMenuOpen}
-              onOpen={openMenu}
-              onClose={closeMenu}
-            />
+            <Navigation isOpen={isMenuOpen} onOpen={openMenu} onClose={closeMenu} />
           </div>
           {isLoggedIn ? <UserMenu onLogout={handleLogout} /> : <AuthMenu />}
         </div>
@@ -96,9 +92,9 @@ function AuthMenu() {
 }
 
 function UserMenu({ onLogout }) {
-  const { user } = useAccounts();
+  const { user, error } = useAccounts();
   const { firstName, lastName, user_type } = user?.data;
-
+  
   return (
     <>
       {/* <WalletConnect /> */}

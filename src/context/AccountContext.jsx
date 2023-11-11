@@ -115,6 +115,7 @@ function AccountsProvider({ children }) {
       });
       dispatch({ type: "account/loaded", payload: response.data });
     } catch (err) {
+      console.log(err);
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
       } else {
