@@ -10,6 +10,9 @@ import { WagmiConfig } from "wagmi";
 import { AccountsProvider } from "@/context/AccountContext";
 import { ServicesProvider } from "@/context/ServiceContext";
 import { useRouter } from "next/router";
+import { ProjectProvider } from "@/context/ProjectContext";
+import { FreelancerProvider } from "@/context/FreelancerContext";
+import { ClientProvider } from "@/context/ClientContext";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -38,14 +41,20 @@ export default function App({ Component, pageProps }) {
 
   return (
     <main className={`${display.variable} ${inter.variable}`}>
-      {/* <WagmiConfig config={config}>
-      </WagmiConfig> */}
       <GoogleOAuthProvider clientId={web.client_id}>
-        <AccountsProvider>
-          <ServicesProvider>
-            <Component {...pageProps} />
-          </ServicesProvider>
-        </AccountsProvider>
+        <WagmiConfig config={config}>
+          <AccountsProvider>
+            <ServicesProvider>
+              <ProjectProvider>
+                <ClientProvider>
+                  <FreelancerProvider>
+                    <Component {...pageProps} />
+                  </FreelancerProvider>
+                </ClientProvider>
+              </ProjectProvider>
+            </ServicesProvider>
+          </AccountsProvider>
+        </WagmiConfig>
       </GoogleOAuthProvider>
     </main>
   );

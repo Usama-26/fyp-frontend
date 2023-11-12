@@ -12,6 +12,7 @@ import { Fragment, useEffect, useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { postData } from "@/utils/api/genericAPI";
 import { BASE_URL } from "@/constants";
+import { Transition } from "@headlessui/react";
 
 const projectSchema = Yup.object({
   title: Yup.string()
@@ -33,7 +34,7 @@ const projectSchema = Yup.object({
     .min(10, "Select a minimum budget of 10 $")
     .max(1000, "Maximum budget can be 1000 $")
     .required("Please enter your budget"),
-  skills_level: Yup.string().trim().required("Choose a pricing type").default("basic"),
+  skills_level: Yup.string().trim().required("Choose a Skills Level").default("beginner"),
   scope: Yup.string().trim().required("Set project scope").default("small"),
 });
 
@@ -62,7 +63,7 @@ const pricingTypes = [
 ];
 function CreateProject() {
   const [formStep, setFormStep] = useState(0);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(null);
   const [inEthereum, setInEthereum] = useState(0);
 
   const [deliveryDate, setDeliveryDate] = useState({});
@@ -71,7 +72,6 @@ function CreateProject() {
   const [selectedCategory, setSelectedCategory] = useState({});
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [selectedService, setSelectedService] = useState({});
-  const [newProject, setNewProject] = useState({});
 
   const [error, setError] = useState();
 
@@ -105,15 +105,15 @@ function CreateProject() {
             <Formik
               initialValues={projectInitialValues}
               validationSchema={projectSchema}
+              // enableReinitialize={true}
               onSubmit={(values, { resetForm }) => {
                 setFormStep(1);
                 setFormData(values);
-                newProject && resetForm({ values: null });
               }}
             >
               {(formikValues) => (
-                <Form>
-                  {formStep === 0 && (
+                <Transition show={formStep === 0}>
+                  <Form>
                     <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
                       <div className="flex justify-between p-8">
                         <div className="basis-5/12">
@@ -175,7 +175,7 @@ function CreateProject() {
                       <div className="px-8 py-4 border-t text-end">
                         <div className="flex justify-end gap-2">
                           <button
-                            onClick={() => router.back()}
+                            onClick={() => router.push("/client/projects")}
                             className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm"
                           >
                             <span>Cancel</span>
@@ -193,12 +193,11 @@ function CreateProject() {
                         </div>
                       </div>
                     </div>
-                  )}
-                </Form>
+                  </Form>
+                </Transition>
               )}
             </Formik>
-
-            {formStep === 1 && (
+            <Transition show={formStep === 1}>
               <ProjectReviewTab
                 formData={formData}
                 error={error}
@@ -209,7 +208,7 @@ function CreateProject() {
                 inEthereum={inEthereum}
                 setFormStep={setFormStep}
               />
-            )}
+            </Transition>
           </div>
         </section>
       </WebLayout>
@@ -238,7 +237,7 @@ function ProjectReviewTab({
       ) : (
         ""
       )}
-      <div className=" p-8 flex divide-x">
+      <div className=" p-8 flex divide-x-2 divide-neutral-500">
         <div className="w-1/3">
           <h1 className="text-2xl font-display text-primary-700 capitalize">
             {"Let's take a final look"}
@@ -302,7 +301,7 @@ function ProjectReviewTab({
             <label htmlFor="budget" className="font-medium">
               Budget
             </label>
-            <p className="capitalize">{` ${formData?.budget} ${
+            <p className="">{` ${formData?.budget}${
               formData.pricing_type === "fixed" ? "$" : "$/hr"
             } (${inEthereum} ETH)`}</p>
           </div>

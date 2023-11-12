@@ -79,7 +79,7 @@ function ClientProjects() {
               </h4>
             </div>
           )}
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-3 gap-4">
             {!isLoading &&
               projects &&
               projects.map((project, index) => (
@@ -90,13 +90,13 @@ function ClientProjects() {
                   <h4 className="text-lg font-semibold text-primary-700">
                     {project.title}
                   </h4>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="font-medium">
                       <span className="capitalize">Project Scope: {project.scope}</span>
                       <br />
                       <span>Deadline: {project.deadline}</span>
                     </span>
-                    <span className="text-end ">
+                    <span className="text-end text-xl">
                       <span className=" font-semibold">{` ${project.budget}${
                         project.pricing_type === "fixed" ? "$" : "$/hr"
                       }`}</span>

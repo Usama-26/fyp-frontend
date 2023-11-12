@@ -84,7 +84,7 @@ export default function LoginForm({ handleSubmit, isSubmitted, isLoading }) {
             disabled={isLoading}
             className="form-submit-btn disabled:bg-neutral-100   disabled:text-neutral-500 "
           >
-            {isLoading ? <Spinner /> : "Send Email"}
+            {isLoading ? <Spinner /> : "Login"}
           </button>
         </Form>
       )}

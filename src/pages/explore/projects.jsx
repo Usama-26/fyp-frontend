@@ -37,7 +37,7 @@ export default function ExploreProjects() {
           Explore the World of Opportunities
         </h1>
         <p className="text-lg">Discover Freelance Projects to bid on</p>
-        <div className="max-w-5xl mx-auto mt-5">
+        <div className="container mx-auto mt-5">
           <SearchBox
             onSearch={handleSearch}
             query={searchQuery}
@@ -53,18 +53,9 @@ export default function ExploreProjects() {
             <h2 className="text-xl font-semibold">Filters</h2>
           </div>
           <div className="basis-9/12 space-y-2">
-            {projects?.map(
-              ({ title, description, budget, skills_level, pricing_type }, index) => (
-                <ProjectCard
-                  key={index}
-                  title={title}
-                  description={description}
-                  budget={budget}
-                  skills_level={skills_level}
-                  pricing_type={pricing_type}
-                />
-              )
-            )}
+            {projects?.map((project, index) => (
+              <ProjectCard key={index} {...project} />
+            ))}
           </div>
         </div>
       </section>

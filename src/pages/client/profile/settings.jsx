@@ -5,6 +5,7 @@ import { Tab } from "@headlessui/react";
 import ContactSettings from "@/components/Freelancer/Settings/ContactSettings";
 import withRouteProtect from "@/helpers/withRouteProtect";
 import Head from "next/head";
+import WalletConnect from "@/components/WalletConnect";
 
 const profileTabs = [
   "Personal Info",
@@ -47,7 +48,8 @@ function ClientProfileSettings() {
                   <SecuritySettings />
                 </Tab.Panel>
                 <Tab.Panel>
-                  <h1 className="font-semibold">Billing & Payments</h1>
+                  <h1 className="font-semibold mb-4">Billing & Payments</h1>
+                  <WalletConnect />
                 </Tab.Panel>
                 <Tab.Panel>
                   <h1 className="font-semibold">Notifications</h1>

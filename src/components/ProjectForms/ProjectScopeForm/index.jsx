@@ -116,7 +116,7 @@ export function ProjectScopeForm({ formikData }) {
           <RadioGroup
             value={selectedSkillsLevel}
             onChange={(level) => {
-              setSelectedSkillsLevel(level), setFieldValue("scope", level.value);
+              setSelectedSkillsLevel(level), setFieldValue("skills_level", level.value);
             }}
           >
             <RadioGroup.Label className="sr-only">Choose Skills Level</RadioGroup.Label>

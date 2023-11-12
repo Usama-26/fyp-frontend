@@ -165,7 +165,7 @@ export function SignupForm({ handleSubmit, isSubmitted, isLoading }) {
             disabled={isLoading}
             className="form-submit-btn disabled:bg-neutral-100   disabled:text-neutral-500 "
           >
-            {isLoading ? <Spinner /> : "Send Email"}
+            {isLoading ? <Spinner /> : "Join"}
           </button>
         </Form>
       )}
