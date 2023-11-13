@@ -14,6 +14,13 @@ import { ProjectProvider } from "@/context/ProjectContext";
 import { FreelancerProvider } from "@/context/FreelancerContext";
 import { ClientProvider } from "@/context/ClientContext";
 
+import { Network, Alchemy } from "alchemy-sdk";
+
+const settings = {
+  apiKey: "WTwFOrxz9Q7lLLK_Gfhm4Px3Jm46KZeM",
+  network: Network.ETH_MAINNET,
+};
+
 export const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -38,6 +45,11 @@ const config = createConfig({
 
 export default function App({ Component, pageProps }) {
   const { web } = GoogleClientSecret;
+
+  const alchemy = new Alchemy(settings);
+
+  // get the latest block
+  const latestBlock = alchemy.core.getBlock("latest").then(console.log);
 
   return (
     <main className={`${display.variable} ${inter.variable}`}>
