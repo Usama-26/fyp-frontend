@@ -11,7 +11,7 @@ import Select from "react-select";
 export default function ContactSettings() {
   const [isEditing, setIsEditing] = useState(false);
   const { user, loadAccount } = useAccounts();
-
+  const [selectedCountry, setSelectedCountry] = useState({});
   const { updateClientInfo, updatedUser, isLoading: updateLoading } = useClient();
 
   const originalValues = {
@@ -34,6 +34,11 @@ export default function ContactSettings() {
     loadAccount(token);
   }, [updatedUser]);
 
+  useEffect(() => {
+    if (user) {
+      setSelectedCountry({ value: user.data.country, label: user.data.country });
+    }
+  }, [user]);
   return (
     <div>
       <div className="flex justify-between">
@@ -50,15 +55,15 @@ export default function ContactSettings() {
         initialValues={originalValues}
         validationSchema={Yup.object({
           email: Yup.string().trim().required("Email is required"),
-          address: Yup.string().trim().required("Address is required"),
-          country: Yup.string().trim().required("Country is required"),
+          address: Yup.string().trim(),
+          country: Yup.string().trim(),
         })}
-        onSubmit={(values) => {
+        onSubmit={(values, { resetForm }) => {
           updateClientInfo(user.data._id, values);
           setIsEditing(false);
         }}
       >
-        {({ values, errors, touched }) => (
+        {({ values, errors, touched, setFieldValue, resetForm }) => (
           <Form>
             <div className="flex">
               <div className="basis-1/2 space-y-4 max-w-md">
@@ -74,7 +79,7 @@ export default function ContactSettings() {
                     name="email"
                     id="email"
                     disabled={!isEditing ? true : false}
-                    placeholder="First Name"
+                    placeholder="Email"
                   />
                   <ErrorMessage
                     name="email"
@@ -112,17 +117,17 @@ export default function ContactSettings() {
                         <Select
                           {...field}
                           options={countries}
-                          classNames={"form-input"}
-                          value={selectedService}
-                          isMulti={true}
-                          placeholder="Refine your result"
+                          isDisabled={isEditing ? false : true}
+                          classNames={"form-input !border-neutral-500"}
+                          value={selectedCountry}
+                          placeholder="Select Country"
                           onChange={(selected) => {
-                            setSelectedSkills(selected);
-                            setFieldValue("skills", selected.value);
+                            setSelectedCountry(selected);
+                            setFieldValue("country", selected.value);
                           }}
                         />
                         <ErrorMessage
-                          name="service"
+                          name="country"
                           component="p"
                           className="field-error__message"
                         />
