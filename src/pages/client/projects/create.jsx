@@ -318,7 +318,9 @@ function ProjectReviewTab({
             </label>
             <p className="break-words">{` ${formData?.budget}${
               formData.pricing_type === "fixed" ? "$" : "$/hr"
-            } (${inEthereum} ETH)`}</p>
+            } ${
+              (inEthereum && parseFloat((formData.budget / inEthereum).toFixed(4))) || 0
+            } ETH `}</p>
           </div>
           <div>
             <label htmlFor="service" className="font-medium">
