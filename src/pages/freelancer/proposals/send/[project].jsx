@@ -30,8 +30,8 @@ const initialProposalValues = {
 function SendProposal() {
   const { project, isLoading: isProjectLoading, getProjectById } = useProjects();
   const { user } = useAccounts();
-  // const [proposalData, setProposalData] = useState();
-  const [deliveryDate, setDeliveryDate] = useState();
+  const [proposalData, setProposalData] = useState({});
+  const [deliveryDate, setDeliveryDate] = useState({});
   const { proposal, isLoading: isSending, sendProposal } = useFreelancer();
   const { client, isLoading: isClientLoading, getClientById } = useClient();
   const router = useRouter();
@@ -52,7 +52,6 @@ function SendProposal() {
     }
   }, [proposal]);
 
-  console.log(client.data);
   return (
     <>
       <Head>
@@ -260,7 +259,7 @@ function SendProposal() {
                   </>
                 )}
               </div>
-              <div className="basis-3/12 border">
+              {/* <div className="basis-3/12 border">
                 {isClientLoading && (
                   <div className="h-full flex items-center justify-center">
                     <Spinner />
@@ -271,14 +270,14 @@ function SendProposal() {
                     <div className="p-4 border-b">
                       <h1 className="font-semibold">Client Details</h1>
                       <div className="flex justify-center text-center mt-8">
-                        {/* <Image
-                    src={"/images/profiles/profile-2.jpg"}
-                    width={1024}
-                    height={683}
-                    className="w-20 h-20 aspect-square object-cover rounded-full"
-                    alt="Profile Picture"
-                  />
-                 */}
+                        <Image
+                          src={"/images/profiles/profile-2.jpg"}
+                          width={1024}
+                          height={683}
+                          className="w-20 h-20 aspect-square object-cover rounded-full"
+                          alt="Profile Picture"
+                        />
+
                         <span className="w-20 h-20 flex justify-center items-center  rounded-full text-4xl text-center text-white font-semibold bg-primary-500">
                           {client.data.firstName[0]}
                         </span>
@@ -321,7 +320,7 @@ function SendProposal() {
                   </>
                 )}
                 <div className="p-4"></div>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
