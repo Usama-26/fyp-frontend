@@ -24,12 +24,12 @@ function ClientProfileSettings() {
       <WebLayout>
         <main className="max-w-screen-2xl mx-auto">
           <div className="my-4 rounded-md shadow-custom-sm shadow-neutral-300 max-w-6xl mx-auto">
-            <Tab.Group as={"div"} className={"flex p-4"} vertical>
+            <Tab.Group as={"div"} className={"flex p-4"} vertical={true}>
               <Tab.List as="ul" className={"min-w-fit profile-tabs border-r"}>
                 {profileTabs.map((tab, index) => (
                   <Tab key={index} as="li">
                     {({ selected }) => (
-                      <button className={selected && "profile-tab__selected"}>
+                      <button className={selected ? "profile-tab__selected " : ""}>
                         {tab}
                       </button>
                     )}
@@ -38,7 +38,7 @@ function ClientProfileSettings() {
               </Tab.List>
 
               <Tab.Panels as="div" className={"h-96 overflow-y-auto w-full p-4"}>
-                <Tab.Panel as={"div"} tabIndex={-1}>
+                <Tab.Panel tabIndex={-1}>
                   <PersonalSettings />
                 </Tab.Panel>
                 <Tab.Panel>

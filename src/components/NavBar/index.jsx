@@ -139,8 +139,8 @@ function UserMenu({ onLogout }) {
                     <h3>{`${firstName} ${lastName}`}</h3>
                   </div>
                   <div className="text-center">
-                    <span className="px-2 text-xs border rounded-full text-green-600 border-green-600">
-                      <GoDotFill className="inline" />
+                    <span className="inline-flex items-end px-1 text-xs border rounded-full text-green-600 border-green-600">
+                      <GoDotFill />
                       <span>online</span>
                     </span>
                   </div>

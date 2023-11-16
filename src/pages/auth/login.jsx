@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { GoogleLoginBtn } from "@/components/GoogleLoginBtn";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
+import Error from "@/components/Messages/Error";
 
 function Login() {
   const { isLoggedIn, error, isLoading, handleLogin } = useAccounts();
@@ -21,11 +22,7 @@ function Login() {
       </Head>
       <WebLayout>
         <div className="relative my-8 max-w-sm mx-auto border rounded-lg shadow ">
-          {error && (
-            <div className="w-full absolute top-0 bg-danger-200 rounded-t-md py-2 px-2">
-              <p className="text-sm text-danger-700">{error}</p>
-            </div>
-          )}
+          {error && <Error message={error} />}
 
           <div className="p-8 pt-12">
             <div className="text-center mb-6">

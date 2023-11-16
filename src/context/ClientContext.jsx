@@ -1,11 +1,19 @@
 import { BASE_URL } from "@/constants";
-import { getData, postData } from "@/utils/api/genericAPI";
+import { getData, postData, updateData } from "@/utils/api/genericAPI";
 import { createContext, useContext, useReducer } from "react";
 
 function reducer(state, action) {
   switch (action.type) {
     case "client/getOne":
       return { ...state, client: action.payload, isLoading: false };
+
+    case "client/updateInfo":
+      return {
+        ...state,
+        updateInfoSuccess: action.payload.status,
+        updatedUser: action.payload,
+        isLoading: false,
+      };
 
     case "loading":
       return { ...state, isLoading: true, error: "" };
@@ -23,13 +31,16 @@ function reducer(state, action) {
 const ClientContext = createContext();
 
 const initialState = {
-  isLoading: true,
+  isLoading: false,
   error: "",
   client: "",
+  updatedUser: {},
+  updateInfoSuccess: "",
 };
 
 function ClientProvider({ children }) {
-  const [{ isLoading, error, client }, dispatch] = useReducer(reducer, initialState);
+  const [{ isLoading, error, client, updateInfoSuccess, updatedUser }, dispatch] =
+    useReducer(reducer, initialState);
 
   const getClientById = async (id) => {
     dispatch({ type: "loading" });
@@ -37,13 +48,38 @@ function ClientProvider({ children }) {
       const response = await getData(`${BASE_URL}/users/${id}`);
       dispatch({ type: "client/getOne", payload: response.data });
     } catch (error) {
-      console.log(error);
-      // dispatch({ type: "rejected", payload: error.response.data.message });
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
+  const updateClientInfo = async (id, data) => {
+    const token = window.localStorage.getItem("token");
+    dispatch({ type: "loading" });
+    try {
+      const response = await updateData(`${BASE_URL}/users/`, id, data, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+
+      dispatch({ type: "client/updateInfo", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
     }
   };
 
   return (
-    <ClientContext.Provider value={{ isLoading, error, client, getClientById }}>
+    <ClientContext.Provider
+      value={{
+        isLoading,
+        error,
+        client,
+        updateInfoSuccess,
+        updatedUser,
+        getClientById,
+        updateClientInfo,
+      }}
+    >
       {children}
     </ClientContext.Provider>
   );

@@ -1,4 +1,4 @@
-import Dropzone from "@/components/Dropzone";
+import ImageDropzone from "@/components/ImageDropzone";
 import WebLayout from "@/layouts/WebLayout";
 import { postData } from "@/utils/api/genericAPI";
 import { uploadImageToCloudinary } from "@/utils/cloudinaryUpload";
@@ -52,9 +52,7 @@ export default function AddCategory() {
   return (
     <WebLayout>
       <div className="max-w-xl mx-auto mb-4">
-        <h3 className="text-2xl font-semibold text-center my-4">
-          Add Category
-        </h3>
+        <h3 className="text-2xl font-semibold text-center my-4">Add Category</h3>
         <Formik
           initialValues={{
             name: "",
@@ -70,18 +68,13 @@ export default function AddCategory() {
           {({ values, errors, touched, submitCount }) => (
             <Form className="space-y-4">
               {message && (
-                <p className="bg-primary-200 p-4 rounded-md font-medium">
-                  {message}
-                </p>
+                <p className="bg-primary-200 p-4 rounded-md font-medium">{message}</p>
               )}
               <div className="flex md:flex-row flex-col space-between gap-4">
                 <div className="w-full">
                   <Field
                     className={`form-input ${
-                      errors.name &&
-                      touched.name &&
-                      submitCount > 0 &&
-                      "field-error"
+                      errors.name && touched.name && submitCount > 0 && "field-error"
                     }`}
                     type="text"
                     name="name"
@@ -143,7 +136,7 @@ export default function AddCategory() {
                 )}
               </div>
 
-              <Dropzone
+              <ImageDropzone
                 error={submitCount > 0 && !files}
                 files={files}
                 setFiles={setFiles}

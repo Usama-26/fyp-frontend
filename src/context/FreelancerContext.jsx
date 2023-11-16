@@ -4,6 +4,9 @@ import { createContext, useContext, useReducer } from "react";
 
 function reducer(state, action) {
   switch (action.type) {
+    case "freelancers/getAll":
+      return { ...state, freelancers: action.payload, isLoading: false };
+
     case "proposal/sendProposal":
       return { ...state, proposal: action.payload, isLoading: false };
 
@@ -27,13 +30,24 @@ const initialState = {
   error: "",
   proposal: "",
   proposals: "",
+  freelancers: [],
 };
 
 function FreelancerProvider({ children }) {
-  const [{ isLoading, error, proposals, proposal }, dispatch] = useReducer(
+  const [{ isLoading, error, proposals, proposal, freelancers }, dispatch] = useReducer(
     reducer,
     initialState
   );
+
+  const getAllFreelancers = async () => {
+    dispatch({ type: "loading" });
+    try {
+      const response = await getData(`${BASE_URL}/users/freelancers/`);
+      dispatch({ type: "freelancers/getAll", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
 
   const sendProposal = async (data) => {
     dispatch({ type: "loading" });
@@ -46,14 +60,21 @@ function FreelancerProvider({ children }) {
       });
       dispatch({ type: "proposal/sendProposal", payload: response.data });
     } catch (error) {
-      console.log(error);
       dispatch({ type: "rejected", payload: error.response.data.message });
     }
   };
 
   return (
     <FreelancerContext.Provider
-      value={{ isLoading, error, proposals, proposal, sendProposal }}
+      value={{
+        isLoading,
+        error,
+        proposals,
+        proposal,
+        freelancers,
+        sendProposal,
+        getAllFreelancers,
+      }}
     >
       {children}
     </FreelancerContext.Provider>

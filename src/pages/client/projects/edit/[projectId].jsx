@@ -13,7 +13,7 @@ import { BiArrowBack } from "react-icons/bi";
 import { Transition } from "@headlessui/react";
 import { useProjects } from "@/context/ProjectContext";
 import Spinner from "@/components/Spinner";
-import FileDropzone from "@/components/FIleDropzone";
+import { isEmpty } from "@/utils/generics";
 
 const projectSchema = Yup.object({
   title: Yup.string()
@@ -43,19 +43,6 @@ const projectSchema = Yup.object({
   scope: Yup.string().trim().required("Set project scope").default("small"),
 });
 
-const projectInitialValues = {
-  title: "",
-  description: "",
-  category: "",
-  sub_category: "",
-  service: "",
-  scope: "small",
-  skills_level: "beginner",
-  pricing_type: "fixed",
-  budget: 0,
-  deadline: "",
-};
-
 const pricingTypes = [
   {
     value: "fixed",
@@ -66,21 +53,38 @@ const pricingTypes = [
     label: "Hourly Rate",
   },
 ];
-function CreateProject() {
+function EditProject() {
   const [formStep, setFormStep] = useState(0);
   const [formData, setFormData] = useState({});
   const [inEthereum, setInEthereum] = useState(0);
 
   const [deliveryDate, setDeliveryDate] = useState({});
   const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
-  const [attachments, setAttachments] = useState([]);
 
   const [selectedCategory, setSelectedCategory] = useState({});
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [selectedService, setSelectedService] = useState({});
-  const [selectedSkills, setSelectedSkills] = useState([]);
+
+  const { project, error, isLoading, getProjectById } = useProjects();
 
   const router = useRouter();
+
+  const projectInitialValues = {
+    title: project?.data.title,
+    description: project?.data.description,
+    category: project?.data.category,
+    sub_category: project?.data.sub_category,
+    service: project?.data.service,
+    scope: project?.data.scope,
+    skills_level: project?.data.skills_level,
+    pricing_type: project?.data.pricing_type,
+    budget: project?.data.budget,
+    deadline: project?.data.deadline,
+  };
+
+  useEffect(() => {
+    getProjectById(router.query.projectId);
+  }, [project]);
 
   return (
     <>
@@ -89,138 +93,121 @@ function CreateProject() {
       </Head>
       <WebLayout>
         <section>
-          <div className="max-w-7xl mx-auto m-4 rounded-md">
-            <Formik
-              initialValues={projectInitialValues}
-              validationSchema={projectSchema}
-              onSubmit={(values, { resetForm }) => {
-                setFormStep(1);
-                setFormData(values);
-              }}
-            >
-              {(formikValues) => (
-                <Transition show={formStep === 0}>
-                  <Form>
-                    <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
-                      <div className="flex justify-between p-8">
-                        <div className="basis-5/12">
-                          <h1 className="text-2xl font-display text-primary-700 capitalize">
-                            {"Let's begin with filling up basic information"}
-                          </h1>
-                          <h4>Tell us what you got in your mind</h4>
+          {!isEmpty && (
+            <div className="max-w-7xl mx-auto m-4 rounded-md">
+              <Formik
+                initialValues={projectInitialValues}
+                validationSchema={projectSchema}
+                onSubmit={(values, { resetForm }) => {
+                  setFormStep(1);
+                  setFormData(values);
+                }}
+              >
+                {(formikValues) => (
+                  <Transition show={formStep === 0}>
+                    <Form>
+                      <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
+                        <div className="flex justify-between p-8">
+                          <div className="basis-5/12">
+                            <h1 className="text-2xl font-display text-primary-700 capitalize">
+                              {"Let's begin with filling up basic information"}
+                            </h1>
+                            <h4>Tell us what you got in your mind</h4>
+                          </div>
+                          <div className="basis-6/12">
+                            <ProjectInfoForm
+                              formikData={formikValues}
+                              selectedCategory={selectedCategory}
+                              selectedSubCategory={selectedSubCategory}
+                              selectedService={selectedService}
+                              setSelectedCategory={setSelectedCategory}
+                              setSelectedService={setSelectedService}
+                              setSelectedSubCategory={setSelectedSubCategory}
+                            />
+                          </div>
                         </div>
-                        <div className="basis-6/12">
-                          <ProjectInfoForm
-                            formikData={formikValues}
-                            selectedCategory={selectedCategory}
-                            selectedSubCategory={selectedSubCategory}
-                            selectedService={selectedService}
-                            setSelectedCategory={setSelectedCategory}
-                            setSelectedService={setSelectedService}
-                            setSelectedSubCategory={setSelectedSubCategory}
-                          />
+                        <div className="flex justify-between p-8">
+                          <div className="basis-5/12">
+                            <h1 className="text-2xl font-display text-primary-700 capitalize">
+                              {"Next, estimate the Scope of your project"}
+                            </h1>
+                            <h4>
+                              Choose among the estimated duration and what level of skills
+                              do you require for your project
+                            </h4>
+                          </div>
+                          <div className="basis-6/12">
+                            <ProjectScopeForm formikData={formikValues} />
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex justify-between p-8">
-                        <div className="basis-5/12">
-                          <h1 className="text-2xl font-display text-primary-700 capitalize">
-                            {"Next, estimate the Scope of your project"}
-                          </h1>
-                          <h4>
-                            Choose among the estimated duration and what level of skills
-                            do you require for your project
-                          </h4>
-                        </div>
-                        <div className="basis-6/12">
-                          <ProjectScopeForm formikData={formikValues} />
-                        </div>
-                      </div>
 
-                      <div className="flex justify-between p-8">
-                        <div className="basis-5/12">
-                          <h1 className="text-2xl font-display text-primary-700 capitalize">
-                            Attach your files
-                          </h1>
-                          <h4>
-                            {
-                              "Send you attachments, if they can further describe your work"
-                            }
-                          </h4>
+                        <div className="flex justify-between p-8">
+                          <div className="basis-5/12">
+                            <h1 className="text-2xl font-display text-primary-700 capitalize">
+                              {"Time to fill up pricing information"}
+                            </h1>
+                            <h4>
+                              Tell us about your budget and your expected delivery date.
+                            </h4>
+                          </div>
+                          <div className="basis-6/12">
+                            <ProjectPricingForm
+                              formikData={formikValues}
+                              inEthereum={inEthereum}
+                              setInEthereum={setInEthereum}
+                              setDeliveryDate={setDeliveryDate}
+                              deliveryDate={deliveryDate}
+                              selectedPricingType={selectedPricingType}
+                              setSelectedPricingType={setSelectedPricingType}
+                              pricingTypes={pricingTypes}
+                            />
+                          </div>
                         </div>
-                        <div className="basis-6/12">
-                          <label htmlFor="attachments" className="font-medium mb-2 block">
-                            Attachments
-                          </label>
-                          <FileDropzone files={attachments} setFiles={setAttachments} />
-                        </div>
-                      </div>
 
-                      <div className="flex justify-between p-8">
-                        <div className="basis-5/12">
-                          <h1 className="text-2xl font-display text-primary-700 capitalize">
-                            {"Time to fill up pricing information"}
-                          </h1>
-                          <h4>
-                            Tell us about your budget and your expected delivery date.
-                          </h4>
-                        </div>
-                        <div className="basis-6/12">
-                          <ProjectPricingForm
-                            formikData={formikValues}
-                            inEthereum={inEthereum}
-                            setInEthereum={setInEthereum}
-                            setDeliveryDate={setDeliveryDate}
-                            deliveryDate={deliveryDate}
-                            selectedPricingType={selectedPricingType}
-                            setSelectedPricingType={setSelectedPricingType}
-                            pricingTypes={pricingTypes}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="px-8 py-4 border-t text-end">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => router.push("/client/projects")}
-                            className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm"
-                          >
-                            <span>Cancel</span>
-                          </button>
-                          <button
-                            type="submit"
-                            disabled={
-                              !formikValues.isValid ||
-                              !Object.keys(formikValues.touched).length
-                            }
-                            className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm"
-                          >
-                            <span>Continue</span>
-                          </button>
+                        <div className="px-8 py-4 border-t text-end">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => router.push("/client/projects")}
+                              className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm"
+                            >
+                              <span>Cancel</span>
+                            </button>
+                            <button
+                              type="submit"
+                              disabled={
+                                !formikValues.isValid ||
+                                !Object.keys(formikValues.touched).length
+                              }
+                              className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm"
+                            >
+                              <span>Continue</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Form>
-                </Transition>
-              )}
-            </Formik>
-            <Transition show={formStep === 1}>
-              <ProjectReviewTab
-                formData={formData}
-                selectedCategory={selectedCategory}
-                selectedSubCategory={selectedSubCategory}
-                selectedService={selectedService}
-                inEthereum={inEthereum}
-                setFormStep={setFormStep}
-              />
-            </Transition>
-          </div>
+                    </Form>
+                  </Transition>
+                )}
+              </Formik>
+              <Transition show={formStep === 1}>
+                <ProjectReviewTab
+                  formData={formData}
+                  selectedCategory={selectedCategory}
+                  selectedSubCategory={selectedSubCategory}
+                  selectedService={selectedService}
+                  inEthereum={inEthereum}
+                  setFormStep={setFormStep}
+                />
+              </Transition>
+            </div>
+          )}
         </section>
       </WebLayout>
     </>
   );
 }
 
-export default withRouteProtect(CreateProject, ["client"]);
+export default withRouteProtect(EditProject, ["client"]);
 
 function ProjectReviewTab({
   formData,
@@ -230,21 +217,13 @@ function ProjectReviewTab({
   inEthereum,
   setFormStep,
 }) {
-  const { isLoading, error, successMessage, postProject } = useProjects();
+  const { isLoading, error, project, postProject } = useProjects();
 
   const handlePostProject = () => {
     postProject(formData);
   };
-
   return (
     <div className="min-h-screen rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
-      {successMessage && (
-        <div className="">
-          <h4 className="text-center  font-medium bg-success-200 text-success-700 text-lg">
-            Your Project is successfully created and listed project catalog.
-          </h4>
-        </div>
-      )}
       {error && (
         <div className="">
           <h4 className="text-center  font-medium bg-danger-200 text-danger-700 text-lg">

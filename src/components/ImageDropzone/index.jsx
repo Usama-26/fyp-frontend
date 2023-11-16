@@ -4,7 +4,7 @@ import { MdImage } from "react-icons/md";
 const { useEffect } = require("react");
 const { useDropzone } = require("react-dropzone");
 
-export default function Dropzone({ error, files, setFiles }) {
+export default function ImageDropzone({ error, files, setFiles }) {
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
@@ -24,6 +24,7 @@ export default function Dropzone({ error, files, setFiles }) {
   const clearFile = () => {
     setFiles(null);
   };
+
   const thumbs = files?.map((file) => (
     <div key={file.name}>
       <div className="w-32">

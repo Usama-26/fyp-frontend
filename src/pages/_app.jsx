@@ -49,24 +49,24 @@ export default function App({ Component, pageProps }) {
   const alchemy = new Alchemy(settings);
 
   // get the latest block
-  const latestBlock = alchemy.core.getBlock("latest").then(console.log);
+  // const latestBlock = alchemy.core.getBlock("latest").then(console.log);
 
   return (
     <main className={`${display.variable} ${inter.variable}`}>
       <GoogleOAuthProvider clientId={web.client_id}>
-        <WagmiConfig config={config}>
-          <AccountsProvider>
-            <ServicesProvider>
-              <ProjectProvider>
-                <ClientProvider>
-                  <FreelancerProvider>
-                    <Component {...pageProps} />
-                  </FreelancerProvider>
-                </ClientProvider>
-              </ProjectProvider>
-            </ServicesProvider>
-          </AccountsProvider>
-        </WagmiConfig>
+        {/* <WagmiConfig config={config}>
+        </WagmiConfig> */}
+        <AccountsProvider>
+          <ServicesProvider>
+            <ProjectProvider>
+              <ClientProvider>
+                <FreelancerProvider>
+                  <Component {...pageProps} />
+                </FreelancerProvider>
+              </ClientProvider>
+            </ProjectProvider>
+          </ServicesProvider>
+        </AccountsProvider>
       </GoogleOAuthProvider>
     </main>
   );

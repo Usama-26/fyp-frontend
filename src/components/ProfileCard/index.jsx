@@ -8,29 +8,32 @@ import {
   HiStar,
 } from "react-icons/hi";
 
-export default function ProfileCard() {
+export default function ProfileCard({ data }) {
   return (
     <div className=" p-4 border space-y-4 rounded-md">
       {/* General Info */}
       <div className="text-center">
         <div className="inline-block relative">
-          <Image
+          {/* <Image
             src={"/images/profiles/profile-1.jpg"}
             height={768}
             width={768}
             alt="Profile Image"
             className="w-24 h-24 mx-auto rounded-full object-cover"
-          />
+          /> */}
+          <span className="w-24 h-24 flex justify-center items-center rounded-full text-4xl text-center text-white font-semibold bg-primary-500">
+            {data.firstName[0]}
+          </span>
           <span
             className={`absolute w-4 h-4 border-2 border-white bottom-0 right-3 rounded-full ${"bg-neutral-500"}`}
           ></span>
         </div>
       </div>
       <div className="text-center mt-4">
-        <h3 className="font-semibold text-lg text-primary-400">Jordan K.</h3>
-        <p className="text-sm text-neutral-500">
-          Expert Laravel, PHP Developer
-        </p>
+        <h3 className="font-semibold text-lg text-primary-400">
+          {data.firstName} {data.lastName[0]}.
+        </h3>
+        <p className="text-sm text-neutral-500">Expert Laravel, PHP Developer</p>
         <span className="inline-flex items-center space-x-1">
           <HiOutlineLocationMarker className="inline w-4 h-4 stroke-neutral-700" />
           &nbsp;

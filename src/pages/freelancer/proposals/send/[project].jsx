@@ -15,6 +15,7 @@ import { useFreelancer } from "@/context/FreelancerContext";
 import Spinner from "@/components/Spinner";
 import { useClient } from "@/context/ClientContext";
 import dayjs from "dayjs";
+import { isEmpty } from "@/utils/generics";
 
 const proposalSchema = Yup.object({
   cover_letter: Yup.string().max(2000).required("Cover Letter Required"),
@@ -40,17 +41,18 @@ function SendProposal() {
   }, []);
 
   useEffect(() => {
-    if (project) {
-      getClientById(project.data.userId);
+    if (!isEmpty(project)) {
+      getClientById(project.data.created_by);
     }
   }, [project]);
 
   useEffect(() => {
-    if (proposal) {
-      router.push('/freelancer/proposals')
+    if (!isEmpty(proposal)) {
+      router.push("/freelancer/proposals");
     }
   }, [proposal]);
 
+  console.log(client.data);
   return (
     <>
       <Head>
@@ -66,7 +68,7 @@ function SendProposal() {
                     <Spinner />
                   </div>
                 )}
-                {project && (
+                {!isEmpty(project) && (
                   <>
                     <h1 className="text-xl font-semibold font-display px-4 py-2 border-b">
                       {project.data.title}
@@ -264,7 +266,7 @@ function SendProposal() {
                     <Spinner />
                   </div>
                 )}
-                {client && (
+                {!isEmpty(client) && (
                   <>
                     <div className="p-4 border-b">
                       <h1 className="font-semibold">Client Details</h1>
@@ -278,10 +280,12 @@ function SendProposal() {
                   />
                  */}
                         <span className="w-20 h-20 flex justify-center items-center  rounded-full text-4xl text-center text-white font-semibold bg-primary-500">
-                          S
+                          {client.data.firstName[0]}
                         </span>
                       </div>
-                      <h1 className="text-lg font-medium text-center">Sikander I.</h1>
+                      <h1 className="text-lg font-medium text-center">
+                        {client.data.firstName} {client.data.lastName[0]}.
+                      </h1>
                       <p className="text-center text-sm">Pakistan</p>
                     </div>
                     <div className="p-4 border-b">
@@ -298,7 +302,7 @@ function SendProposal() {
                     <div className="p-4 border-b">
                       <div className="flex justify-between text-sm">
                         <span>Projects Posted</span>
-                        <span className="font-medium">5</span>
+                        <span className="font-medium">{client.data.projects.length}</span>
                       </div>
                     </div>
                     <div className="p-4 border-b">

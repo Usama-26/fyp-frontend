@@ -5,11 +5,13 @@ import { BASE_URL } from "@/constants";
 function reducer(state, action) {
   switch (action.type) {
     case "categories/fetch":
-      return { ...state, categories: action.payload };
+      return { ...state, categories: action.payload, isLoading: false };
+    case "skills/fetch":
+      return { ...state, skills: action.payload, isLoading: false };
     case "loading":
       return { ...state, isLoading: true };
     case "rejected":
-      return { ...state, error: action.payload };
+      return { ...state, error: action.payload, isLoading: false };
     case "reset":
       return { ...state, ...initialState };
   }
@@ -17,6 +19,7 @@ function reducer(state, action) {
 
 const initialState = {
   categories: null,
+  skills: [],
   isLoading: false,
   error: "",
 };
@@ -36,6 +39,16 @@ function ServicesProvider({ children }) {
       } else {
         dispatch({ type: "rejected", payload: error?.response?.data.message });
       }
+    }
+  };
+
+  const fetchSkills = async () => {
+    dispatch({ type: "loading" });
+    try {
+      const response = await getData(`${BASE_URL}/skills`);
+      dispatch({ type: "skills/fetch", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
     }
   };
 
@@ -100,11 +113,12 @@ function ServicesProvider({ children }) {
         isLoading,
         error,
         dispatch,
+        fetchSkills,
         getCategory,
         getSubCategory,
         getService,
         getSubCategoriesByCategory,
-        getServicesByCategory
+        getServicesByCategory,
       }}
     >
       {children}

@@ -220,6 +220,35 @@ export function ProjectInfoForm({
             )}
           </Field>
         </div>
+        {/* <div className="w-full">
+          <Field name="skills">
+            {({ field }) => (
+              <div className="w-full">
+                <label htmlFor="skills" className="font-medium">
+                  Be More Specific
+                </label>
+                <Select
+                  {...field}
+                  options={services ? services : null}
+                  isDisabled={services ? false : true}
+                  classNames={"form-input"}
+                  value={selectedService}
+                  isMulti={true}
+                  placeholder="Refine your result"
+                  onChange={(selected) => {
+                    setSelectedSkills(selected);
+                    setFieldValue("skills", selected.value);
+                  }}
+                />
+                <ErrorMessage
+                  name="service"
+                  component="p"
+                  className="field-error__message"
+                />
+              </div>
+            )}
+          </Field>
+        </div> */}
       </div>
     </>
   );

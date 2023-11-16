@@ -199,6 +199,7 @@ function AccountsProvider({ children }) {
         handleLogin,
         handleLogout,
         handleGoogleAuth,
+        loadAccount,
         forgotPassword,
         resetPassword,
       }}
