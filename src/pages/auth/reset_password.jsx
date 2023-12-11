@@ -5,7 +5,7 @@ import Head from "next/head";
 import * as Yup from "yup";
 
 import Logo from "@/components/Logo";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAccounts } from "@/context/AccountContext";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";

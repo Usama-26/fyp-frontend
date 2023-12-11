@@ -46,7 +46,30 @@ function ClientProvider({ children }) {
     dispatch({ type: "loading" });
     try {
       const response = await getData(`${BASE_URL}/users/${id}`);
+
       dispatch({ type: "client/getOne", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
+  const updateClientProfilePhoto = async (id, file) => {
+    dispatch({ type: "loading" });
+    const token = window.localStorage.getItem("token");
+    const data = new FormData();
+    try {
+      data.append("profile_photo", file);
+      const response = await updateData(
+        `${BASE_URL}/users/update_profile_photo`,
+        id,
+        data,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch({ type: "client/updateInfo", payload: response.data });
     } catch (error) {
       dispatch({ type: "rejected", payload: error.response.data.message });
     }
@@ -56,12 +79,11 @@ function ClientProvider({ children }) {
     const token = window.localStorage.getItem("token");
     dispatch({ type: "loading" });
     try {
-      const response = await updateData(`${BASE_URL}/users/`, id, data, {
+      const response = await updateData(`${BASE_URL}/users`, id, data, {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
-
       dispatch({ type: "client/updateInfo", payload: response.data });
     } catch (error) {
       dispatch({ type: "rejected", payload: error.response.data.message });
@@ -77,6 +99,7 @@ function ClientProvider({ children }) {
         updateInfoSuccess,
         updatedUser,
         getClientById,
+        updateClientProfilePhoto,
         updateClientInfo,
       }}
     >

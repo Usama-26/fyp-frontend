@@ -1,4 +1,4 @@
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/Header";
 import ServiceExplorer from "@/components/ServiceExplorer";
 import WebLayout from "@/layouts/WebLayout";
 import Head from "next/head";

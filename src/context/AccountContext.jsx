@@ -1,4 +1,4 @@
-import { postData, getData } from "@/utils/api/genericAPI";
+import { postData, getData, updateData } from "@/utils/api/genericAPI";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { BASE_URL } from "@/constants";
@@ -19,10 +19,13 @@ function reducer(state, action) {
       return { ...state, user: action.payload, isLoading: false };
 
     case "account/forgotPassword":
-      return { ...state, emailSuccessMessage: action.payload, isLoading: false };
+      return { ...state, successMessage: action.payload, isLoading: false };
 
     case "account/resetPassword":
-      return { ...state, resetPassSuccessMessage: action.payload, isLoading: false };
+      return { ...state, successMessage: action.payload, isLoading: false };
+
+    case "clearMessage":
+      return { ...state, successMessage: "" };
 
     case "loading":
       return { ...state, isLoading: true, error: "" };
@@ -46,18 +49,17 @@ const initialState = {
   isLoggedIn: false,
   error: "",
   user: null,
-  emailSuccessMessage: "",
-  resetPassSuccessMessage: "",
+  successMessage: "",
 };
 
 const AccountsContext = createContext();
 
 function AccountsProvider({ children }) {
   const router = useRouter();
-  const [
-    { isLoading, isLoggedIn, error, user, emailSuccessMessage, resetPassSuccessMessage },
-    dispatch,
-  ] = useReducer(reducer, initialState);
+  const [{ isLoading, isLoggedIn, error, user, successMessage }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
 
   const handleSignup = async (data) => {
     dispatch({ type: "loading" });
@@ -165,6 +167,29 @@ function AccountsProvider({ children }) {
     }
   };
 
+  const updatePassword = async (id, data) => {
+    dispatch({ type: "loading" });
+    const token = window.localStorage.getItem("token");
+    try {
+      const response = await updateData(`${BASE_URL}/auth/updatePassword`, id, data, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch({ type: "account/resetPassword", payload: response?.data?.message });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
+    }
+  };
+
+  const clearMessage = () => {
+    dispatch({ type: "clearMessage" });
+  };
+
   useEffect(() => {
     if (window.localStorage.getItem("token") && !user) {
       const token = window.localStorage.getItem("token");
@@ -193,8 +218,7 @@ function AccountsProvider({ children }) {
         isLoggedIn,
         isLoading,
         error,
-        emailSuccessMessage,
-        resetPassSuccessMessage,
+        successMessage,
         handleSignup,
         handleLogin,
         handleLogout,
@@ -202,6 +226,8 @@ function AccountsProvider({ children }) {
         loadAccount,
         forgotPassword,
         resetPassword,
+        clearMessage,
+        updatePassword,
       }}
     >
       {children}

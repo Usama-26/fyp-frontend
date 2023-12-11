@@ -7,7 +7,7 @@ module.exports = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
@@ -30,5 +30,5 @@ module.exports = {
     },
   },
 
-  plugins: [],
+  // plugins: [require("@tailwindcss/forms")],
 };

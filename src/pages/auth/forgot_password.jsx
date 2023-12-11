@@ -1,5 +1,5 @@
 import Logo from "@/components/Logo";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/Header";
 import Head from "next/head";
 import Footer from "@/components/Footer";
 import { ErrorMessage, Field, Form, Formik } from "formik";
@@ -9,7 +9,7 @@ import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 import Spinner from "@/components/Spinner";
 
 function ForgotPassword() {
-  const { forgotPassword, isLoading, error, emailSuccessMessage } = useAccounts();
+  const { forgotPassword, isLoading, error, successMessage } = useAccounts();
 
   return (
     <>
@@ -24,9 +24,9 @@ function ForgotPassword() {
               <p className="text-sm text-danger-700">{error}</p>
             </div>
           )}
-          {emailSuccessMessage && (
+          {successMessage && (
             <div className="w-full absolute top-0 bg-success-200 rounded-t-md py-2 px-2">
-              <p className="text-sm text-success-700">{emailSuccessMessage}</p>
+              <p className="text-sm text-success-700">{successMessage}</p>
             </div>
           )}
           <div className="p-8 pt-12">
@@ -54,7 +54,7 @@ function ForgotPassword() {
               })}
               onSubmit={(values, { resetForm }) => {
                 forgotPassword(values);
-                if (emailSuccessMessage) {
+                if (successMessage) {
                   resetForm({ values: null });
                 }
               }}

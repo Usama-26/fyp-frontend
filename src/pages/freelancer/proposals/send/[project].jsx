@@ -59,7 +59,7 @@ function SendProposal() {
       </Head>
       <WebLayout>
         <section className="min-h-screen">
-          <div className="container mx-auto my-8 ">
+          <div className="container mx-auto my-8">
             <div className="flex gap-2">
               <div className="basis-9/12 border">
                 {isProjectLoading && (
@@ -259,7 +259,7 @@ function SendProposal() {
                   </>
                 )}
               </div>
-              {/* <div className="basis-3/12 border">
+              <div className="basis-3/12 border">
                 {isClientLoading && (
                   <div className="h-full flex items-center justify-center">
                     <Spinner />
@@ -320,7 +320,7 @@ function SendProposal() {
                   </>
                 )}
                 <div className="p-4"></div>
-              </div> */}
+              </div>
             </div>
           </div>
         </section>

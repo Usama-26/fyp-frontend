@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/Header";
 import { useState, useEffect } from "react";
 import ServiceExplorer from "@/components/ServiceExplorer";
 // import { useRouter } from "next/router";

@@ -1,19 +1,22 @@
-import { Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import Head from "next/head";
 import * as Yup from "yup";
-
 import WebLayout from "@/layouts/WebLayout";
 import withRouteProtect from "@/helpers/withRouteProtect";
-import { ProjectInfoForm } from "@/components/ProjectForms/ProjectInfoForm";
-import { ProjectScopeForm } from "@/components/ProjectForms/ProjectScopeForm";
-import { ProjectPricingForm } from "@/components/ProjectForms/ProjectPricingForm";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
-import { BiArrowBack } from "react-icons/bi";
-import { Transition } from "@headlessui/react";
 import { useProjects } from "@/context/ProjectContext";
 import Spinner from "@/components/Spinner";
 import FileDropzone from "@/components/FIleDropzone";
+import { useServices } from "@/context/ServiceContext";
+import { Listbox, Transition } from "@headlessui/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { classNames, isEmpty } from "@/utils/generics";
+import sampleSkills from "@/json/sample-skills";
+import ComboboxMultiple from "@/components/Comboboxes/ComboboxMultiple";
+import axios from "axios";
+import { BsChevronDown } from "react-icons/bs";
+import Datepicker from "react-tailwindcss-datepicker";
 
 const projectSchema = Yup.object({
   title: Yup.string()
@@ -27,34 +30,18 @@ const projectSchema = Yup.object({
     .max(2000, "Description can't exceed 2000 characters")
     .required("Add project description"),
   category: Yup.string().trim().required("Please Select A Category"),
-  sub_category: Yup.string().trim().required("Please Select A Service"),
   service: Yup.string().trim().required("Please Select An Option"),
   pricing_type: Yup.string().trim().required("Choose a pricing type"),
   deadline: Yup.date().required("Set Project Deadline"),
-  skills: Yup.array()
+  tags: Yup.array()
     .min(3, "Select atleast 3 skills")
-    .max(5, "You can only choose upto 10 skills")
+    .max(5, "You can only choose upto 5 skills")
     .of(Yup.string()),
   budget: Yup.number()
     .min(10, "Select a minimum budget of 10 $")
     .max(1000, "Maximum budget can be 1000 $")
     .required("Please enter your budget"),
-  skills_level: Yup.string().trim().required("Choose a Skills Level").default("beginner"),
-  scope: Yup.string().trim().required("Set project scope").default("small"),
 });
-
-const projectInitialValues = {
-  title: "",
-  description: "",
-  category: "",
-  sub_category: "",
-  service: "",
-  scope: "small",
-  skills_level: "beginner",
-  pricing_type: "fixed",
-  budget: 0,
-  deadline: "",
-};
 
 const pricingTypes = [
   {
@@ -70,17 +57,28 @@ function CreateProject() {
   const [formStep, setFormStep] = useState(0);
   const [formData, setFormData] = useState({});
   const [inEthereum, setInEthereum] = useState(0);
-
-  const [deliveryDate, setDeliveryDate] = useState({});
-  const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
-  const [attachments, setAttachments] = useState([]);
-
   const [selectedCategory, setSelectedCategory] = useState({});
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [selectedService, setSelectedService] = useState({});
-  const [selectedSkills, setSelectedSkills] = useState([]);
-
+  const [deliveryDate, setDeliveryDate] = useState({});
+  const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
+  const [attachments, setAttachments] = useState([]);
+  const { categories } = useServices();
+  const { postProject } = useProjects();
   const router = useRouter();
+
+  const projectInitialValues = {
+    title: "",
+    description: "",
+    category: "",
+    sub_category: "",
+    service: "",
+    scope: "small",
+    skills: [],
+    pricing_type: "fixed",
+    budget: 0,
+    deadline: "",
+  };
 
   return (
     <>
@@ -94,125 +92,260 @@ function CreateProject() {
               initialValues={projectInitialValues}
               validationSchema={projectSchema}
               onSubmit={(values, { resetForm }) => {
-                setFormStep(1);
-                setFormData(values);
+                postProject(values);
               }}
             >
-              {(formikValues) => (
-                <Transition show={formStep === 0}>
-                  <Form>
-                    <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
-                      <div className="flex justify-between p-8">
-                        <div className="basis-5/12">
-                          <h1 className="text-2xl font-display text-primary-700 capitalize">
-                            {"Let's begin with filling up basic information"}
-                          </h1>
-                          <h4>Tell us what you got in your mind</h4>
-                        </div>
-                        <div className="basis-6/12">
-                          <ProjectInfoForm
-                            formikData={formikValues}
-                            selectedCategory={selectedCategory}
-                            selectedSubCategory={selectedSubCategory}
-                            selectedService={selectedService}
-                            setSelectedCategory={setSelectedCategory}
-                            setSelectedService={setSelectedService}
-                            setSelectedSubCategory={setSelectedSubCategory}
-                          />
-                        </div>
-                      </div>
-                      <div className="flex justify-between p-8">
-                        <div className="basis-5/12">
-                          <h1 className="text-2xl font-display text-primary-700 capitalize">
-                            {"Next, estimate the Scope of your project"}
-                          </h1>
-                          <h4>
-                            Choose among the estimated duration and what level of skills
-                            do you require for your project
-                          </h4>
-                        </div>
-                        <div className="basis-6/12">
-                          <ProjectScopeForm formikData={formikValues} />
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between p-8">
-                        <div className="basis-5/12">
-                          <h1 className="text-2xl font-display text-primary-700 capitalize">
-                            Attach your files
-                          </h1>
-                          <h4>
-                            {
-                              "Send you attachments, if they can further describe your work"
-                            }
-                          </h4>
-                        </div>
-                        <div className="basis-6/12">
-                          <label htmlFor="attachments" className="font-medium mb-2 block">
-                            Attachments
+              {({ values, errors, touched, isValid, setFieldValue, submitCount }) => (
+                <Form>
+                  <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
+                    {/* Basic Info Section */}
+                    <div className="flex justify-between p-8">
+                      <SectionInfo
+                        heading={"Let's begin with filling up basic information"}
+                        description={"Tell us what you got in your mind"}
+                      />
+                      <div className="basis-6/12 space-y-5">
+                        <div className="w-full">
+                          <label htmlFor="title" className="block font-medium">
+                            Project Title
                           </label>
-                          <FileDropzone files={attachments} setFiles={setAttachments} />
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between p-8">
-                        <div className="basis-5/12">
-                          <h1 className="text-2xl font-display text-primary-700 capitalize">
-                            {"Time to fill up pricing information"}
-                          </h1>
-                          <h4>
-                            Tell us about your budget and your expected delivery date.
-                          </h4>
-                        </div>
-                        <div className="basis-6/12">
-                          <ProjectPricingForm
-                            formikData={formikValues}
-                            inEthereum={inEthereum}
-                            setInEthereum={setInEthereum}
-                            setDeliveryDate={setDeliveryDate}
-                            deliveryDate={deliveryDate}
-                            selectedPricingType={selectedPricingType}
-                            setSelectedPricingType={setSelectedPricingType}
-                            pricingTypes={pricingTypes}
+                          <Field
+                            className={`form-input ${
+                              errors.title &&
+                              touched.title &&
+                              submitCount > 0 &&
+                              "field-error"
+                            }`}
+                            type="text"
+                            name="title"
+                            id="title"
+                            maxLength={100}
+                            placeholder="Enter Project Title"
                           />
-                        </div>
-                      </div>
+                          <span className="text-sm float-right">
+                            {values.title.length}/100
+                          </span>
 
-                      <div className="px-8 py-4 border-t text-end">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => router.push("/client/projects")}
-                            className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm"
-                          >
-                            <span>Cancel</span>
-                          </button>
-                          <button
-                            type="submit"
-                            disabled={
-                              !formikValues.isValid ||
-                              !Object.keys(formikValues.touched).length
-                            }
-                            className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm"
-                          >
-                            <span>Continue</span>
-                          </button>
+                          {errors.title && touched.title && submitCount > 0 ? (
+                            <ErrorMessage
+                              name="title"
+                              component={"p"}
+                              className="field-error__message"
+                            />
+                          ) : (
+                            <p className="text-sm italic text-neutral-500">
+                              {
+                                "Example: Create a website for my personal portfolio. (20 to 100 character)"
+                              }
+                            </p>
+                          )}
+                        </div>
+                        <div className="w-full">
+                          <label htmlFor="description" className="block font-medium">
+                            Project Description
+                          </label>
+                          <Field
+                            as="textarea"
+                            rows="5"
+                            className={`form-input resize-none ${
+                              errors.description &&
+                              touched.description &&
+                              submitCount > 0 &&
+                              "field-error"
+                            }`}
+                            name="description"
+                            id="description"
+                            maxLength={2000}
+                            placeholder="Enter Description"
+                          />
+
+                          <span className="text-sm float-right">
+                            {values.description.length}/2000
+                          </span>
+
+                          {errors.description &&
+                          touched.description &&
+                          submitCount > 0 ? (
+                            <ErrorMessage
+                              name="description"
+                              component={"p"}
+                              className="field-error__message"
+                            />
+                          ) : (
+                            <p className="text-sm italic text-neutral-500">
+                              {
+                                "Write a paragraph which explains your project in detail. (50 to 2000 characters)"
+                              }
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
-                  </Form>
-                </Transition>
+                    {/* Skills Section */}
+                    <div className="flex justify-between p-8">
+                      <SectionInfo
+                        heading={"Choose Category and required skills"}
+                        description={
+                          "Choose from the available categories and select what skills are required for this project."
+                        }
+                      />
+                      <div className="basis-6/12 space-y-5">
+                        <div className="flex gap-4">
+                          <div className="w-full">
+                            <label htmlFor="category" className="block font-medium">
+                              Select a Category
+                            </label>
+                            <Field name="category">
+                              {({ field }) => (
+                                <>
+                                  <SelectMenu
+                                    {...field}
+                                    items={categories?.data}
+                                    selected={selectedCategory}
+                                    handleChange={(category) => {
+                                      setSelectedCategory(category);
+                                      setFieldValue("category", category._id);
+                                    }}
+                                  />
+                                </>
+                              )}
+                            </Field>
+                          </div>
+                          <div className="w-full">
+                            <label htmlFor="sub_category" className="block font-medium">
+                              Select a Service
+                            </label>
+                            <Field name="sub_category">
+                              {({ field }) => (
+                                <>
+                                  <SelectMenu
+                                    {...field}
+                                    items={selectedCategory?.sub_categories}
+                                    isDisabled={isEmpty(selectedCategory)}
+                                    selected={selectedSubCategory}
+                                    handleChange={(subCategory) => {
+                                      setSelectedSubCategory(subCategory);
+                                      setFieldValue("sub_category", subCategory._id);
+                                    }}
+                                  />
+                                </>
+                              )}
+                            </Field>
+                          </div>
+                        </div>
+                        <div className="w-full">
+                          <label htmlFor="service" className="block font-medium">
+                            Select A More Specific Service
+                          </label>
+                          <Field name="service">
+                            {({ field }) => (
+                              <>
+                                <SelectMenu
+                                  {...field}
+                                  items={selectedSubCategory?.services}
+                                  isDisabled={isEmpty(selectedSubCategory)}
+                                  selected={selectedService}
+                                  handleChange={(service) => {
+                                    setSelectedService(service);
+                                    setFieldValue("service", service._id);
+                                  }}
+                                />
+                              </>
+                            )}
+                          </Field>
+                        </div>
+                        <div className="w-full">
+                          <label htmlFor="tags" className="block font-medium">
+                            Choose Required Skills
+                          </label>
+                          <Field name="tags">
+                            {({ field }) => (
+                              <>
+                                <ComboboxMultiple
+                                  {...field}
+                                  items={selectedSubCategory?.tags || sampleSkills.skills}
+                                  placeholder={"Choose Skills"}
+                                  isEditing={true}
+                                  isDisabled={
+                                    isEmpty(selectedSubCategory) ||
+                                    values.skills.length >= 5
+                                  }
+                                  setValue={(skills) => {
+                                    setFieldValue("tags", skills);
+                                  }}
+                                />
+                              </>
+                            )}
+                          </Field>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Attachments */}
+                    <div className="flex justify-between p-8">
+                      <SectionInfo
+                        heading={"Attach Your Files"}
+                        description={
+                          "Send you attachments, if they can further describe your work"
+                        }
+                      />
+                      <div className="basis-6/12">
+                        <label htmlFor="attachments" className="font-medium mb-2 block">
+                          Attachments
+                        </label>
+                        <FileDropzone files={attachments} setFiles={setAttachments} />
+                      </div>
+                    </div>
+                    {/* Budget and Delivery Date */}
+                    <div className="flex justify-between p-8">
+                      <SectionInfo
+                        heading={"Time to set your Budget and Deadline"}
+                        description={
+                          "Tell us about your budget and your expected delivery date."
+                        }
+                      />
+
+                      <div className="basis-6/12">
+                        <ProjectPricingForm
+                          formikData={{
+                            values,
+                            touched,
+                            errors,
+                            submitCount,
+                            setFieldValue,
+                          }}
+                          inEthereum={inEthereum}
+                          setInEthereum={setInEthereum}
+                          setDeliveryDate={setDeliveryDate}
+                          deliveryDate={deliveryDate}
+                          selectedPricingType={selectedPricingType}
+                          setSelectedPricingType={setSelectedPricingType}
+                          pricingTypes={pricingTypes}
+                        />
+                      </div>
+                    </div>
+                    {/* Form Submission */}
+                    <div className="px-8 py-4 border-t text-end">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => router.push("/client/projects")}
+                          type="button"
+                          className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm"
+                        >
+                          <span>Cancel</span>
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={!isValid || !Object.keys(touched).length}
+                          className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm"
+                        >
+                          <span>Continue</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </Form>
               )}
             </Formik>
-            <Transition show={formStep === 1}>
-              <ProjectReviewTab
-                formData={formData}
-                selectedCategory={selectedCategory}
-                selectedSubCategory={selectedSubCategory}
-                selectedService={selectedService}
-                inEthereum={inEthereum}
-                setFormStep={setFormStep}
-              />
-            </Transition>
           </div>
         </section>
       </WebLayout>
@@ -222,134 +355,250 @@ function CreateProject() {
 
 export default withRouteProtect(CreateProject, ["client"]);
 
-function ProjectReviewTab({
-  formData,
-  selectedCategory,
-  selectedSubCategory,
-  selectedService,
-  inEthereum,
-  setFormStep,
-}) {
-  const { isLoading, error, successMessage, postProject } = useProjects();
+function SectionInfo({ heading, description }) {
+  return (
+    <div className="basis-5/12">
+      <h1 className="text-2xl font-display text-primary-700 capitalize">{heading}</h1>
+      <h4>{description}</h4>
+    </div>
+  );
+}
 
-  const handlePostProject = () => {
-    postProject(formData);
+function SelectMenu({
+  items,
+  selected,
+  handleChange,
+  isDisabled,
+  defaultValue,
+  placeholder,
+}) {
+  return (
+    <Listbox disabled={isDisabled} value={selected} onChange={handleChange}>
+      <div className="relative mt-1">
+        <Listbox.Button className="w-full rounded-md form-input bg-white py-1.5 pl-3 pr-10 disabled:text-neutral-500 text-left disabled:border-neutral-300 text-neutral-700 shadow-sm sm:text-sm sm:leading-6 outline-none">
+          <span className="block truncate ">
+            {!isEmpty(selected) ? selected.name : placeholder ? placeholder : "Select"}
+          </span>
+          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+            <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+          </span>
+        </Listbox.Button>
+        <Transition
+          as={Fragment}
+          leave="transition ease-in duration-100"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <Listbox.Options className="absolute mt-1 z-10 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+            {items &&
+              items.map((item, index) => (
+                <Listbox.Option
+                  key={index}
+                  value={item}
+                  className={({ active }) =>
+                    classNames(
+                      "relative cursor-default select-none py-2 pl-8 pr-4",
+                      active ? "bg-primary-500 text-white" : "text-neutral-700"
+                    )
+                  }
+                >
+                  {({ active, selected }) => (
+                    <>
+                      <span
+                        className={classNames(
+                          "block truncate",
+                          selected && "font-semibold"
+                        )}
+                      >
+                        {item.name}
+                      </span>
+
+                      {selected && (
+                        <span
+                          className={classNames(
+                            "absolute inset-y-0 left-0 flex items-center pl-1.5",
+                            active ? "text-white" : "text-primary-500"
+                          )}
+                        >
+                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      )}
+                    </>
+                  )}
+                </Listbox.Option>
+              ))}
+          </Listbox.Options>
+        </Transition>
+      </div>
+    </Listbox>
+  );
+}
+
+function ProjectPricingForm({
+  formikData,
+  inEthereum,
+  setInEthereum,
+  deliveryDate,
+  setDeliveryDate,
+  selectedPricingType,
+  setSelectedPricingType,
+  pricingTypes,
+}) {
+  const { values, errors, touched, submitCount, setFieldValue } = formikData;
+  const [apiError, setApiError] = useState("");
+
+  const fetchCurrencyRate = async () => {
+    try {
+      const response = await axios.get(
+        "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+      );
+      setInEthereum(response.data.ethereum.usd);
+    } catch (error) {
+      setApiError("Can't load currency exchange rates right now. Try again later");
+    }
   };
 
+  useEffect(() => {
+    fetchCurrencyRate();
+  }, []);
+
   return (
-    <div className="min-h-screen rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
-      {successMessage && (
-        <div className="">
-          <h4 className="text-center  font-medium bg-success-200 text-success-700 text-lg">
-            Your Project is successfully created and listed project catalog.
-          </h4>
-        </div>
-      )}
-      {error && (
-        <div className="">
-          <h4 className="text-center  font-medium bg-danger-200 text-danger-700 text-lg">
-            Something went wront. Please try again later
-          </h4>
-        </div>
-      )}
-      <div className=" p-8 flex divide-x-2 divide-neutral-500">
-        <div className="w-1/3">
-          <h1 className="text-2xl font-display text-primary-700 capitalize">
-            {"Let's take a final look"}
-          </h1>
-        </div>
-        <div className="w-1/3 px-2 space-y-4">
-          <h1 className="font-display font-bold text-xl">Basic Info</h1>
-          <div>
-            <label htmlFor="title" className="font-medium">
-              Title
+    <>
+      <div className="w-11/12 flex justify-between">
+        <div className="basis-6/12 space-y-5">
+          <div className="inline-block relative">
+            <label htmlFor="pricing_type" className="block font-medium mb-2">
+              Choose A Pricing Type
             </label>
-            <p>{formData?.title}</p>
+            <Field name="pricing_type" id="pricing_type">
+              {({ field }) => (
+                <Listbox
+                  {...field}
+                  value={selectedPricingType}
+                  onChange={(value) => {
+                    setFieldValue("pricing_type", value.value);
+                    setSelectedPricingType(value);
+                  }}
+                >
+                  {({ open }) => (
+                    <>
+                      <Listbox.Button
+                        className={`w-32 p-2 rounded-md border text-left  focus:ring-2 focus:border-primary-500 ${
+                          open ? "border-primary-500 ring-2" : "border-neutral-500"
+                        } font-medium placeholder:text-neutral-400 outline-none text-sm capitalize`}
+                      >
+                        <span className="w-full justify-between flex items-center gap-2">
+                          {selectedPricingType.label}
+                          <span>
+                            {
+                              <BsChevronDown
+                                className={`stroke-1 transition-transform ${
+                                  open ? "rotate-180" : "rotate-0"
+                                }`}
+                              />
+                            }
+                          </span>
+                        </span>
+                      </Listbox.Button>
+                      <Transition
+                        show={open}
+                        enter="transition-opacity duration-75"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity duration-150"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                      >
+                        <Listbox.Options
+                          className={
+                            "w-full rounded-md shadow-custom-md shadow-neutral-300 mt-2 absolute bg-white divide-y"
+                          }
+                        >
+                          {pricingTypes.map(({ value, label }, index) => (
+                            <Listbox.Option
+                              key={index}
+                              value={{ value, label }}
+                              className={
+                                " text-sm cursor-pointer hover:bg-primary-100 p-2 capitalize"
+                              }
+                            >
+                              <span>{label}</span>
+                            </Listbox.Option>
+                          ))}
+                        </Listbox.Options>
+                      </Transition>
+                    </>
+                  )}
+                </Listbox>
+              )}
+            </Field>
           </div>
-          <div>
-            <label htmlFor="description" className="font-medium">
-              Description
+          <div className="w-full">
+            <label htmlFor="budget" className="font-medium mb-2 block">
+              Project Budget
             </label>
-            <p>{formData?.description}</p>
-          </div>
-          <div>
-            <label htmlFor="category" className="font-medium">
-              Category
-            </label>
-            <p>{selectedCategory?.label}</p>
-          </div>
-          <div>
-            <label htmlFor="service" className="font-medium">
-              Service
-            </label>
-            <p>{selectedSubCategory?.label}</p>
-          </div>
-          <div>
-            <label htmlFor="focused" className="font-medium">
-              Specific Service
-            </label>
-            <p>{selectedService?.label}</p>
-          </div>
-        </div>
-        <div className="w-1/3 px-2 space-y-4">
-          <h1 className="font-display font-bold text-xl">Project Scope</h1>
-          <div>
-            <label htmlFor="service" className="font-medium">
-              Scope
-            </label>
-            <p className="capitalize">{formData?.scope}</p>
-          </div>
-          <div>
-            <label htmlFor="service" className="font-medium">
-              Skills Level
-            </label>
-            <p className="capitalize">{formData?.skills_level}</p>
-          </div>
-          <h1 className="font-display font-bold text-xl">Pricing and Deadline</h1>
-          <div>
-            <label htmlFor="pricing_type" className="font-medium">
-              Pricing Type
-            </label>
-            <p className="capitalize">{formData?.pricing_type}</p>
-          </div>
-          <div>
-            <label htmlFor="budget" className="font-medium">
-              Budget
-            </label>
-            <p className="break-words">{` ${formData?.budget}${
-              formData.pricing_type === "fixed" ? "$" : "$/hr"
-            } ${
-              (inEthereum && parseFloat((formData.budget / inEthereum).toFixed(4))) || 0
-            } ETH `}</p>
-          </div>
-          <div>
-            <label htmlFor="service" className="font-medium">
-              Delivery Date
-            </label>
-            <p className="capitalize">{formData?.deadline}</p>
-          </div>
-        </div>
-      </div>
-      <div className="px-8 py-4 border-t text-end">
-        <div className="flex justify-end gap-2">
-          <button
-            onClick={() => setFormStep(0)}
-            className="px-4 py-2 rounded-md border font-medium  inline-flex gap-2 items-center text-sm"
-          >
-            <span>
-              <BiArrowBack />
+
+            <Field
+              name="budget"
+              type="number"
+              id="budget"
+              min={10}
+              max={1000}
+              className=" w-32 p-2 border border-neutral-500 rounded-md text-left  focus:ring-2 focus:border-primary-500 font-medium placeholder:text-neutral-400 outline-none text-sm capitalize"
+            />
+            <span className="ml-2 text-lg font-medium">
+              {values.pricing_type === "hourly" ? "$/hr" : "$"}
             </span>
-            <span>Edit</span>
-          </button>
-          <button
-            onClick={handlePostProject}
-            disabled={isLoading}
-            className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 text-white font-medium  inline-flex gap-2 items-center text-sm disabled:bg-neutral-200 disabled:text-neutral-500"
-          >
-            {isLoading ? <Spinner /> : "Post Project"}
-          </button>
+            {errors.budget && touched.budget && submitCount > 0 ? (
+              <ErrorMessage
+                name="budget"
+                component={"p"}
+                className="field-error__message"
+              />
+            ) : (
+              <p className="text-sm italic text-neutral-500">
+                Enter your budget between $10 to $1000
+              </p>
+            )}
+
+            <h4 className="font-medium">
+              {(inEthereum && parseFloat((values.budget / inEthereum).toFixed(4))) || 0}{" "}
+              ETH
+            </h4>
+          </div>
+        </div>
+        <div className="basis-6/12">
+          <label htmlFor="delivery_date" className="block mb-2 font-medium">
+            Set A Delivery Date
+          </label>
+
+          <Field name="deadline">
+            {({ field }) => (
+              <Datepicker
+                {...field}
+                primaryColor="indigo"
+                asSingle={true}
+                useRange={false}
+                value={deliveryDate}
+                minDate={new Date()}
+                displayFormat="MM/DD/YYYY"
+                inputClassName="w-full p-2 border border-neutral-500 rounded-md focus:ring-2 focus:border-primary-500 bg-white text-neutral-700 placeholder:font-medium outline-none"
+                onChange={(date) => {
+                  setDeliveryDate(date);
+                  setFieldValue("deadline", date.endDate);
+                }}
+              />
+            )}
+          </Field>
+          {errors.deadline && submitCount > 0 && (
+            <ErrorMessage
+              name="deadline"
+              component={"p"}
+              className="field-error__message"
+            />
+          )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
