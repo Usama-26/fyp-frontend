@@ -27,7 +27,7 @@ function ClientProjects() {
     if (clientProjects) {
       setProjects(clientProjects.data);
     }
-  }, [clientProjects]);
+  }, []);
 
   return (
     <>
@@ -79,7 +79,7 @@ function ClientProjects() {
             {!isLoading && projects?.length <= 0 ? (
               <ProjectEmptyState />
             ) : (
-              <MyProjectsList items={projects} />
+              <MyProjectsList projects={projects} />
             )}
           </div>
         </section>

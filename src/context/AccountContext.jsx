@@ -207,13 +207,13 @@ function AccountsProvider({ children }) {
     } else {
       return () => {};
     }
-  }, [user]);
+  }, [user, router]);
 
   useEffect(() => {
     if (error) {
       dispatch({ type: "reset" });
     }
-  }, [router]);
+  }, [error]);
 
   return (
     <AccountsContext.Provider

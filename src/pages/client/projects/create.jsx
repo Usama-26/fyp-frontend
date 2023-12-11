@@ -6,7 +6,6 @@ import withRouteProtect from "@/helpers/withRouteProtect";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import { useProjects } from "@/context/ProjectContext";
-import Spinner from "@/components/Spinner";
 import FileDropzone from "@/components/FIleDropzone";
 import { useServices } from "@/context/ServiceContext";
 import { Listbox, Transition } from "@headlessui/react";
@@ -54,8 +53,6 @@ const pricingTypes = [
   },
 ];
 function CreateProject() {
-  const [formStep, setFormStep] = useState(0);
-  const [formData, setFormData] = useState({});
   const [inEthereum, setInEthereum] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState({});
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
@@ -91,7 +88,7 @@ function CreateProject() {
             <Formik
               initialValues={projectInitialValues}
               validationSchema={projectSchema}
-              onSubmit={(values, { resetForm }) => {
+              onSubmit={(values) => {
                 postProject(values);
               }}
             >
@@ -364,14 +361,7 @@ function SectionInfo({ heading, description }) {
   );
 }
 
-function SelectMenu({
-  items,
-  selected,
-  handleChange,
-  isDisabled,
-  defaultValue,
-  placeholder,
-}) {
+function SelectMenu({ items, selected, handleChange, isDisabled, placeholder }) {
   return (
     <Listbox disabled={isDisabled} value={selected} onChange={handleChange}>
       <div className="relative mt-1">
@@ -454,7 +444,7 @@ function ProjectPricingForm({
       );
       setInEthereum(response.data.ethereum.usd);
     } catch (error) {
-      setApiError("Can't load currency exchange rates right now. Try again later");
+      setApiError("Can't fetch ethereum");
     }
   };
 
@@ -560,7 +550,7 @@ function ProjectPricingForm({
                 Enter your budget between $10 to $1000
               </p>
             )}
-
+            {apiError && <h6 className="text-neutral-500 text-xs">{apiError}</h6>}
             <h4 className="font-medium">
               {(inEthereum && parseFloat((values.budget / inEthereum).toFixed(4))) || 0}{" "}
               ETH
