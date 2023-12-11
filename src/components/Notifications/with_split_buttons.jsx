@@ -1,8 +1,8 @@
-import { Fragment, useState } from 'react'
-import { Transition } from '@headlessui/react'
+import { Fragment, useState } from "react";
+import { Transition } from "@headlessui/react";
 
 export default function Example() {
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(true);
 
   return (
     <>
@@ -26,8 +26,12 @@ export default function Example() {
             <div className="pointer-events-auto flex w-full max-w-md divide-x divide-gray-200 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
               <div className="flex w-0 flex-1 items-center p-4">
                 <div className="w-full">
-                  <p className="text-sm font-medium text-gray-900">Receive notifications</p>
-                  <p className="mt-1 text-sm text-gray-500">Notifications may include alerts, sounds, and badges.</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    Receive notifications
+                  </p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Notifications may include alerts, sounds, and badges.
+                  </p>
                 </div>
               </div>
               <div className="flex">
@@ -37,7 +41,7 @@ export default function Example() {
                       type="button"
                       className="flex w-full items-center justify-center rounded-none rounded-tr-lg border border-transparent px-4 py-3 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:z-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       onClick={() => {
-                        setShow(false)
+                        setShow(false);
                       }}
                     >
                       Reply
@@ -48,10 +52,10 @@ export default function Example() {
                       type="button"
                       className="flex w-full items-center justify-center rounded-none rounded-br-lg border border-transparent px-4 py-3 text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       onClick={() => {
-                        setShow(false)
+                        setShow(false);
                       }}
                     >
-                      Don't allow
+                      {"Don't allow"}
                     </button>
                   </div>
                 </div>
@@ -61,5 +65,5 @@ export default function Example() {
         </div>
       </div>
     </>
-  )
+  );
 }

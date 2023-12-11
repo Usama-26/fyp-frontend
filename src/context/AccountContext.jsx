@@ -198,7 +198,11 @@ function AccountsProvider({ children }) {
     } else if (!window.localStorage.getItem("token") && user) {
       window.localStorage.setItem("token", user?.token);
       dispatch({ type: "loggedIn" });
-      router.push("/");
+      if (user.data.user_type === "client") {
+        router.push("/client/dashboard/");
+      } else if (user.data.user_type === "freelancer") {
+        router.push("/freelancer/dashboard/");
+      }
       return;
     } else {
       return () => {};
