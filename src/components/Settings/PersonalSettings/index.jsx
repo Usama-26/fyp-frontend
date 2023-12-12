@@ -24,10 +24,9 @@ export default function PersonalSettings() {
 
   const handleUpdate = (e) => {
     updateClientProfilePhoto(user.data._id, e.target.files[0]);
+    setProfilePhoto(e.target.files[0]);
   };
 
-  // const handleUpdate = () => {
-  // };
   const originalValues = {
     firstName: user?.data.firstName,
     lastName: user?.data.lastName,
@@ -71,7 +70,7 @@ export default function PersonalSettings() {
             </p>
           </div>
           {isEditing ? (
-            <Form className="space-y-4">
+            <Form encType="multipart/form-data" className="space-y-4">
               <div className=" space-y-4 max-w-md">
                 <div>
                   <label htmlFor="firsName" className="font-medium text-sm">

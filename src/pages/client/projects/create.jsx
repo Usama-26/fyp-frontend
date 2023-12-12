@@ -9,13 +9,20 @@ import { useProjects } from "@/context/ProjectContext";
 import FileDropzone from "@/components/FIleDropzone";
 import { useServices } from "@/context/ServiceContext";
 import { Listbox, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowDownTrayIcon,
+  CheckIcon,
+  ChevronRightIcon,
+  ChevronUpDownIcon,
+  PaperClipIcon,
+} from "@heroicons/react/20/solid";
 import { classNames, isEmpty } from "@/utils/generics";
 import sampleSkills from "@/json/sample-skills";
 import ComboboxMultiple from "@/components/Comboboxes/ComboboxMultiple";
 import axios from "axios";
 import { BsChevronDown } from "react-icons/bs";
 import Datepicker from "react-tailwindcss-datepicker";
+import { BiFile } from "react-icons/bi";
 
 const projectSchema = Yup.object({
   title: Yup.string()
@@ -40,6 +47,7 @@ const projectSchema = Yup.object({
     .min(10, "Select a minimum budget of 10 $")
     .max(1000, "Maximum budget can be 1000 $")
     .required("Please enter your budget"),
+  attachments: Yup.array(),
 });
 
 const pricingTypes = [
@@ -52,8 +60,10 @@ const pricingTypes = [
     label: "Hourly Rate",
   },
 ];
+
 function CreateProject() {
   const [inEthereum, setInEthereum] = useState(0);
+  const [formStep, setFormStep] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState({});
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [selectedService, setSelectedService] = useState({});
@@ -61,7 +71,7 @@ function CreateProject() {
   const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
   const [attachments, setAttachments] = useState([]);
   const { categories } = useServices();
-  const { postProject } = useProjects();
+  const { postProject, error } = useProjects();
   const router = useRouter();
 
   const projectInitialValues = {
@@ -71,12 +81,17 @@ function CreateProject() {
     sub_category: "",
     service: "",
     scope: "small",
-    skills: [],
+    tags: [],
     pricing_type: "fixed",
     budget: 0,
     deadline: "",
+    attachments: [],
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [formStep]);
+  console.log(error);
   return (
     <>
       <Head>
@@ -94,252 +109,273 @@ function CreateProject() {
             >
               {({ values, errors, touched, isValid, setFieldValue, submitCount }) => (
                 <Form>
-                  <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
-                    {/* Basic Info Section */}
-                    <div className="flex justify-between p-8">
-                      <SectionInfo
-                        heading={"Let's begin with filling up basic information"}
-                        description={"Tell us what you got in your mind"}
-                      />
-                      <div className="basis-6/12 space-y-5">
-                        <div className="w-full">
-                          <label htmlFor="title" className="block font-medium">
-                            Project Title
-                          </label>
-                          <Field
-                            className={`form-input ${
-                              errors.title &&
-                              touched.title &&
-                              submitCount > 0 &&
-                              "field-error"
-                            }`}
-                            type="text"
-                            name="title"
-                            id="title"
-                            maxLength={100}
-                            placeholder="Enter Project Title"
-                          />
-                          <span className="text-sm float-right">
-                            {values.title.length}/100
-                          </span>
-
-                          {errors.title && touched.title && submitCount > 0 ? (
-                            <ErrorMessage
-                              name="title"
-                              component={"p"}
-                              className="field-error__message"
-                            />
-                          ) : (
-                            <p className="text-sm italic text-neutral-500">
-                              {
-                                "Example: Create a website for my personal portfolio. (20 to 100 character)"
-                              }
-                            </p>
-                          )}
-                        </div>
-                        <div className="w-full">
-                          <label htmlFor="description" className="block font-medium">
-                            Project Description
-                          </label>
-                          <Field
-                            as="textarea"
-                            rows="5"
-                            className={`form-input resize-none ${
-                              errors.description &&
-                              touched.description &&
-                              submitCount > 0 &&
-                              "field-error"
-                            }`}
-                            name="description"
-                            id="description"
-                            maxLength={2000}
-                            placeholder="Enter Description"
-                          />
-
-                          <span className="text-sm float-right">
-                            {values.description.length}/2000
-                          </span>
-
-                          {errors.description &&
-                          touched.description &&
-                          submitCount > 0 ? (
-                            <ErrorMessage
-                              name="description"
-                              component={"p"}
-                              className="field-error__message"
-                            />
-                          ) : (
-                            <p className="text-sm italic text-neutral-500">
-                              {
-                                "Write a paragraph which explains your project in detail. (50 to 2000 characters)"
-                              }
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {/* Skills Section */}
-                    <div className="flex justify-between p-8">
-                      <SectionInfo
-                        heading={"Choose Category and required skills"}
-                        description={
-                          "Choose from the available categories and select what skills are required for this project."
-                        }
-                      />
-                      <div className="basis-6/12 space-y-5">
-                        <div className="flex gap-4">
-                          <div className="w-full">
-                            <label htmlFor="category" className="block font-medium">
-                              Select a Category
-                            </label>
-                            <Field name="category">
-                              {({ field }) => (
-                                <>
-                                  <SelectMenu
-                                    {...field}
-                                    items={categories?.data}
-                                    selected={selectedCategory}
-                                    handleChange={(category) => {
-                                      setSelectedCategory(category);
-                                      setFieldValue("category", category._id);
-                                    }}
-                                  />
-                                </>
-                              )}
-                            </Field>
-                          </div>
-                          <div className="w-full">
-                            <label htmlFor="sub_category" className="block font-medium">
-                              Select a Service
-                            </label>
-                            <Field name="sub_category">
-                              {({ field }) => (
-                                <>
-                                  <SelectMenu
-                                    {...field}
-                                    items={selectedCategory?.sub_categories}
-                                    isDisabled={isEmpty(selectedCategory)}
-                                    selected={selectedSubCategory}
-                                    handleChange={(subCategory) => {
-                                      setSelectedSubCategory(subCategory);
-                                      setFieldValue("sub_category", subCategory._id);
-                                    }}
-                                  />
-                                </>
-                              )}
-                            </Field>
-                          </div>
-                        </div>
-                        <div className="w-full">
-                          <label htmlFor="service" className="block font-medium">
-                            Select A More Specific Service
-                          </label>
-                          <Field name="service">
-                            {({ field }) => (
-                              <>
-                                <SelectMenu
-                                  {...field}
-                                  items={selectedSubCategory?.services}
-                                  isDisabled={isEmpty(selectedSubCategory)}
-                                  selected={selectedService}
-                                  handleChange={(service) => {
-                                    setSelectedService(service);
-                                    setFieldValue("service", service._id);
-                                  }}
-                                />
-                              </>
-                            )}
-                          </Field>
-                        </div>
-                        <div className="w-full">
-                          <label htmlFor="tags" className="block font-medium">
-                            Choose Required Skills
-                          </label>
-                          <Field name="tags">
-                            {({ field }) => (
-                              <>
-                                <ComboboxMultiple
-                                  {...field}
-                                  items={selectedSubCategory?.tags || sampleSkills.skills}
-                                  placeholder={"Choose Skills"}
-                                  isEditing={true}
-                                  isDisabled={
-                                    isEmpty(selectedSubCategory) ||
-                                    values.skills.length >= 5
-                                  }
-                                  setValue={(skills) => {
-                                    setFieldValue("tags", skills);
-                                  }}
-                                />
-                              </>
-                            )}
-                          </Field>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Attachments */}
-                    <div className="flex justify-between p-8">
-                      <SectionInfo
-                        heading={"Attach Your Files"}
-                        description={
-                          "Send you attachments, if they can further describe your work"
-                        }
-                      />
-                      <div className="basis-6/12">
-                        <label htmlFor="attachments" className="font-medium mb-2 block">
-                          Attachments
-                        </label>
-                        <FileDropzone files={attachments} setFiles={setAttachments} />
-                      </div>
-                    </div>
-                    {/* Budget and Delivery Date */}
-                    <div className="flex justify-between p-8">
-                      <SectionInfo
-                        heading={"Time to set your Budget and Deadline"}
-                        description={
-                          "Tell us about your budget and your expected delivery date."
-                        }
-                      />
-
-                      <div className="basis-6/12">
-                        <ProjectPricingForm
-                          formikData={{
-                            values,
-                            touched,
-                            errors,
-                            submitCount,
-                            setFieldValue,
-                          }}
-                          inEthereum={inEthereum}
-                          setInEthereum={setInEthereum}
-                          setDeliveryDate={setDeliveryDate}
-                          deliveryDate={deliveryDate}
-                          selectedPricingType={selectedPricingType}
-                          setSelectedPricingType={setSelectedPricingType}
-                          pricingTypes={pricingTypes}
+                  {formStep === 0 ? (
+                    <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
+                      {/* Basic Info Section */}
+                      <div className="flex justify-between p-8">
+                        <SectionInfo
+                          heading={"Let's begin with filling up basic information"}
+                          description={"Tell us what you got in your mind"}
                         />
+                        <div className="basis-6/12 space-y-5">
+                          <div className="w-full">
+                            <label htmlFor="title" className="block font-medium">
+                              Project Title
+                            </label>
+                            <Field
+                              className={`form-input ${
+                                errors.title &&
+                                touched.title &&
+                                submitCount > 0 &&
+                                "field-error"
+                              }`}
+                              type="text"
+                              name="title"
+                              id="title"
+                              maxLength={100}
+                              placeholder="Enter Project Title"
+                            />
+                            <span className="text-sm float-right">
+                              {values.title.length}/100
+                            </span>
+
+                            {errors.title && touched.title && submitCount > 0 ? (
+                              <ErrorMessage
+                                name="title"
+                                component={"p"}
+                                className="field-error__message"
+                              />
+                            ) : (
+                              <p className="text-sm italic text-neutral-500">
+                                {
+                                  "Example: Create a website for my personal portfolio. (20 to 100 character)"
+                                }
+                              </p>
+                            )}
+                          </div>
+                          <div className="w-full">
+                            <label htmlFor="description" className="block font-medium">
+                              Project Description
+                            </label>
+                            <Field
+                              as="textarea"
+                              rows="5"
+                              className={`form-input resize-none ${
+                                errors.description &&
+                                touched.description &&
+                                submitCount > 0 &&
+                                "field-error"
+                              }`}
+                              name="description"
+                              id="description"
+                              maxLength={2000}
+                              placeholder="Enter Description"
+                            />
+
+                            <span className="text-sm float-right">
+                              {values.description.length}/2000
+                            </span>
+
+                            {errors.description &&
+                            touched.description &&
+                            submitCount > 0 ? (
+                              <ErrorMessage
+                                name="description"
+                                component={"p"}
+                                className="field-error__message"
+                              />
+                            ) : (
+                              <p className="text-sm italic text-neutral-500">
+                                {
+                                  "Write a paragraph which explains your project in detail. (50 to 2000 characters)"
+                                }
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      {/* Skills Section */}
+                      <div className="flex justify-between p-8">
+                        <SectionInfo
+                          heading={"Choose Category and required skills"}
+                          description={
+                            "Choose from the available categories and select what skills are required for this project."
+                          }
+                        />
+                        <div className="basis-6/12 space-y-5">
+                          <div className="flex gap-4">
+                            <div className="w-full">
+                              <label htmlFor="category" className="block font-medium">
+                                Select a Category
+                              </label>
+                              <Field name="category">
+                                {({ field }) => (
+                                  <>
+                                    <SelectMenu
+                                      {...field}
+                                      items={categories?.data}
+                                      selected={selectedCategory}
+                                      handleChange={(category) => {
+                                        setSelectedCategory(category);
+                                        setFieldValue("category", category._id);
+                                      }}
+                                    />
+                                  </>
+                                )}
+                              </Field>
+                            </div>
+                            <div className="w-full">
+                              <label htmlFor="sub_category" className="block font-medium">
+                                Select a Service
+                              </label>
+                              <Field name="sub_category">
+                                {({ field }) => (
+                                  <>
+                                    <SelectMenu
+                                      {...field}
+                                      items={selectedCategory?.sub_categories}
+                                      isDisabled={isEmpty(selectedCategory)}
+                                      selected={selectedSubCategory}
+                                      handleChange={(subCategory) => {
+                                        setSelectedSubCategory(subCategory);
+                                        setFieldValue("sub_category", subCategory._id);
+                                      }}
+                                    />
+                                  </>
+                                )}
+                              </Field>
+                            </div>
+                          </div>
+                          <div className="w-full">
+                            <label htmlFor="service" className="block font-medium">
+                              Select A More Specific Service
+                            </label>
+                            <Field name="service">
+                              {({ field }) => (
+                                <>
+                                  <SelectMenu
+                                    {...field}
+                                    items={selectedSubCategory?.services}
+                                    isDisabled={isEmpty(selectedSubCategory)}
+                                    selected={selectedService}
+                                    handleChange={(service) => {
+                                      setSelectedService(service);
+                                      setFieldValue("service", service._id);
+                                    }}
+                                  />
+                                </>
+                              )}
+                            </Field>
+                          </div>
+                          <div className="w-full">
+                            <label htmlFor="tags" className="block font-medium">
+                              Choose Required Skills
+                            </label>
+                            <Field name="tags">
+                              {({ field }) => (
+                                <>
+                                  <ComboboxMultiple
+                                    {...field}
+                                    items={
+                                      selectedSubCategory?.tags || sampleSkills.skills
+                                    }
+                                    placeholder={"Choose Skills"}
+                                    isEditing={true}
+                                    isDisabled={
+                                      isEmpty(selectedSubCategory) ||
+                                      values.tags.length >= 5
+                                    }
+                                    defaultItems={values.tags}
+                                    setValue={(skills) => {
+                                      setFieldValue("tags", skills);
+                                    }}
+                                  />
+                                </>
+                              )}
+                            </Field>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Attachments */}
+                      <div className="flex justify-between p-8">
+                        <SectionInfo
+                          heading={"Attach Your Files"}
+                          description={
+                            "Send you attachments, if they can further describe your work"
+                          }
+                        />
+                        <div className="basis-6/12">
+                          <label htmlFor="attachments" className="font-medium mb-2 block">
+                            Attachments
+                          </label>
+                          <FileDropzone
+                            files={values.attachments}
+                            setFiles={(attachments) =>
+                              setFieldValue("attachments", attachments)
+                            }
+                          />
+                        </div>
+                      </div>
+                      {/* Budget and Delivery Date */}
+                      <div className="flex justify-between p-8">
+                        <SectionInfo
+                          heading={"Time to set your Budget and Deadline"}
+                          description={
+                            "Tell us about your budget and your expected delivery date."
+                          }
+                        />
+
+                        <div className="basis-6/12">
+                          <ProjectPricingForm
+                            formikData={{
+                              values,
+                              touched,
+                              errors,
+                              submitCount,
+                              setFieldValue,
+                            }}
+                            inEthereum={inEthereum}
+                            setInEthereum={setInEthereum}
+                            setDeliveryDate={setDeliveryDate}
+                            deliveryDate={deliveryDate}
+                            selectedPricingType={selectedPricingType}
+                            setSelectedPricingType={setSelectedPricingType}
+                            pricingTypes={pricingTypes}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Form Submission */}
+                      <div className="px-8 py-4 border-t text-end">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => router.push("/client/projects")}
+                            type="button"
+                            className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm"
+                          >
+                            <span>Cancel</span>
+                          </button>
+                          <button
+                            onClick={() => setFormStep(1)}
+                            disabled={!isValid || !Object.keys(touched).length}
+                            className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm"
+                          >
+                            <span>Continue</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    {/* Form Submission */}
-                    <div className="px-8 py-4 border-t text-end">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => router.push("/client/projects")}
-                          type="button"
-                          className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm"
-                        >
-                          <span>Cancel</span>
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={!isValid || !Object.keys(touched).length}
-                          className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm"
-                        >
-                          <span>Continue</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  ) : (
+                    <ReviewForm
+                      formData={{
+                        ...values,
+                        category: selectedCategory.name,
+                        sub_category: selectedSubCategory.name,
+                        service: selectedService.name,
+                      }}
+                      onFormStep={setFormStep}
+                    />
+                  )}
                 </Form>
               )}
             </Formik>
@@ -349,8 +385,6 @@ function CreateProject() {
     </>
   );
 }
-
-export default withRouteProtect(CreateProject, ["client"]);
 
 function SectionInfo({ heading, description }) {
   return (
@@ -592,3 +626,126 @@ function ProjectPricingForm({
     </>
   );
 }
+
+function ReviewForm({ formData, onFormStep }) {
+  return (
+    <div className=" rounded-md shadow-custom-md grid grid-cols-4 shadow-neutral-300 p-8">
+      <div className="px-4 sm:px-0 flex justify-between col-span-1">
+        <h3 className="text-base font-semibold leading-7 text-neutral-700">
+          Review your Project
+        </h3>
+      </div>
+
+      <div className="mt-6 border-t border-neutral-100 col-span-3">
+        <dl className="divide-y divide-neutral-100">
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-neutral-700">
+              Project Title
+            </dt>
+            <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+              {formData.title}
+            </dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-neutral-700">
+              Description
+            </dt>
+            <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+              {formData.description}
+            </dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-neutral-700">Category</dt>
+            <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+              {formData.category}
+            </dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-neutral-700">Service</dt>
+            <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+              {formData.sub_category}{" "}
+              <ChevronRightIcon className="h-6 w-6 inline-block align-bottom" />{" "}
+              {formData.service}
+            </dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-neutral-700">Budget</dt>
+            <dd className="mt-1 text-sm leading-6 font-medium text-neutral-700 sm:col-span-2 capitalize sm:mt-0">
+              ${formData.budget}{" "}
+              <span className="inline-block px-1 bg-neutral-300 rounded-md font-medium">
+                {formData.pricing_type}
+              </span>
+            </dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-neutral-700">
+              Required Skills
+            </dt>
+            <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+              <ul className="mt-2 flex flex-wrap gap-2">
+                {formData.tags.map((tag) => (
+                  <li
+                    key={tag}
+                    className={
+                      "inline-flex items-center gap-1 text-xs rounded-lg bg-neutral-500 text-white font-medium py-1.5 px-2"
+                    }
+                  >
+                    <span>{tag}</span>
+                  </li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-neutral-700">
+              Attachments
+            </dt>
+            <dd className="mt-2 text-sm text-neutral-700 sm:col-span-2 sm:mt-0">
+              {formData.attachments.length > 0 ? (
+                <ul
+                  role="list"
+                  className="divide-y divide-neutral-100 rounded-md border border-neutral-200"
+                >
+                  {formData.attachments.map((file) => (
+                    <li
+                      key={file.path}
+                      className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
+                    >
+                      <div
+                        key={file.name}
+                        className="bg-neutral-200 m-2 rounded-md inline-flex items-center p-1  text-xs"
+                      >
+                        <BiFile className="w-5 h-5" />
+                        <p className=" p-2">{file.name}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No Attachments</p>
+              )}
+            </dd>
+          </div>
+          <div className="px-8 py-4 border-t text-end">
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => onFormStep(0)}
+                type="button"
+                className="px-4 py-2 rounded-md border hover:bg-neutral-200 disabled:bg-neutral-400 font-medium  inline-flex gap-2 items-center text-sm"
+              >
+                <span>Back</span>
+              </button>
+              <button
+                type="submit"
+                className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm"
+              >
+                <span>Post Project</span>
+              </button>
+            </div>
+          </div>
+        </dl>
+      </div>
+    </div>
+  );
+}
+export default withRouteProtect(CreateProject, ["client"]);

@@ -9,6 +9,7 @@ import ProfileSettings from "@/components/Client/ProfileSettings";
 import PaymentSettings from "@/components/Settings/PaymentSettings";
 import NotificationSettings from "@/components/Settings/NotificationSettings";
 import AccountDeactivation from "@/components/Settings/AccountDeactivation";
+import { useAccounts } from "@/context/AccountContext";
 
 const profileTabs = [
   "Personal",
@@ -19,6 +20,7 @@ const profileTabs = [
   "Deactivate Account",
 ];
 function ClientProfileSettings() {
+  const { user } = useAccounts();
   return (
     <>
       <Head>
@@ -26,12 +28,14 @@ function ClientProfileSettings() {
       </Head>
       <WebLayout>
         <main className="relative max-w-screen-2xl mx-auto">
-          <WarningAlert>
-            <p>
-              Your profile is <b>50%</b> completed. Complete your profile to 100% to start
-              posting projects.
-            </p>
-          </WarningAlert>
+          {user && (
+            <WarningAlert>
+              <p>
+                Your profile is <b>{user.data.profile_completion}%</b> completed. Complete
+                your profile to 100% to start posting projects.
+              </p>
+            </WarningAlert>
+          )}
           <div className="my-4 rounded-md shadow-custom-sm shadow-neutral-300 min-h-[25rem] max-w-7xl mx-auto">
             <Tab.Group as={"div"}>
               <Tab.List as="ul" className={"w-full justify-between flex profile-tabs"}>
@@ -62,9 +66,7 @@ function ClientProfileSettings() {
                 <Tab.Panel>
                   <SecuritySettings />
                 </Tab.Panel>
-                <Tab.Panel>
-                  <PaymentSettings />
-                </Tab.Panel>
+                <Tab.Panel>{/* <PaymentSettings /> */}</Tab.Panel>
                 <Tab.Panel>
                   <NotificationSettings />
                 </Tab.Panel>

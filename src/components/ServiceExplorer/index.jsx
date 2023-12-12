@@ -1,16 +1,14 @@
 import Link from "next/link";
 import ServicesMegaMenu from "../ServicesMegaMenu";
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { useServices } from "@/context/ServiceContext";
 
 export default function ServiceExplorer() {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const [subCategories, setSubCategories] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
-  const router = useRouter();
 
-  const { categories, error } = useServices();
+  const { categories } = useServices();
 
   const openMenu = () => {
     setIsMenuOpen(true);
@@ -30,9 +28,7 @@ export default function ServiceExplorer() {
                 key={name}
                 onClick={closeMenu}
                 onMouseEnter={() => {
-                  openMenu(),
-                    setSubCategories(sub_categories),
-                    setActiveTab(index);
+                  openMenu(), setSubCategories(sub_categories), setActiveTab(index);
                 }}
                 onMouseLeave={closeMenu}
                 href={`/categories/${path}`}

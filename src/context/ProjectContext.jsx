@@ -1,5 +1,5 @@
 import { BASE_URL } from "@/constants";
-import { getData, postData } from "@/utils/api/genericAPI";
+import { getData, postData, updateData } from "@/utils/api/genericAPI";
 import { useRouter } from "next/router";
 import { createContext, useContext, useReducer } from "react";
 
@@ -9,6 +9,9 @@ function reducer(state, action) {
       return { ...state, project: action.payload, isLoading: false };
 
     case "project/postProject":
+      return { ...state, successMessage: action.payload, isLoading: false };
+
+    case "project/updateProject":
       return { ...state, successMessage: action.payload, isLoading: false };
 
     case "project/fetchClientProjects":
@@ -87,6 +90,22 @@ function ProjectProvider({ children }) {
     }
   };
 
+  const updateProject = async (id, data) => {
+    const token = window.localStorage.getItem("token");
+    dispatch({ type: "loading" });
+    try {
+      const response = await updateData(`${BASE_URL}/projects`, id, data, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch({ type: "project/updateProject", payload: response.data.message });
+      router.push("/client/projects");
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
   return (
     <ProjectContext.Provider
       value={{
@@ -95,6 +114,7 @@ function ProjectProvider({ children }) {
         project,
         clientProjects,
         getProjectById,
+        updateProject,
         postProject,
         fetchClientProjects,
       }}

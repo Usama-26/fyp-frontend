@@ -8,11 +8,12 @@ export default function FileDropzone({ files, setFiles }) {
 
   const handleOnDrop = (acceptedFiles) => {
     setFiles(
-      acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      )
+      // acceptedFiles.map((file) =>
+      //   Object.assign(file, {
+      //     preview: URL.createObjectURL(file),
+      //   })
+      // )
+      acceptedFiles
     );
   };
 
@@ -32,7 +33,7 @@ export default function FileDropzone({ files, setFiles }) {
         <>
           <div
             {...getRootProps()}
-            className="border border-dashed border-neutral-500 rounded-md cursor-pointer py-5 hover:border-primary-500 hover:text-primary-500 hover:bg-primary-100"
+            className="border border-dashed border-neutral-500 rounded-md cursor-pointer py-5 hover:border-primary-500 hover:text-primary-500 hover:bg-primary-50"
           >
             <input {...getInputProps()} />
             {files.length === 0 ? (

@@ -54,20 +54,20 @@ export default function App({ Component, pageProps }) {
 
   return (
     <main className={`${display.variable} ${inter.variable}`}>
+      {/* <WagmiConfig config={config}>
+      </WagmiConfig> */}
       <GoogleOAuthProvider clientId={web.client_id}>
-        <WagmiConfig config={config}>
-          <AccountsProvider>
-            <ServicesProvider>
-              <ProjectProvider>
-                <ClientProvider>
-                  <FreelancerProvider>
-                    <Component {...pageProps} />
-                  </FreelancerProvider>
-                </ClientProvider>
-              </ProjectProvider>
-            </ServicesProvider>
-          </AccountsProvider>
-        </WagmiConfig>
+        <AccountsProvider>
+          <ServicesProvider>
+            <ProjectProvider>
+              <ClientProvider>
+                <FreelancerProvider>
+                  <Component {...pageProps} />
+                </FreelancerProvider>
+              </ClientProvider>
+            </ProjectProvider>
+          </ServicesProvider>
+        </AccountsProvider>
       </GoogleOAuthProvider>
     </main>
   );

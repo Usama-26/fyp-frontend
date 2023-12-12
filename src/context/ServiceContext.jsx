@@ -6,6 +6,10 @@ function reducer(state, action) {
   switch (action.type) {
     case "categories/fetch":
       return { ...state, categories: action.payload, isLoading: false };
+    case "subCategories/fetch":
+      return { ...state, subCategories: action.payload, isLoading: false };
+    case "services/fetch":
+      return { ...state, services: action.payload, isLoading: false };
     case "skills/fetch":
       return { ...state, skills: action.payload, isLoading: false };
     case "loading":
@@ -19,6 +23,8 @@ function reducer(state, action) {
 
 const initialState = {
   categories: null,
+  services: {},
+  subCategories: {},
   skills: [],
   isLoading: false,
   error: "",
@@ -27,12 +33,39 @@ const initialState = {
 const ServicesContext = createContext();
 
 function ServicesProvider({ children }) {
-  const [{ categories, isLoading, error }, dispatch] = useReducer(reducer, initialState);
+  const [{ categories, services, subCategories, isLoading, error }, dispatch] =
+    useReducer(reducer, initialState);
 
   const fetchCategories = async () => {
     try {
       const response = await getData(`${BASE_URL}/categories`);
       dispatch({ type: "categories/fetch", payload: response.data });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
+    }
+  };
+
+  const fetchSubCategories = async () => {
+    try {
+      const response = await getData(`${BASE_URL}/subCategories`);
+      dispatch({ type: "subCategories/fetch", payload: response.data });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
+    }
+  };
+
+  const fetchServices = async () => {
+    try {
+      const response = await getData(`${BASE_URL}/services`);
+      dispatch({ type: "services/fetch", payload: response.data });
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
@@ -104,12 +137,16 @@ function ServicesProvider({ children }) {
 
   useEffect(() => {
     fetchCategories();
+    fetchSubCategories();
+    fetchServices();
   }, []);
 
   return (
     <ServicesContext.Provider
       value={{
         categories,
+        subCategories,
+        services,
         isLoading,
         error,
         dispatch,
@@ -117,6 +154,8 @@ function ServicesProvider({ children }) {
         getCategory,
         getSubCategory,
         getService,
+        fetchSubCategories,
+        fetchServices,
         getSubCategoriesByCategory,
         getServicesByCategory,
       }}

@@ -5,7 +5,6 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { BsCheckCircleFill } from "react-icons/bs";
 import { AiFillStar } from "react-icons/ai";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useAccounts } from "@/context/AccountContext";
@@ -16,6 +15,8 @@ import Spinner from "@/components/Spinner";
 import { useClient } from "@/context/ClientContext";
 import dayjs from "dayjs";
 import { isEmpty } from "@/utils/generics";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/20/solid";
+import Link from "next/link";
 
 const proposalSchema = Yup.object({
   cover_letter: Yup.string().max(2000).required("Cover Letter Required"),
@@ -30,7 +31,6 @@ const initialProposalValues = {
 function SendProposal() {
   const { project, isLoading: isProjectLoading, getProjectById } = useProjects();
   const { user } = useAccounts();
-  const [proposalData, setProposalData] = useState({});
   const [deliveryDate, setDeliveryDate] = useState({});
   const { proposal, isLoading: isSending, sendProposal } = useFreelancer();
   const { client, isLoading: isClientLoading, getClientById } = useClient();
@@ -38,7 +38,7 @@ function SendProposal() {
 
   useEffect(() => {
     getProjectById(router.query.project);
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!isEmpty(project)) {
@@ -78,19 +78,7 @@ function SendProposal() {
                         <h2 className="text-lg font-medium">{project.data.deadline}</h2>
                       </div>
                       <div>
-                        <h4>Required Skills Level</h4>
-                        <h2 className="text-lg font-medium capitalize">
-                          {project.data.skills_level}
-                        </h2>
-                      </div>
-                      <div>
-                        <h4>Project Scope</h4>
-                        <h2 className="text-lg font-medium capitalize">
-                          {project.data.scope}
-                        </h2>
-                      </div>
-                      <div>
-                        <h4>Price</h4>
+                        <h4>Budget</h4>
                         <h2 className="text-lg font-medium">
                           {project.data.pricing_type === "hourly" ? (
                             <span>${project.data.budget}/hr</span>
@@ -110,6 +98,7 @@ function SendProposal() {
                       <h2 className="font-medium mb-2">Project Description</h2>
                       <p className="">{project.data.description}</p>
                     </div>
+                    {/* Cover Letter */}
                     <div className="mx-8 my-4 rounded-md shadow-custom-md shadow-neutral-300 p-4">
                       <Formik
                         initialValues={initialProposalValues}
@@ -270,32 +259,45 @@ function SendProposal() {
                     <div className="p-4 border-b">
                       <h1 className="font-semibold">Client Details</h1>
                       <div className="flex justify-center text-center mt-8">
-                        <Image
-                          src={"/images/profiles/profile-2.jpg"}
-                          width={1024}
-                          height={683}
-                          className="w-20 h-20 aspect-square object-cover rounded-full"
-                          alt="Profile Picture"
-                        />
-
-                        <span className="w-20 h-20 flex justify-center items-center  rounded-full text-4xl text-center text-white font-semibold bg-primary-500">
-                          {client.data.firstName[0]}
-                        </span>
+                        {client.data.profile_photo ? (
+                          <Image
+                            src={client.data.profile_photo}
+                            width={1024}
+                            height={683}
+                            className="w-20 h-20 aspect-square object-cover rounded-full"
+                            alt="Profile Picture"
+                          />
+                        ) : (
+                          <span className="w-20 h-20 flex justify-center items-center  rounded-full text-4xl text-center text-white font-semibold bg-primary-500">
+                            {client.data.firstName[0]}
+                          </span>
+                        )}
                       </div>
                       <h1 className="text-lg font-medium text-center">
-                        {client.data.firstName} {client.data.lastName[0]}.
+                        <Link href={`/explore/freelancer/${client.data._id}`}>
+                          {client.data.firstName} {client.data.lastName[0]}.
+                        </Link>
                       </h1>
-                      <p className="text-center text-sm">Pakistan</p>
+                      <p className="text-center text-sm">{client.data.country}</p>
                     </div>
                     <div className="p-4 border-b">
                       <div className="flex justify-between text-sm">
                         <span>Payment Status</span>
-                        <span className="font-medium">
-                          <span>
-                            <BsCheckCircleFill className="inline mr-2 w-4 h-4 fill-success-600" />
+                        {client.data.payment_method ? (
+                          <span className="font-medium inline-flex items-center">
+                            <span>
+                              <CheckCircleIcon className="inline mr-2 w-4 h-4 fill-success-600" />
+                            </span>
+                            <span>Verified</span>
                           </span>
-                          <span>Verified</span>
-                        </span>
+                        ) : (
+                          <span className="font-medium inline-flex items-center">
+                            <span>
+                              <XCircleIcon className="inline mr-2 w-5 h-5 fill-danger-600" />
+                            </span>
+                            <span>Not Verified</span>
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="p-4 border-b">

@@ -13,6 +13,7 @@ export default function ExploreProjects() {
   const [error, setError] = useState("");
   const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
+
   const handleSearch = (query = searchQuery) => {
     console.log("Actual Query :", query);
   };
@@ -40,7 +41,7 @@ export default function ExploreProjects() {
             Explore the World of Opportunities
           </h1>
           <p className="text-lg">Discover Freelance Projects to bid on</p>
-          <div className="container mx-auto mt-5">
+          <div className="container max-w-5xl mx-auto mt-5">
             <SearchBox
               onSearch={handleSearch}
               query={searchQuery}

@@ -27,7 +27,7 @@ function ClientProjects() {
     if (clientProjects) {
       setProjects(clientProjects.data);
     }
-  }, []);
+  }, [clientProjects]);
 
   return (
     <>
@@ -36,12 +36,14 @@ function ClientProjects() {
       </Head>
       <WebLayout>
         <section className="min-h-screen">
-          <WarningAlert>
-            <p>
-              Your profile is <b>50%</b> completed. Complete your profile to 100% to start
-              posting projects.
-            </p>
-          </WarningAlert>
+          {user && (
+            <WarningAlert>
+              <p>
+                Your profile is <b>{user.data.profile_completion}%</b> completed. Complete
+                your profile to 100% to start posting projects.
+              </p>
+            </WarningAlert>
+          )}
           <div className="container mx-auto m-4 p-4 rounded-md  ">
             <h1 className="text-2xl font-display font-bold text-primary-950 mb-10">
               My Projects
