@@ -34,7 +34,9 @@ export default function ExploreProjects() {
 
   return (
     <>
-      <Head>Explore Projects | ChainWork</Head>
+      <Head>
+        <title>Explore Projects | ChainWork</title>
+      </Head>
       <WebLayout>
         <section className="bg-gradient-to-br from-primary-500 to-primary-700 py-12 text-center text-white">
           <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium font-display">

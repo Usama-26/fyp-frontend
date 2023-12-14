@@ -99,7 +99,6 @@ function AccountsProvider({ children }) {
           "user-type": userType,
         },
       });
-
       dispatch({ type: "account/login", payload: response.data });
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
@@ -209,11 +208,11 @@ function AccountsProvider({ children }) {
     }
   }, [user, router]);
 
-  useEffect(() => {
-    if (error) {
-      dispatch({ type: "reset" });
-    }
-  }, [error]);
+  // useEffect(() => {
+  //   if (error) {
+  //     dispatch({ type: "reset" });
+  //   }
+  // }, [error]);
 
   return (
     <AccountsContext.Provider

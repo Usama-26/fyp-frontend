@@ -1,7 +1,7 @@
 export default function Chip({ value }) {
   return (
-    <button className="px-2 py-1 border rounded-md text-neutral-500 text-xs hover:border-primary-700 hover:text-primary-700">
+    <span className="px-2 py-1 bg-primary-100  rounded-md text-primary-700 text-xs ">
       <span>{value}</span>
-    </button>
+    </span>
   );
 }

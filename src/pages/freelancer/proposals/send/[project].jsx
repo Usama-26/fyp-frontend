@@ -14,9 +14,11 @@ import { useFreelancer } from "@/context/FreelancerContext";
 import Spinner from "@/components/Spinner";
 import { useClient } from "@/context/ClientContext";
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { isEmpty } from "@/utils/generics";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import Chip from "@/components/Chip";
 
 const proposalSchema = Yup.object({
   cover_letter: Yup.string().max(2000).required("Cover Letter Required"),
@@ -35,6 +37,7 @@ function SendProposal() {
   const { proposal, isLoading: isSending, sendProposal } = useFreelancer();
   const { client, isLoading: isClientLoading, getClientById } = useClient();
   const router = useRouter();
+  dayjs.extend(relativeTime);
 
   useEffect(() => {
     getProjectById(router.query.project);
@@ -63,22 +66,26 @@ function SendProposal() {
             <div className="flex gap-2">
               <div className="basis-9/12 border">
                 {isProjectLoading && (
-                  <div className="flex items-center justify-center">
-                    <Spinner />
+                  <div className="flex h-96 items-center text-neutral-500 justify-center">
+                    <Spinner /> <span>Loading...</span>
                   </div>
                 )}
                 {!isEmpty(project) && (
-                  <>
-                    <h1 className="text-xl font-semibold font-display px-4 py-2 border-b">
-                      {project.data.title}
-                    </h1>
+                  <div className="border-y">
+                    <div className="px-4 py-2">
+                      <h1 className="text-xl font-semibold text-primary-500 ">
+                        {project.data.title}
+                      </h1>
+                      <p className="text-sm text-neutral-500">
+                        Posted {dayjs(project.data.createdAt).fromNow()}
+                      </p>
+                    </div>
                     <div className="px-4 py-2 flex gap-12 text-center text-sm border-b">
                       <div>
-                        <h4>Deadline</h4>
                         <h2 className="text-lg font-medium">{project.data.deadline}</h2>
+                        <h4>Deadline</h4>
                       </div>
                       <div>
-                        <h4>Budget</h4>
                         <h2 className="text-lg font-medium">
                           {project.data.pricing_type === "hourly" ? (
                             <span>${project.data.budget}/hr</span>
@@ -86,172 +93,205 @@ function SendProposal() {
                             <span>${project.data.budget}</span>
                           )}
                         </h2>
+                        <h4>Budget</h4>
                       </div>
                       <div>
-                        <h4>Proposals</h4>
                         <h2 className="text-lg font-medium">
                           {project.data.proposals.length}
                         </h2>
+                        <h4>Proposals</h4>
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-medium">
+                          {project.data.proposals.length}
+                        </h2>
+                        <h4>Proposals</h4>
                       </div>
                     </div>
                     <div className="border-b p-4">
                       <h2 className="font-medium mb-2">Project Description</h2>
                       <p className="">{project.data.description}</p>
                     </div>
+                    <div className="border-b p-4">
+                      <h2 className="font-medium mb-2">Required Skills</h2>
+                      <div className="flex flex-wrap gap-2">
+                        {project.data.tags.map((tag) => (
+                          <Chip key={tag} value={tag} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="border-b p-4">
+                      <h2 className="font-medium mb-2">Attachments</h2>
+                      {project.data.attachments.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {project.data.attachments.map((tag) => (
+                            <Chip key={tag} value={tag} />
+                          ))}
+                        </div>
+                      ) : (
+                        <p>No Attachments</p>
+                      )}
+                    </div>
                     {/* Cover Letter */}
-                    <div className="mx-8 my-4 rounded-md shadow-custom-md shadow-neutral-300 p-4">
-                      <Formik
-                        initialValues={initialProposalValues}
-                        validationSchema={proposalSchema}
-                        onSubmit={(values, { resetForm }) => {
-                          sendProposal({
-                            ...values,
-                            freelancer_id: user.data._id,
-                            project_id: project.data._id,
-                          });
-                          if (proposal) {
-                            resetForm({ values: null });
-                          }
-                        }}
-                      >
-                        {({
-                          values,
-                          errors,
-                          touched,
-                          submitCount,
-                          isValid,
-                          setFieldValue,
-                        }) => (
-                          <Form className="space-y-8">
-                            <div className="">
-                              <label
-                                htmlFor="cover_letter"
-                                className="block text-xl font-semibold mb-4"
-                              >
-                                Cover Letter
-                              </label>
-                              <Field
-                                as="textarea"
-                                rows="5"
-                                className={`form-input resize-none ${
-                                  errors.cover_letter &&
-                                  touched.cover_letter &&
-                                  submitCount > 0 &&
-                                  "field-error"
-                                }`}
-                                type="cover_letter"
-                                name="cover_letter"
-                                id="cover_letter"
-                                maxLength={2000}
-                              />
-                              <span className="text-sm float-right">
-                                {values.cover_letter.length}/2000
-                              </span>
-
-                              {errors.cover_letter &&
-                              touched.cover_letter &&
-                              submitCount > 0 ? (
-                                <ErrorMessage
-                                  name="cover_letter"
-                                  component={"p"}
-                                  className="field-error__message"
-                                />
-                              ) : (
-                                <p className="text-sm italic text-neutral-500">
-                                  {"Write your proposal here."}
-                                </p>
-                              )}
-                            </div>
-                            <div className="flex justify-between">
-                              <div>
+                    <div>
+                      {" "}
+                      <div className="mx-8 my-4 rounded-md shadow-custom-md shadow-neutral-300 p-4">
+                        <Formik
+                          initialValues={initialProposalValues}
+                          validationSchema={proposalSchema}
+                          onSubmit={(values, { resetForm }) => {
+                            sendProposal({
+                              ...values,
+                              freelancer_id: user.data._id,
+                              project_id: project.data._id,
+                            });
+                            if (proposal) {
+                              resetForm({ values: null });
+                            }
+                          }}
+                        >
+                          {({
+                            values,
+                            errors,
+                            touched,
+                            submitCount,
+                            isValid,
+                            setFieldValue,
+                          }) => (
+                            <Form className="space-y-8">
+                              <div className="">
                                 <label
-                                  htmlFor="bid_amount"
+                                  htmlFor="cover_letter"
                                   className="block text-xl font-semibold mb-4"
                                 >
-                                  Offer Your Price
+                                  Cover Letter
                                 </label>
                                 <Field
-                                  name="bid_amount"
-                                  type="number"
-                                  id="bid_amount"
-                                  min={10}
-                                  max={1000}
-                                  className=" w-32 p-2 border border-neutral-500 rounded-md text-left  focus:ring-2 focus:border-primary-500 font-medium placeholder:text-neutral-400 outline-none text-sm capitalize"
+                                  as="textarea"
+                                  rows="5"
+                                  className={`form-input resize-none ${
+                                    errors.cover_letter &&
+                                    touched.cover_letter &&
+                                    submitCount > 0 &&
+                                    "field-error"
+                                  }`}
+                                  type="cover_letter"
+                                  name="cover_letter"
+                                  id="cover_letter"
+                                  maxLength={2000}
                                 />
-                                <span className="ml-2 text-lg font-medium">
-                                  {project?.data.pricing_type === "hourly" ? "$/hr" : "$"}
+                                <span className="text-sm float-right">
+                                  {values.cover_letter.length}/2000
                                 </span>
-                                {errors.bid_amount &&
-                                touched.bid_amount &&
+
+                                {errors.cover_letter &&
+                                touched.cover_letter &&
                                 submitCount > 0 ? (
                                   <ErrorMessage
-                                    name="bid_amount"
+                                    name="cover_letter"
                                     component={"p"}
                                     className="field-error__message"
                                   />
                                 ) : (
                                   <p className="text-sm italic text-neutral-500">
-                                    Enter your Bid Amount between $10 to $1000
+                                    {"Write your proposal here."}
                                   </p>
                                 )}
                               </div>
-                              <div>
-                                <label
-                                  htmlFor="deliver_date"
-                                  className="block text-xl font-semibold mb-4"
-                                >
-                                  {"When you'll deliver"}
-                                </label>
-                                <Field name="delivery_date">
-                                  {({ field }) => (
-                                    <Datepicker
-                                      {...field}
-                                      primaryColor="indigo"
-                                      asSingle={true}
-                                      useRange={false}
-                                      value={deliveryDate}
-                                      minDate={new Date()}
-                                      displayFormat="MM/DD/YYYY"
-                                      inputClassName="w-full p-2 border border-neutral-500 rounded-md focus:ring-2 focus:border-primary-500 bg-white text-neutral-700 placeholder:font-medium outline-none"
-                                      onChange={(date) => {
-                                        setDeliveryDate(date);
-                                        setFieldValue(
-                                          "delivery_date",
-                                          dayjs(date.endDate)
-                                        );
-                                      }}
+                              <div className="flex justify-between">
+                                <div>
+                                  <label
+                                    htmlFor="bid_amount"
+                                    className="block text-xl font-semibold mb-4"
+                                  >
+                                    Offer Your Price
+                                  </label>
+                                  <Field
+                                    name="bid_amount"
+                                    type="number"
+                                    id="bid_amount"
+                                    min={10}
+                                    max={1000}
+                                    className=" w-32 p-2 border border-neutral-500 rounded-md text-left  focus:ring-2 focus:border-primary-500 font-medium placeholder:text-neutral-400 outline-none text-sm capitalize"
+                                  />
+                                  <span className="ml-2 text-lg font-medium">
+                                    {project?.data.pricing_type === "hourly"
+                                      ? "$/hr"
+                                      : "$"}
+                                  </span>
+                                  {errors.bid_amount &&
+                                  touched.bid_amount &&
+                                  submitCount > 0 ? (
+                                    <ErrorMessage
+                                      name="bid_amount"
+                                      component={"p"}
+                                      className="field-error__message"
+                                    />
+                                  ) : (
+                                    <p className="text-sm italic text-neutral-500">
+                                      Enter your Bid Amount between $10 to $1000
+                                    </p>
+                                  )}
+                                </div>
+                                <div>
+                                  <label
+                                    htmlFor="deliver_date"
+                                    className="block text-xl font-semibold mb-4"
+                                  >
+                                    {"When you'll deliver"}
+                                  </label>
+                                  <Field name="delivery_date">
+                                    {({ field }) => (
+                                      <Datepicker
+                                        {...field}
+                                        primaryColor="indigo"
+                                        asSingle={true}
+                                        useRange={false}
+                                        value={deliveryDate}
+                                        minDate={new Date()}
+                                        displayFormat="MM/DD/YYYY"
+                                        inputClassName="w-full p-2 border border-neutral-500 rounded-md focus:ring-2 focus:border-primary-500 bg-white text-neutral-700 placeholder:font-medium outline-none"
+                                        onChange={(date) => {
+                                          setDeliveryDate(date);
+                                          setFieldValue(
+                                            "delivery_date",
+                                            dayjs(date.endDate)
+                                          );
+                                        }}
+                                      />
+                                    )}
+                                  </Field>
+                                  {errors.delivery_date && submitCount > 0 && (
+                                    <ErrorMessage
+                                      name="delivery_date"
+                                      component={"p"}
+                                      className="field-error__message"
                                     />
                                   )}
-                                </Field>
-                                {errors.delivery_date && submitCount > 0 && (
-                                  <ErrorMessage
-                                    name="delivery_date"
-                                    component={"p"}
-                                    className="field-error__message"
-                                  />
-                                )}
+                                </div>
                               </div>
-                            </div>
-                            <div className=" py-4 text-end border-t">
-                              <button
-                                type="submit"
-                                disabled={!isValid || !Object.keys(touched).length}
-                                className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium items-center"
-                              >
-                                <span>{isSending ? <Spinner /> : "Send Proposal"}</span>
-                              </button>
-                            </div>
-                          </Form>
-                        )}
-                      </Formik>
+                              <div className=" py-4 text-end border-t">
+                                <button
+                                  type="submit"
+                                  disabled={!isValid || !Object.keys(touched).length}
+                                  className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium items-center"
+                                >
+                                  <span>{isSending ? <Spinner /> : "Send Proposal"}</span>
+                                </button>
+                              </div>
+                            </Form>
+                          )}
+                        </Formik>
+                      </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
               <div className="basis-3/12 border">
                 {isClientLoading && (
                   <div className="h-full flex items-center justify-center">
                     <Spinner />
+                    <span className="text-sm">Loading...</span>
                   </div>
                 )}
                 {!isEmpty(client) && (

@@ -1,22 +1,20 @@
 import { BsClockHistory } from "react-icons/bs";
-import { FaLevelUpAlt, FaRegDotCircle } from "react-icons/fa";
+import { FaRegDotCircle } from "react-icons/fa";
 import { TbClockCheck } from "react-icons/tb";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Chip from "../Chip";
 import { useAccounts } from "@/context/AccountContext";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useServices } from "@/context/ServiceContext";
+import { useClient } from "@/context/ClientContext";
+import { isEmpty } from "@/utils/generics";
 
 export default function ProjectCard(props) {
   dayjs.extend(relativeTime);
-  const { user } = useAccounts();
-
-  const router = useRouter();
   const [view, setView] = useState(false);
 
   return (
@@ -66,18 +64,6 @@ export default function ProjectCard(props) {
           >
             View Project
           </button>
-          {user && user.data.user_type !== "client" && (
-            <Link
-              href={
-                user.data.user_type === "freelancer"
-                  ? `/freelancer/proposals/send/${props._id}`
-                  : "/freelancer/join"
-              }
-              className="py-2  text-center uppercase text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700 text-sm"
-            >
-              View Project
-            </Link>
-          )}
         </div>
       </div>
       <ViewProject open={view} setOpen={setView} projectData={props} />
@@ -86,8 +72,14 @@ export default function ProjectCard(props) {
 }
 
 function ViewProject({ open, setOpen, projectData }) {
-  const { categories, services, subCategories, error } = useServices();
-  console.log(projectData);
+  const { categories, services, subCategories } = useServices();
+  const { getClientById, client } = useClient();
+  const { isLoggedIn, user } = useAccounts();
+
+  useEffect(() => {
+    getClientById(projectData.created_by);
+  }, []);
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
@@ -117,7 +109,7 @@ function ViewProject({ open, setOpen, projectData }) {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="pointer-events-auto w-screen max-w-3xl">
+                <Dialog.Panel className="pointer-events-auto w-screen max-w-4xl">
                   <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
@@ -127,7 +119,7 @@ function ViewProject({ open, setOpen, projectData }) {
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                             onClick={() => setOpen(false)}
                           >
                             <span className="sr-only">Close panel</span>
@@ -136,67 +128,129 @@ function ViewProject({ open, setOpen, projectData }) {
                         </div>
                       </div>
                     </div>
-                    <div className="relative mt-6 flex-1 px-4 sm:px-6 space-y-6 divide-y">
-                      <h1 className="font-semibold text-2xl text-primary-500 font-display mb-6">
-                        {projectData.title}
-                      </h1>
-                      <p className="py-4">{projectData.description}</p>
-                      {categories && subCategories && services ? (
+                    <div className="flex">
+                      <div className="relative flex-1 mt-6 px-4 sm:px-6 space-y-6 divide-y border-r">
+                        <h1 className="font-semibold text-2xl text-primary-500 font-display mb-6">
+                          {projectData.title}
+                        </h1>
+                        <p className="py-4">{projectData.description}</p>
+                        {categories && subCategories && services ? (
+                          <div>
+                            <h5 className="font-medium py-2 text-base">Under</h5>
+                            <ul className="flex items-center gap-2">
+                              <li className="rounded-md bg-neutral-100 p-1 ">
+                                {
+                                  categories.data.find(
+                                    (category) => category._id === projectData.category
+                                  ).name
+                                }
+                              </li>
+                              <li>
+                                <ChevronRightIcon className="h-4 w-4" />
+                              </li>
+                              <li className="rounded-md bg-neutral-100 p-1">
+                                {
+                                  subCategories.data.find(
+                                    (subcategory) =>
+                                      subcategory._id === projectData.sub_category
+                                  ).name
+                                }
+                              </li>
+                            </ul>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
                         <div>
-                          <h5 className="font-medium py-2">Under</h5>
-                          <ul className="flex items-center gap-2">
-                            <li className="rounded-md bg-neutral-100 p-1 ">
-                              {
-                                categories.data.find(
-                                  (category) => category._id === projectData.category
-                                ).name
-                              }
-                            </li>
-                            <li>
-                              <ChevronRightIcon className="h-4 w-4" />
-                            </li>
-                            <li className="rounded-md bg-neutral-100 p-1">
-                              {
-                                subCategories.data.find(
-                                  (subcategory) =>
-                                    subcategory._id === projectData.sub_category
-                                ).name
-                              }
-                            </li>
-                          </ul>
+                          <h5 className="font-medium py-2 text-base">Required Skills</h5>
+                          <div className="flex flex-wrap gap-2">
+                            {projectData.tags.map((tag) => (
+                              <Chip key={tag} value={tag} />
+                            ))}
+                          </div>
                         </div>
-                      ) : (
-                        <></>
-                      )}
-                      <div>
-                        <h5 className="font-medium py-2">Required Skills</h5>
-                        <div className="flex flex-wrap gap-2">
-                          {projectData.tags.map((tag) => (
-                            <Chip key={tag} value={tag} />
-                          ))}
+                        <div>
+                          <div className="pt-4 flex justify-between max-w-lg">
+                            <div>
+                              <h6 className="font-medium mb-1">Deadline</h6>
+                              <p>{dayjs(projectData.deadline).format("MM/DD/YYYY")}</p>
+                            </div>
+                            <div>
+                              <h6 className="font-medium mb-1">
+                                {`${
+                                  projectData.pricing_type === "hourly"
+                                    ? "Hourly Rate"
+                                    : "Fixed Budget"
+                                }`}
+                              </h6>
+                              <p className="font-semibold text-base">
+                                ${projectData.budget}
+                              </p>
+                            </div>
+                            <div>
+                              <h6 className="font-medium mb-1">Posted</h6>
+                              <p>{dayjs(projectData.createdAt).fromNow()}</p>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Client Information */}
+                        <div>
+                          <h5 className="font-medium py-2 text-base">
+                            Client Information
+                          </h5>
+                          {!isEmpty(client) && (
+                            <div className="pt-4 flex justify-between max-w-xl">
+                              <div>
+                                <h6 className="font-medium mb-1">Payment</h6>
+                                <p>
+                                  {client.data.payment_verified
+                                    ? "Verified"
+                                    : "Not Verified"}
+                                </p>
+                              </div>
+                              <div>
+                                <h6 className="font-medium mb-1">Member since</h6>
+                                <p>
+                                  {dayjs(client.data.createdAt).format("MMMM DD, YYYY")}
+                                </p>
+                              </div>
+                              <div>
+                                <h6 className="font-medium mb-1">Projects Posted</h6>
+                                <p>{client.data.projects.length}</p>
+                              </div>
+                              <div>
+                                <h6 className="font-medium mb-1">Company</h6>
+                                <Link
+                                  href={client.data.company_website_link}
+                                  className="capitalize underline-offset-2 underline"
+                                >
+                                  {client.data.client_scope === "company"
+                                    ? client.data.company_name
+                                    : client.data.client_scope}
+                                </Link>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div className="py-6 flex justify-between max-w-lg">
-                        <div>
-                          <h6 className="font-medium mb-1">Deadline</h6>
-                          <p>{dayjs(projectData.deadline).format("MM/DD/YYYY")}</p>
-                        </div>
-                        <div>
-                          <h6 className="font-medium mb-1">
-                            {`${
-                              projectData.pricing_type === "hourly"
-                                ? "Hourly Rate"
-                                : "Fixed Budget"
-                            }`}
-                          </h6>
-                          <p className="font-semibold text-base">${projectData.budget}</p>
-                        </div>
-                        <div>
-                          <h6 className="font-medium mb-1">Posted</h6>
-                          <p className=" text-base">
-                            {dayjs(projectData.createdAt).fromNow()}
-                          </p>
-                        </div>
+                      <div className="basis-1/4 py-10 px-6 text-center">
+                        {user ? (
+                          user.data.user_type !== "client" && (
+                            <Link
+                              href={`/freelancer/proposals/send/${projectData._id}`}
+                              className="block py-1.5 px-4 text-base  uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700 "
+                            >
+                              Send Proposal
+                            </Link>
+                          )
+                        ) : (
+                          <Link
+                            href={`/freelancer/join`}
+                            className="block py-1.5 px-4 uppercase text-center text-primary-700 border rounded-lg border-primary-700  font-medium hover:text-white hover:bg-primary-700 "
+                          >
+                            Sign up
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>

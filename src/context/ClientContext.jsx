@@ -33,7 +33,7 @@ const ClientContext = createContext();
 const initialState = {
   isLoading: false,
   error: "",
-  client: "",
+  client: {},
   updatedUser: {},
   updateInfoSuccess: "",
 };
