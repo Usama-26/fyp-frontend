@@ -60,6 +60,7 @@ export default function ProjectCard(props) {
           </div>
           <button
             onClick={() => setView(true)}
+            type="button"
             className="py-2  text-center uppercase text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700 text-sm"
           >
             View Project
@@ -73,7 +74,7 @@ export default function ProjectCard(props) {
 
 function ViewProject({ open, setOpen, projectData }) {
   const { categories, services, subCategories } = useServices();
-  const { getClientById, client } = useClient();
+  const { getClientById, client, error } = useClient();
   const { isLoggedIn, user } = useAccounts();
 
   useEffect(() => {
@@ -217,17 +218,6 @@ function ViewProject({ open, setOpen, projectData }) {
                               <div>
                                 <h6 className="font-medium mb-1">Projects Posted</h6>
                                 <p>{client.data.projects.length}</p>
-                              </div>
-                              <div>
-                                <h6 className="font-medium mb-1">Company</h6>
-                                <Link
-                                  href={client.data.company_website_link}
-                                  className="capitalize underline-offset-2 underline"
-                                >
-                                  {client.data.client_scope === "company"
-                                    ? client.data.company_name
-                                    : client.data.client_scope}
-                                </Link>
                               </div>
                             </div>
                           )}

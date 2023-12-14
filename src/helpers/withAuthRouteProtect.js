@@ -7,10 +7,10 @@ const withAuthRouteProtect = (WrappedComponent) => {
     const router = useRouter();
     const [isAvailable, setIsAvailable] = useState(true);
 
-    const { user } = useAccounts();
+    const { user, isLoggedIn } = useAccounts();
 
     useEffect(() => {
-      if (window.localStorage.getItem("token")) {
+      if (window.localStorage.getItem("token") && !isLoggedIn) {
         setIsAvailable(false);
         router.push("/");
       }
