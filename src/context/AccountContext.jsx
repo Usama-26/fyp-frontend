@@ -242,9 +242,9 @@ function AccountsProvider({ children }) {
       window.localStorage.setItem("token", user?.token);
       dispatch({ type: "loggedIn" });
       if (user.data.user_type === "client") {
-        router.push("/client/dashboard/overview");
+        router.push("/client/dashboard/");
       } else if (user.data.user_type === "freelancer") {
-        router.push("/freelancer/dashboard/overview");
+        router.push("/freelancer/dashboard/");
       }
       return;
     } else {
