@@ -16,6 +16,9 @@ function reducer(state, action) {
     case "rejected":
       return { ...state, error: action.payload, isLoading: false };
 
+    case "clearMessage":
+      return { ...state, clearMessage: "" };
+
     case "reset":
       return { ...state, ...initialState };
 
@@ -27,6 +30,7 @@ const FreelancerContext = createContext();
 
 const initialState = {
   isLoading: false,
+  successMessage: "",
   error: "",
   proposal: "",
   proposals: "",
@@ -64,6 +68,10 @@ function FreelancerProvider({ children }) {
     }
   };
 
+  const clearMessage = () => {
+    dispatch({ type: "clearMessage" });
+  };
+
   return (
     <FreelancerContext.Provider
       value={{
@@ -72,6 +80,7 @@ function FreelancerProvider({ children }) {
         proposals,
         proposal,
         freelancers,
+        clearMessage,
         sendProposal,
         getAllFreelancers,
       }}

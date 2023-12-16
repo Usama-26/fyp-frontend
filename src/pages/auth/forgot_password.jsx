@@ -7,10 +7,18 @@ import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
 import withAuthRouteProtect from "@/helpers/withAuthRouteProtect";
 import Spinner from "@/components/Spinner";
+import { useEffect } from "react";
+import SuccessAlert from "@/components/Alerts/SuccessAlert";
 
 function ForgotPassword() {
-  const { forgotPassword, isLoading, error, successMessage } = useAccounts();
+  const { forgotPassword, isLoading, error, successMessage, clearMessage } =
+    useAccounts();
 
+  useEffect(() => {
+    if (successMessage) {
+      clearMessage();
+    }
+  }, []);
   return (
     <>
       <Head>
@@ -18,17 +26,17 @@ function ForgotPassword() {
       </Head>
       <NavBar />
       <main>
+        {successMessage && (
+          <SuccessAlert>
+            <p>{successMessage}</p>
+          </SuccessAlert>
+        )}
+        {error && (
+          <div className="w-full absolute top-0 bg-danger-200 rounded-t-md py-2 px-2">
+            <p className="text-sm text-danger-700">{error}</p>
+          </div>
+        )}
         <div className="relative my-10 max-w-sm mx-auto border rounded-lg shadow">
-          {error && (
-            <div className="w-full absolute top-0 bg-danger-200 rounded-t-md py-2 px-2">
-              <p className="text-sm text-danger-700">{error}</p>
-            </div>
-          )}
-          {successMessage && (
-            <div className="w-full absolute top-0 bg-success-200 rounded-t-md py-2 px-2">
-              <p className="text-sm text-success-700">{successMessage}</p>
-            </div>
-          )}
           <div className="p-8 pt-12">
             <div className="text-center mb-6">
               <Logo />

@@ -74,8 +74,8 @@ export default function ProjectCard(props) {
 
 function ViewProject({ open, setOpen, projectData }) {
   const { categories, services, subCategories } = useServices();
-  const { getClientById, client, error } = useClient();
-  const { isLoggedIn, user } = useAccounts();
+  const { getClientById, client } = useClient();
+  const { user } = useAccounts();
 
   useEffect(() => {
     getClientById(projectData.created_by);
@@ -225,12 +225,22 @@ function ViewProject({ open, setOpen, projectData }) {
                       </div>
                       <div className="basis-1/4 py-10 px-6 text-center">
                         {user ? (
-                          user.data.user_type !== "client" && (
+                          user.data.user_type === "freelancer" && (
                             <Link
-                              href={`/freelancer/proposals/send/${projectData._id}`}
+                              href={
+                                projectData.proposals.includes(
+                                  (proposal) => proposal.freelancer_id === user.data._id
+                                )
+                                  ? `/freelancer/proposals/`
+                                  : `/freelancer/proposals/send/${projectData._id}`
+                              }
                               className="block py-1.5 px-4 text-base  uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700 "
                             >
-                              Send Proposal
+                              {projectData.proposals.includes(
+                                (proposal) => proposal.freelander._id === user._id
+                              )
+                                ? "View Proposals"
+                                : "Send Proposal"}
                             </Link>
                           )
                         ) : (

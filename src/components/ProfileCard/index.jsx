@@ -14,16 +14,19 @@ export default function ProfileCard({ data }) {
       {/* General Info */}
       <div className="text-center">
         <div className="inline-block relative">
-          {/* <Image
-            src={"/images/profiles/profile-1.jpg"}
-            height={768}
-            width={768}
-            alt="Profile Image"
-            className="w-24 h-24 mx-auto rounded-full object-cover"
-          /> */}
-          <span className="w-24 h-24 flex justify-center items-center rounded-full text-4xl text-center text-white font-semibold bg-primary-500">
-            {data.firstName[0]}
-          </span>
+          {data.profile_photo ? (
+            <Image
+              src={data.profile_photo}
+              height={768}
+              width={768}
+              alt="Profile Image"
+              className="w-24 h-24 mx-auto rounded-full object-cover"
+            />
+          ) : (
+            <span className="w-24 h-24 flex justify-center items-center rounded-full text-4xl text-center text-white font-semibold bg-primary-500">
+              {data.firstName[0]}
+            </span>
+          )}
           <span
             className={`absolute w-4 h-4 border-2 border-white bottom-0 right-3 rounded-full ${"bg-neutral-500"}`}
           ></span>

@@ -13,6 +13,8 @@ import { IoMdExit } from "react-icons/io";
 import { classNames } from "@/utils/generics";
 import { useAccounts } from "@/context/AccountContext";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { TbLayoutDashboard } from "react-icons/tb";
+import { MdDashboard, MdSpaceDashboard } from "react-icons/md";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -196,6 +198,16 @@ function UserMenu({ onLogout }) {
                   <span className="capitalize text-xs">{`${user_type} Account`}</span>
                 </div>
               </Menu.Item>
+
+              <Menu.Item as={"li"}>
+                <Link
+                  href={`/${user_type}/dashboard/`}
+                  className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
+                >
+                  <MdSpaceDashboard className="w-5 h-5 fill-neutral-500" />
+                  <span>Dashboard</span>
+                </Link>
+              </Menu.Item>
               {user_type && (
                 <Menu.Item as={"li"}>
                   {user_type === "freelancer" && (
@@ -225,7 +237,7 @@ function UserMenu({ onLogout }) {
                   className="w-full p-3 inline-flex items-center gap-2 hover:bg-primary-100"
                 >
                   <BsGear className="w-5 h-5 fill-neutral-500" />
-                  <span>Profile Settings</span>
+                  <span>Settings</span>
                 </Link>
               </Menu.Item>
 

@@ -41,7 +41,7 @@ const projectSchema = Yup.object({
   deadline: Yup.date().required("Set Project Deadline"),
   tags: Yup.array()
     .min(3, "Select atleast 3 skills")
-    .max(5, "You can only choose upto 5 skills")
+    .max(10, "You can only choose upto 5 skills")
     .of(Yup.string()),
   budget: Yup.number()
     .min(10, "Select a minimum budget of 10 $")

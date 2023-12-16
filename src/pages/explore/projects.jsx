@@ -4,28 +4,17 @@ import WebLayout from "@/layouts/WebLayout";
 
 import sampleSkills from "@/json/sample-skills.json";
 import { useEffect, useState } from "react";
-import { getData } from "@/utils/api/genericAPI";
-import { BASE_URL } from "@/constants";
 import Head from "next/head";
+import { useProjects } from "@/context/ProjectContext";
 
 export default function ExploreProjects() {
-  const [projects, setProjects] = useState([]);
-  const [error, setError] = useState("");
   const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
 
+  const { projects, error, isLoading, fetchProjects } = useProjects();
+
   const handleSearch = (query = searchQuery) => {
     console.log("Actual Query :", query);
-  };
-
-  const fetchProjects = async () => {
-    try {
-      const response = await getData(`${BASE_URL}/projects`);
-
-      setProjects(response?.data?.data);
-    } catch (error) {
-      setError("Something went wrong while loading projects.");
-    }
   };
 
   useEffect(() => {
@@ -59,7 +48,7 @@ export default function ExploreProjects() {
               <h2 className="text-xl font-semibold">Filters</h2>
             </div>
             <div className="basis-9/12 space-y-2">
-              {projects?.map((project, index) => (
+              {projects?.data?.map((project, index) => (
                 <ProjectCard key={index} {...project} />
               ))}
             </div>

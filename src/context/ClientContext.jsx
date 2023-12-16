@@ -1,20 +1,12 @@
 import { BASE_URL } from "@/constants";
-import { getData, postData, updateData } from "@/utils/api/genericAPI";
+import { getData, updateData } from "@/utils/api/genericAPI";
+import { useRouter } from "next/router";
 import { createContext, useContext, useReducer } from "react";
 
 function reducer(state, action) {
   switch (action.type) {
     case "client/getOne":
       return { ...state, client: action.payload, isLoading: false };
-
-    case "client/updateInfo":
-      return {
-        ...state,
-        updateInfoSuccess: action.payload.status,
-        updatedUser: action.payload,
-        isLoading: false,
-      };
-
     case "loading":
       return { ...state, isLoading: true, error: "" };
 
@@ -34,8 +26,7 @@ const initialState = {
   isLoading: false,
   error: "",
   client: {},
-  updatedUser: {},
-  updateInfoSuccess: "",
+  successMessage: "",
 };
 
 function ClientProvider({ children }) {
@@ -53,43 +44,6 @@ function ClientProvider({ children }) {
     }
   };
 
-  const updateClientProfilePhoto = async (id, file) => {
-    dispatch({ type: "loading" });
-    const token = window.localStorage.getItem("token");
-    const data = new FormData();
-    try {
-      data.append("profile_photo", file);
-      const response = await updateData(
-        `${BASE_URL}/users/update_profile_photo`,
-        id,
-        data,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      dispatch({ type: "client/updateInfo", payload: response.data });
-    } catch (error) {
-      dispatch({ type: "rejected", payload: error.response.data.message });
-    }
-  };
-
-  const updateClientInfo = async (id, data) => {
-    const token = window.localStorage.getItem("token");
-    dispatch({ type: "loading" });
-    try {
-      const response = await updateData(`${BASE_URL}/users`, id, data, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
-      dispatch({ type: "client/updateInfo", payload: response.data });
-    } catch (error) {
-      dispatch({ type: "rejected", payload: error.response.data.message });
-    }
-  };
-
   return (
     <ClientContext.Provider
       value={{
@@ -99,8 +53,6 @@ function ClientProvider({ children }) {
         updateInfoSuccess,
         updatedUser,
         getClientById,
-        updateClientProfilePhoto,
-        updateClientInfo,
       }}
     >
       {children}

@@ -21,6 +21,14 @@ function reducer(state, action) {
     case "account/forgotPassword":
       return { ...state, successMessage: action.payload, isLoading: false };
 
+    case "user/updateInfo":
+      return {
+        ...state,
+        successMessage: action.payload.status,
+        updatedUser: action.payload,
+        isLoading: false,
+      };
+
     case "account/resetPassword":
       return { ...state, successMessage: action.payload, isLoading: false };
 
@@ -28,7 +36,7 @@ function reducer(state, action) {
       return { ...state, successMessage: "" };
 
     case "loading":
-      return { ...state, isLoading: true, error: "" };
+      return { ...state, isLoading: true, error: "", successMessage: "" };
 
     case "rejected":
       return { ...state, error: action.payload, isLoading: false };
@@ -49,6 +57,7 @@ const initialState = {
   isLoggedIn: false,
   error: "",
   user: null,
+  updatedUser: {},
   successMessage: "",
 };
 
@@ -56,10 +65,8 @@ const AccountsContext = createContext();
 
 function AccountsProvider({ children }) {
   const router = useRouter();
-  const [{ isLoading, isLoggedIn, error, user, successMessage }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [{ isLoading, isLoggedIn, updatedUser, error, user, successMessage }, dispatch] =
+    useReducer(reducer, initialState);
 
   const handleSignup = async (data) => {
     dispatch({ type: "loading" });
@@ -185,6 +192,43 @@ function AccountsProvider({ children }) {
     }
   };
 
+  const updateUserProfilePhoto = async (id, file) => {
+    dispatch({ type: "loading" });
+    const token = window.localStorage.getItem("token");
+    const data = new FormData();
+    try {
+      data.append("profile_photo", file);
+      const response = await updateData(
+        `${BASE_URL}/users/update_profile_photo`,
+        id,
+        data,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch({ type: "user/updateInfo", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
+  const updateUserInfo = async (id, data) => {
+    const token = window.localStorage.getItem("token");
+    dispatch({ type: "loading" });
+    try {
+      const response = await updateData(`${BASE_URL}/users`, id, data, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch({ type: "user/updateInfo", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
   const clearMessage = () => {
     dispatch({ type: "clearMessage" });
   };
@@ -198,9 +242,9 @@ function AccountsProvider({ children }) {
       window.localStorage.setItem("token", user?.token);
       dispatch({ type: "loggedIn" });
       if (user.data.user_type === "client") {
-        router.push("/client/dashboard/");
+        router.push("/client/dashboard/overview");
       } else if (user.data.user_type === "freelancer") {
-        router.push("/freelancer/dashboard/");
+        router.push("/freelancer/dashboard/overview");
       }
       return;
     } else {
@@ -214,6 +258,10 @@ function AccountsProvider({ children }) {
   //   }
   // }, [error]);
 
+  useEffect(() => {
+    clearMessage();
+  }, [router]);
+
   return (
     <AccountsContext.Provider
       value={{
@@ -222,11 +270,14 @@ function AccountsProvider({ children }) {
         isLoading,
         error,
         successMessage,
+        updatedUser,
         handleSignup,
         handleLogin,
         handleLogout,
         handleGoogleAuth,
         loadAccount,
+        updateUserInfo,
+        updateUserProfilePhoto,
         forgotPassword,
         resetPassword,
         clearMessage,

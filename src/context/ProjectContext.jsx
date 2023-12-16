@@ -17,6 +17,9 @@ function reducer(state, action) {
     case "project/fetchClientProjects":
       return { ...state, isLoading: false, clientProjects: action.payload };
 
+    case "project/fetchProjects":
+      return { ...state, isLoading: false, projects: action.payload };
+
     case "loading":
       return { ...state, isLoading: true, error: "" };
 
@@ -36,12 +39,13 @@ const initialState = {
   isLoading: false,
   error: "",
   project: {},
+  projects: {},
   clientProjects: {},
   successMessage: "",
 };
 
 function ProjectProvider({ children }) {
-  const [{ isLoading, error, project, clientProjects }, dispatch] = useReducer(
+  const [{ isLoading, error, project, projects, clientProjects }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -59,6 +63,15 @@ function ProjectProvider({ children }) {
         }
       );
       dispatch({ type: "project/fetchClientProjects", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
+  const fetchProjects = async () => {
+    try {
+      const response = await getData(`${BASE_URL}/projects?status=listed`);
+      dispatch({ type: "project/fetchProjects", payload: response.data });
     } catch (error) {
       dispatch({ type: "rejected", payload: error.response.data.message });
     }
@@ -111,8 +124,10 @@ function ProjectProvider({ children }) {
       value={{
         isLoading,
         error,
+        projects,
         project,
         clientProjects,
+        fetchProjects,
         getProjectById,
         updateProject,
         postProject,

@@ -4,27 +4,25 @@ import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
 import { BiPencil } from "react-icons/bi";
-import { useClient } from "@/context/ClientContext";
 import Spinner from "@/components/Spinner";
 import countries from "@/json/countries";
 import ComboSelectBox from "@/components/Comboboxes/ComboSelectBox";
-import { CameraIcon, CheckBadgeIcon } from "@heroicons/react/20/solid";
+import { CameraIcon, CheckBadgeIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 
 export default function PersonalSettings() {
   const [isEditing, setIsEditing] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState([]);
-  const { user, loadAccount } = useAccounts();
   const {
-    updateClientInfo,
-    updateClientProfilePhoto,
+    user,
+    loadAccount,
+    isLoading,
+    updateUserProfilePhoto,
+    updateUserInfo,
     updatedUser,
-    isLoading: updateLoading,
-  } = useClient();
+  } = useAccounts();
 
-  const handleUpdate = (e) => {
-    updateClientProfilePhoto(user.data._id, e.target.files[0]);
-    setProfilePhoto(e.target.files[0]);
+  const handleProfilePhotoUpdate = (e) => {
+    updateUserProfilePhoto(user.data._id, e.target.files[0]);
   };
 
   const originalValues = {
@@ -33,6 +31,7 @@ export default function PersonalSettings() {
     email: user?.data.email,
     address: user?.data.address || "",
     country: user?.data.country || "",
+    email_verified: user?.data.email_verified,
   };
 
   const toggleIsEditing = () => {
@@ -55,7 +54,7 @@ export default function PersonalSettings() {
         country: Yup.string().trim(),
       })}
       onSubmit={(values) => {
-        updateClientInfo(user.data._id, values);
+        updateUserInfo(user.data._id, values);
         setIsEditing(false);
       }}
     >
@@ -201,10 +200,10 @@ export default function PersonalSettings() {
                   </button>
                   <button
                     type="submit"
-                    disabled={updateLoading}
+                    disabled={isLoading}
                     className="bg-primary-500 font-medium px-2 py-1.5 text-sm rounded-md hover:bg-primary-700 text-white disabled:bg-neutral-100 disabled:text-neutral-500 "
                   >
-                    {updateLoading ? <Spinner /> : "Save Changes"}
+                    {isLoading ? <Spinner /> : "Save Changes"}
                   </button>
                 </div>
               )}
@@ -236,8 +235,8 @@ export default function PersonalSettings() {
                     {user?.data.firstName[0]}
                   </span>
                 )}
-                {updateLoading && (
-                  <span className="absolute top-0 left-0 inline-flex w-full h-full z-10 bg-black/50 items-center justify-center ">
+                {isLoading && (
+                  <span className="absolute top-0 left-0 inline-flex w-full h-full z-10 bg-white/50 items-center justify-center ">
                     <Spinner />
                   </span>
                 )}
@@ -250,7 +249,7 @@ export default function PersonalSettings() {
               </span>
               <input
                 type="file"
-                onChange={handleUpdate}
+                onChange={handleProfilePhotoUpdate}
                 accept="image/*"
                 className="hidden"
                 id="profile_photo"
@@ -278,7 +277,18 @@ function PersonalInformation({ data }) {
             Email Address
           </dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2  sm:mt-0">
-            {data.email}
+            <p>{data.email}</p>
+            {data.email_verified ? (
+              <span className="italic text-success-500">
+                <CheckBadgeIcon className="w-5 h-5 mr-1 align-middle inline-block " />
+                <span>Email Verified</span>
+              </span>
+            ) : (
+              <span className="italic text-danger-500">
+                <XCircleIcon className="w-5 h-5 mr-1 align-middle inline-block " />
+                <span>Email Not Verified</span>
+              </span>
+            )}
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

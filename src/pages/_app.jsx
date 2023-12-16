@@ -10,6 +10,7 @@ import { ServicesProvider } from "@/context/ServiceContext";
 import { ProjectProvider } from "@/context/ProjectContext";
 import { FreelancerProvider } from "@/context/FreelancerContext";
 import { ClientProvider } from "@/context/ClientContext";
+import { ThirdPartyServicesProvider } from "@/context/ThirdPartyContext";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -27,17 +28,19 @@ export default function App({ Component, pageProps }) {
   return (
     <main className={`${display.variable} ${inter.variable}`}>
       <GoogleOAuthProvider clientId={web.client_id}>
-        <AccountsProvider>
-          <ServicesProvider>
-            <ProjectProvider>
-              <ClientProvider>
-                <FreelancerProvider>
-                  <Component {...pageProps} />
-                </FreelancerProvider>
-              </ClientProvider>
-            </ProjectProvider>
-          </ServicesProvider>
-        </AccountsProvider>
+        <ThirdPartyServicesProvider>
+          <AccountsProvider>
+            <ServicesProvider>
+              <ProjectProvider>
+                <ClientProvider>
+                  <FreelancerProvider>
+                    <Component {...pageProps} />
+                  </FreelancerProvider>
+                </ClientProvider>
+              </ProjectProvider>
+            </ServicesProvider>
+          </AccountsProvider>
+        </ThirdPartyServicesProvider>
       </GoogleOAuthProvider>
     </main>
   );
