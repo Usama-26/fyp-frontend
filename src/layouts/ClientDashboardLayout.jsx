@@ -6,12 +6,16 @@ const clientTabs = [
   { name: "Projects", href: "/client/dashboard/projects", current: false },
   { name: "Payments", href: "/client/dashboard/payments", current: false },
   { name: "Inbox", href: "/client/dashboard/inbox", current: false },
+  { name: "Reviews", href: "/client/dashboard/reviews", current: false },
 ];
 
 export default function ClientDashboardLayout({ children }) {
   return (
     <WebLayout>
-      <div className="container mx-auto my-8">
+      <div className="container mx-auto my-4">
+        <div className="text-xl font-semibold mb-6">
+          <h1 className="">Client Dashboard</h1>
+        </div>
         <DashboardNavigation initialTabs={clientTabs} />
         {children}
       </div>

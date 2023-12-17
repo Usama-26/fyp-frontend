@@ -13,6 +13,9 @@ export default function FreelancerDashboardLayout({ children }) {
   return (
     <WebLayout>
       <div className="container mx-auto my-8">
+        <div className="text-xl font-semibold mb-6">
+          <h1 className="">Freelancer Dashboard</h1>
+        </div>
         <DashboardNavigation initialTabs={freelancerTabs} />
         {children}
       </div>

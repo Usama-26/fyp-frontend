@@ -6,11 +6,36 @@ import Image from "next/image";
 import Link from "next/link";
 import { AiFillStar } from "react-icons/ai";
 
+const stats = [
+  { name: "Projects Posted", stat: "5" },
+  { name: "Total Payments", stat: "$ 0" },
+  { name: "Job Success Rate", stat: "0 %" },
+];
+
 export default function ClientOverview() {
   return (
     <ClientDashboardLayout>
       <div className="flex gap-2">
-        <div className="basis-9/12 rounded-md"></div>
+        <div className="basis-9/12 border rounded-md">
+          {/* Stats Section */}
+          <div className="px-5">
+            <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+              {stats.map((item) => (
+                <div
+                  key={item.name}
+                  className="overflow-hidden rounded-md bg-white px-4 py-5 shadow-custom-md shadow-neutral-300 sm:p-6"
+                >
+                  <dt className="truncate text-sm font-medium text-gray-500">
+                    {item.name}
+                  </dt>
+                  <dd className="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
+                    {item.stat}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
         <UserInfo />
       </div>
     </ClientDashboardLayout>
@@ -48,9 +73,7 @@ function UserInfo({}) {
               )}
             </div>
             <h1 className="text-lg font-medium text-center">
-              <Link href={`/explore/freelancer/${user.data._id}`}>
-                {user.data.firstName} {user.data.lastName[0]}.
-              </Link>
+              {user.data.firstName} {user.data.lastName[0]}.
             </h1>
             <p className="text-center text-sm text-neutral-500">UI | UX Developer</p>
             <p className="text-center text-sm">{user.data.country}</p>
@@ -98,8 +121,6 @@ function UserInfo({}) {
           </div>
         </>
       )}
-
-      <div className="p-4"></div>
     </div>
   );
 }

@@ -39,6 +39,6 @@
     @apply focus:outline-none focus:border-primary-100 focus:text-neutral-700;
   }
   .profile-tabs button {
-    @apply w-full text-center p-3 hover:border-b-2  font-medium;
+    @apply w-full text-center p-3 hover:border-b-2 font-medium;
   }
 }
