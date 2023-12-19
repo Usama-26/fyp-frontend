@@ -10,6 +10,8 @@ function reducer(state, action) {
       return { ...state, subCategories: action.payload, isLoading: false };
     case "services/fetch":
       return { ...state, services: action.payload, isLoading: false };
+    case "languages/fetch":
+      return { ...state, languages: action.payload, isLoading: false };
     case "skills/fetch":
       return { ...state, skills: action.payload, isLoading: false };
     case "loading":
@@ -25,6 +27,7 @@ const initialState = {
   categories: null,
   services: {},
   subCategories: {},
+  languages: [],
   skills: [],
   isLoading: false,
   error: "",
@@ -33,8 +36,10 @@ const initialState = {
 const ServicesContext = createContext();
 
 function ServicesProvider({ children }) {
-  const [{ categories, services, subCategories, isLoading, error }, dispatch] =
-    useReducer(reducer, initialState);
+  const [
+    { categories, services, subCategories, skills, languages, isLoading, error },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   const fetchCategories = async () => {
     try {
@@ -82,6 +87,19 @@ function ServicesProvider({ children }) {
       dispatch({ type: "skills/fetch", payload: response.data });
     } catch (error) {
       dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
+  const fetchLanguages = async () => {
+    try {
+      const response = await getData(`${BASE_URL}/languages`);
+      dispatch({ type: "languages/fetch", payload: response.data });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
 
@@ -149,6 +167,8 @@ function ServicesProvider({ children }) {
         services,
         isLoading,
         error,
+        skills,
+        languages,
         dispatch,
         fetchSkills,
         getCategory,
@@ -156,6 +176,7 @@ function ServicesProvider({ children }) {
         getService,
         fetchSubCategories,
         fetchServices,
+        fetchLanguages,
         getSubCategoriesByCategory,
         getServicesByCategory,
       }}

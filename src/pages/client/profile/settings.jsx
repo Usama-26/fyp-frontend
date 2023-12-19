@@ -28,7 +28,7 @@ function ClientProfileSettings() {
       </Head>
       <WebLayout>
         <main className="relative max-w-screen-2xl mx-auto">
-          {user && (
+          {user.data.profile_completion !== 100 && (
             <WarningAlert>
               <p>
                 Your profile is <b>{user.data.profile_completion}%</b> completed. Complete
@@ -66,7 +66,9 @@ function ClientProfileSettings() {
                 <Tab.Panel>
                   <SecuritySettings />
                 </Tab.Panel>
-                <Tab.Panel>{/* <PaymentSettings /> */}</Tab.Panel>
+                <Tab.Panel>
+                  <PaymentSettings />
+                </Tab.Panel>
                 <Tab.Panel>
                   <NotificationSettings />
                 </Tab.Panel>

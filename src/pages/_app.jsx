@@ -3,6 +3,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "react-quill/dist/quill.snow.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { mainnet, createConfig, configureChains } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
 import GoogleClientSecret from "@/json/client_secret";
 import { Inter, Comfortaa } from "next/font/google";
 import { AccountsProvider } from "@/context/AccountContext";
@@ -11,6 +13,8 @@ import { ProjectProvider } from "@/context/ProjectContext";
 import { FreelancerProvider } from "@/context/FreelancerContext";
 import { ClientProvider } from "@/context/ClientContext";
 import { ThirdPartyServicesProvider } from "@/context/ThirdPartyContext";
+import { ProposalProvider } from "@/context/ProposalContext";
+import { WagmiConfig } from "wagmi";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -23,25 +27,38 @@ export const display = Comfortaa({
   weight: ["700", "600", "500", "400"],
 });
 
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [mainnet],
+  [publicProvider()]
+);
+const config = createConfig({
+  autoConnect: true,
+  publicClient,
+  webSocketPublicClient,
+});
 export default function App({ Component, pageProps }) {
   const { web } = GoogleClientSecret;
   return (
     <main className={`${display.variable} ${inter.variable}`}>
-      <GoogleOAuthProvider clientId={web.client_id}>
-        <ThirdPartyServicesProvider>
-          <AccountsProvider>
-            <ServicesProvider>
-              <ProjectProvider>
-                <ClientProvider>
-                  <FreelancerProvider>
-                    <Component {...pageProps} />
-                  </FreelancerProvider>
-                </ClientProvider>
-              </ProjectProvider>
-            </ServicesProvider>
-          </AccountsProvider>
-        </ThirdPartyServicesProvider>
-      </GoogleOAuthProvider>
+      <ThirdPartyServicesProvider>
+        <WagmiConfig config={config}>
+          <GoogleOAuthProvider clientId={web.client_id}>
+            <AccountsProvider>
+              <ServicesProvider>
+                <ProjectProvider>
+                  <ProposalProvider>
+                    <ClientProvider>
+                      <FreelancerProvider>
+                        <Component {...pageProps} />
+                      </FreelancerProvider>
+                    </ClientProvider>
+                  </ProposalProvider>
+                </ProjectProvider>
+              </ServicesProvider>
+            </AccountsProvider>
+          </GoogleOAuthProvider>
+        </WagmiConfig>
+      </ThirdPartyServicesProvider>
     </main>
   );
 }

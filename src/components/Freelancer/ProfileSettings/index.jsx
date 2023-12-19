@@ -2,15 +2,14 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
-import { useClient } from "@/context/ClientContext";
 import Spinner from "@/components/Spinner";
 import { BiPencil } from "react-icons/bi";
-import ComboboxMultiple from "@/components/Comboboxes/ComboboxMultiple";
 import ComboSelectBox from "@/components/Comboboxes/ComboSelectBox";
-import sampleSkills from "@/json/sample-skills.json";
-import { LinkIcon } from "@heroicons/react/20/solid";
-import Link from "next/link";
-import { useThirdPartyServices } from "@/context/ThirdPartyContext";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { useServices } from "@/context/ServiceContext";
+import { Combobox } from "@headlessui/react";
+import { classNames } from "@/utils/generics";
+import { HiX } from "react-icons/hi";
 
 const industries = [
   "Technology and IT",
@@ -34,23 +33,23 @@ const industries = [
   "Food and Beverage",
   "Fitness and Wellness",
 ];
+
+const languageProficiencies = ["Fluent", "Native", "Conversational"];
 export default function FreelancerProfileSettings() {
   const [isEditing, setIsEditing] = useState(false);
+  const [isAddLangOpen, setIsAddLangOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState({
+    name: "",
+    proficiency: languageProficiencies[0],
+  });
   const {
-    fetchUniversities,
-    universities,
-    error,
-    isLoading: thirdPartyLoading,
-  } = useThirdPartyServices();
-
-  const { user, loadAccount } = useAccounts();
-  const {
-    updateClientInfo,
+    user,
+    loadAccount,
     updatedUser,
-    updateInfoSuccess,
-    isLoading: updateLoading,
-  } = useClient();
-
+    isLoading: isUpdating,
+    updateUserInfo,
+  } = useAccounts();
+  const { skills, languages, fetchSkills, fetchLanguages } = useServices();
   const originalValues = {
     bio: user?.data.bio || "",
     skills: user?.data.skills || [],
@@ -58,10 +57,16 @@ export default function FreelancerProfileSettings() {
     languages: user?.data.languages || [],
     profile_title: user?.data.profile_title || "",
     industry: user?.data.industry || "",
+    languages: user?.data.languages || "",
   };
 
   const toggleIsEditing = () => {
     setIsEditing(!isEditing);
+  };
+
+  const resetSelectedLanguage = () => {
+    setSelectedLanguage({ language: "", proficiency: "" });
+    setIsAddLangOpen(false);
   };
 
   useEffect(() => {
@@ -70,8 +75,9 @@ export default function FreelancerProfileSettings() {
   }, [updatedUser]);
 
   useEffect(() => {
-    fetchUniversities("turkey");
-  }, []);
+    fetchLanguages();
+    fetchSkills();
+  }, [isEditing]);
 
   return (
     <div className="relative">
@@ -82,18 +88,20 @@ export default function FreelancerProfileSettings() {
           profile_title: Yup.string().trim().max(100).required("Enter profile title"),
           industry: Yup.string().trim(),
           skills: Yup.array().required("Select at least one skill tag"),
-          languages: Yup.array().of(
-            Yup.object({
-              name: Yup.string().required("Select a Language"),
-              proficiency: Yup.string()
-                .required("Proficiency is required")
-                .default("Beginner"),
-            })
-          ),
+          languages: Yup.array()
+            .of(
+              Yup.object({
+                name: Yup.string().required("Select a Language"),
+                proficiency: Yup.string()
+                  .required("Proficiency is required")
+                  .default("Fluent"),
+              })
+            )
+            .min(1, "Select at least one language"),
           hourly_rate: Yup.number().required("Set your hourly rate"),
         })}
         onSubmit={(values) => {
-          updateClientInfo(user.data._id, values);
+          updateUserInfo(user.data._id, values);
           setIsEditing(false);
         }}
       >
@@ -175,6 +183,123 @@ export default function FreelancerProfileSettings() {
                       setValue={(item) => setFieldValue("industry", item)}
                     />
                   </div>
+                  {/* Add Languages */}
+                  <div>
+                    <label className="text-base font-semibold text-neutral-700">
+                      Languages
+                    </label>
+                    {isEditing && (
+                      <p className="text-sm text-neutral-500">
+                        {"Select the languages you can speak"}
+                      </p>
+                    )}
+                    <div>
+                      {isAddLangOpen && (
+                        <>
+                          {" "}
+                          <div className="flex items-center gap-4">
+                            {languages && (
+                              <div className="w-full">
+                                <LanguageSelectBox
+                                  items={languages.data}
+                                  setValue={(item) => {
+                                    setSelectedLanguage(
+                                      (prev) => (prev = { ...prev, name: item })
+                                    );
+                                  }}
+                                  placeholder={"Select a Language"}
+                                />
+                              </div>
+                            )}
+                            <div>
+                              <ComboSelectBox
+                                items={languageProficiencies}
+                                defaultItem={languageProficiencies[0]}
+                                setValue={(item) => {
+                                  setSelectedLanguage(
+                                    (prev) => (prev = { ...prev, proficiency: item })
+                                  );
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="space-x-2 text-end mt-2">
+                            <button
+                              onClick={resetSelectedLanguage}
+                              type="button"
+                              className="font-medium px-2 py-1.5 rounded bg-neutral-200 hover:bg-neutral-300  text-sm"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setFieldValue("languages", [
+                                  ...values.languages,
+                                  selectedLanguage,
+                                ]);
+                                resetSelectedLanguage();
+                                setIsAddLangOpen(false);
+                              }}
+                              disabled={
+                                !selectedLanguage.name || !selectedLanguage.proficiency
+                              }
+                              className="bg-primary-500 font-medium px-2 py-1.5 text-sm rounded-md hover:bg-primary-700 text-white disabled:bg-neutral-100 disabled:text-neutral-500 "
+                            >
+                              Add Language
+                            </button>
+                          </div>
+                        </>
+                      )}
+                      <ErrorMessage
+                        name="languages"
+                        component={"p"}
+                        className="field-error__message"
+                      />
+                      <ul className=" space-y-2 mt-2">
+                        {values.languages.map((language) => (
+                          <li
+                            key={language.name}
+                            className={
+                              "relative group flex justify-between items-center rounded-sm gap-1 text-sm  bg-neutral-100 text-white p-2"
+                            }
+                          >
+                            <span className="text-neutral-700 font-medium">
+                              {language.name}
+                            </span>
+                            <span className="text-neutral-500">
+                              {language.proficiency}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFieldValue(
+                                  "languages",
+                                  values.languages.filter(
+                                    (lang) => lang.name != language.name
+                                  )
+                                )
+                              }
+                              className="right-0 hidden group-hover:inline-block absolute p-2 bg-danger-300 "
+                            >
+                              <HiX className="w-4 h-4 fill-danger-700" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      {!isAddLangOpen && (
+                        <div className="text-end mt-2">
+                          <button
+                            type="button"
+                            onClick={() => setIsAddLangOpen(true)}
+                            className="text-sm hover:underline font-medium text-primary-500"
+                          >
+                            Add New Language
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
                   <div>
                     <label
@@ -188,16 +313,29 @@ export default function FreelancerProfileSettings() {
                         {"Select your skills and expertise"}
                       </p>
                     )}
-                    <Field name="skills">
-                      {({ field }) => (
-                        <ComboboxMultiple
-                          items={sampleSkills.skills}
-                          setValue={(items) => setFieldValue("skills", items)}
-                          defaultItems={values.skills}
-                          placeholder="Select Skills"
-                        />
-                      )}
-                    </Field>
+                    {skills && <Field name="skills"></Field>}
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <div className="w-full">
+                      <label
+                        htmlFor="hourly_rate"
+                        className="text-base font-semibold text-neutral-700"
+                      >
+                        Hourly Rate
+                      </label>
+
+                      <p className="text-sm text-neutral-500">
+                        {"Set Your Hourly Rate (Minimum: 10)"}
+                      </p>
+                    </div>
+                    <Field
+                      name="hourly_rate"
+                      type="number"
+                      className="form-input w-2/12"
+                      min={10}
+                    />{" "}
+                    <span className="font-medium ml-1">$</span>
                   </div>
                 </div>
               ) : (
@@ -216,10 +354,10 @@ export default function FreelancerProfileSettings() {
                   </button>
                   <button
                     type="submit"
-                    disabled={updateLoading}
+                    disabled={isUpdating}
                     className="bg-primary-500 font-medium px-2 py-1.5 text-sm rounded-md hover:bg-primary-700 text-white disabled:bg-neutral-100 disabled:text-neutral-500 "
                   >
-                    {updateLoading ? <Spinner /> : "Update"}
+                    {isUpdating ? <Spinner /> : "Update"}
                   </button>
                 </div>
               )}
@@ -310,5 +448,84 @@ function ProfileInformation({ data }) {
         </div>
       </dl>
     </div>
+  );
+}
+
+function LanguageSelectBox({ items, isDisabled, defaultItem, setValue, placeholder }) {
+  const [query, setQuery] = useState("");
+  const [selectedItem, setSelectedItem] = useState(defaultItem || null);
+
+  const filteredItems =
+    query === ""
+      ? items
+      : items.filter((item) => {
+          return item.name.toLowerCase().includes(query.toLowerCase());
+        });
+
+  return (
+    <Combobox
+      as="div"
+      value={selectedItem}
+      onChange={(item) => {
+        setSelectedItem(item);
+        setValue(item);
+      }}
+      disabled={isDisabled}
+    >
+      {/* <Combobox.Label className="block text-sm font-medium leading-6 text-neutral-700">
+        Assigned to
+      </Combobox.Label> */}
+      <div className="relative mt-2">
+        <Combobox.Input
+          className="w-full rounded-md form-input bg-white py-1.5 pl-3 pr-10 disabled:text-neutral-500 disabled:border-neutral-300 text-neutral-700 shadow-sm sm:text-sm sm:leading-6 outline-none"
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={placeholder}
+        />
+        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+          <ChevronUpDownIcon className="h-5 w-5 text-neutral-400" aria-hidden="true" />
+        </Combobox.Button>
+
+        {filteredItems.length > 0 && (
+          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-opacity-5 focus:outline-none sm:text-sm">
+            {filteredItems.map((item, index) => (
+              <Combobox.Option
+                key={index}
+                value={item.name}
+                className={({ active }) =>
+                  classNames(
+                    "relative cursor-default select-none py-2 pl-8 pr-4",
+                    active ? "bg-primary-500 text-white" : "text-neutral-700"
+                  )
+                }
+              >
+                {({ active, selected }) => (
+                  <>
+                    <span
+                      className={classNames(
+                        "block truncate",
+                        selected && "font-semibold"
+                      )}
+                    >
+                      {item.name}
+                    </span>
+
+                    {selected && (
+                      <span
+                        className={classNames(
+                          "absolute inset-y-0 left-0 flex items-center pl-1.5",
+                          active ? "text-white" : "text-primary-500"
+                        )}
+                      >
+                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                    )}
+                  </>
+                )}
+              </Combobox.Option>
+            ))}
+          </Combobox.Options>
+        )}
+      </div>
+    </Combobox>
   );
 }

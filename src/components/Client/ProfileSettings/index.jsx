@@ -10,6 +10,7 @@ import ComboSelectBox from "@/components/Comboboxes/ComboSelectBox";
 import sampleSkills from "@/json/sample-skills.json";
 import { LinkIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { useServices } from "@/context/ServiceContext";
 
 const scopes = [
   { label: "I am an Individual", value: "individual" },
@@ -40,12 +41,14 @@ const industries = [
 ];
 export default function ProfileSettings() {
   const [isEditing, setIsEditing] = useState(false);
-
   const { user, loadAccount } = useAccounts();
+  const { languages, skills, error, isLoading, fetchSkills, fetchLanguages } =
+    useServices();
+
   const {
     updateClientInfo,
     updatedUser,
-    updateInfoSuccess,
+    successMessage,
     isLoading: updateLoading,
   } = useClient();
 
@@ -66,6 +69,15 @@ export default function ProfileSettings() {
     const token = window.localStorage.getItem("token");
     loadAccount(token);
   }, [updatedUser]);
+
+  useEffect(() => {
+    if (isEditing) {
+      fetchSkills();
+      fetchLanguages();
+    }
+  }, [isEditing]);
+
+  console.log(languages, skills);
 
   return (
     <div className="relative">

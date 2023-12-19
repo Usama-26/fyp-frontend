@@ -6,43 +6,19 @@ import { classNames, isEmpty } from "@/utils/generics";
 import { useAccounts } from "@/context/AccountContext";
 import { useProjects } from "@/context/ProjectContext";
 import Link from "next/link";
+import dayjs from "dayjs";
 
 const statuses = {
   Complete: "text-green-700 bg-green-50 ring-green-600/20",
   "In progress": "text-neutral-600 bg-neutral-50 ring-neutral-500/10",
   Archived: "text-yellow-800 bg-yellow-50 ring-yellow-600/20",
 };
-const projects = [
-  {
-    id: 1,
-    name: "GraphQL API",
-    href: "#",
-    status: "Complete",
-    createdBy: "Leslie Alexander",
-    dueDate: "March 17, 2023",
-    dueDateTime: "2023-03-17T00:00Z",
-  },
-  {
-    id: 2,
-    name: "New benefits plan",
-    href: "#",
-    status: "In progress",
-    createdBy: "Leslie Alexander",
-    dueDate: "May 5, 2023",
-    dueDateTime: "2023-05-05T00:00Z",
-  },
-  {
-    id: 3,
-    name: "Onboarding emails",
-    href: "#",
-    status: "In progress",
-    createdBy: "Courtney Henry",
-    dueDate: "May 25, 2023",
-    dueDateTime: "2023-05-25T00:00Z",
-  },
-];
 
-const projectsTabs = ["In Progress", "Listed", "Completed"];
+let projectsTabs = [
+  { name: "In Progress", count: 0 },
+  { name: "Listed", count: 0 },
+  { name: "Completed", count: 0 },
+];
 
 const projectsFilter = {
   inProgress: [],
@@ -74,6 +50,10 @@ export default function ClientProjects() {
         (project) => project.status === "completed"
       );
 
+      projectsTabs[0].count = inProgressProjects.length;
+      projectsTabs[1].count = listedProjects.length;
+      projectsTabs[2].count = completedProjects.length;
+
       setFilteredProjects({
         inProgress: inProgressProjects,
         listed: listedProjects,
@@ -100,7 +80,7 @@ export default function ClientProjects() {
                           "p-4 text-sm border-b-2 focus:outline-none font-medium"
                         )}
                       >
-                        {tab}
+                        {`${tab.name} (${tab.count})`}
                       </button>
                     )}
                   </Tab>
@@ -138,7 +118,6 @@ function InProgressProjects({ projects }) {
 }
 
 function ListedProjects({ projects }) {
-  console.log(projects);
   return (
     <ul role="list" className=" space-y-3">
       {projects.map((project) => (
@@ -181,7 +160,10 @@ function ProjectCard({ project }) {
         </div>
         <div className="mt-1 flex items-center gap-x-2 text-xs leading-5 text-neutral-500">
           <p className="whitespace-nowrap">
-            Due on <time dateTime={project.deadline}>{project.deadline}</time>
+            Due on{" "}
+            <time dateTime={project.deadline}>
+              {dayjs(project.deadline).format("DD/MM/YY")}
+            </time>
           </p>
         </div>
       </div>
