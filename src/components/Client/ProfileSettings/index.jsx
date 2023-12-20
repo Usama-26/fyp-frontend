@@ -2,7 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
-import { useClient } from "@/context/ClientContext";
+
 import Spinner from "@/components/Spinner";
 import { BiPencil } from "react-icons/bi";
 import ComboboxMultiple from "@/components/Comboboxes/ComboboxMultiple";
@@ -11,46 +11,45 @@ import sampleSkills from "@/json/sample-skills.json";
 import { LinkIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { useServices } from "@/context/ServiceContext";
+import ProgressBar from "@/components/ProgressBar";
 
 const scopes = [
   { label: "I am an Individual", value: "individual" },
   { label: "I own a company", value: "company" },
 ];
 
-const industries = [
-  "Technology and IT",
-  "Design and Creative",
-  "Writing and Content",
-  "Marketing and Advertising",
-  "Business and Finance",
-  "Healthcare",
-  "Education",
-  "E-commerce",
-  "Real Estate",
-  "Travel and Hospitality",
-  "Legal",
-  "Manufacturing and Engineering",
-  "Consulting",
-  "Fashion and Beauty",
-  "Energy and Environment",
-  "Art and Entertainment",
-  "Telecommunications",
-  "Nonprofit and Social Services",
-  "Food and Beverage",
-  "Fitness and Wellness",
-];
+const profileSchema = Yup.object({
+  bio: Yup.string().trim().required("Bio is required."),
+  client_scope: Yup.string().trim().default("individual"),
+  industry: Yup.string().trim().required("Industry is required"),
+  preferred_skills: Yup.array()
+    .of(Yup.string())
+    .min(3, "Select at least 3 skills")
+    .max(10, "You can select upto 10 skills")
+    .required("Select 3 to 10 skills"),
+  company_name: Yup.string().test({
+    name: "requiredForCompany",
+    test: function (value) {
+      const clientScope = this.resolve(Yup.ref("client_scope"));
+      // If client_scope is 'company', then company_name is required
+      return !(clientScope === "company" && !value);
+    },
+    message: "Company name is required",
+  }),
+  company_website_link: Yup.string().trim().url("Invalid Url"),
+});
+
 export default function ProfileSettings() {
   const [isEditing, setIsEditing] = useState(false);
-  const { user, loadAccount } = useAccounts();
-  const { languages, skills, error, isLoading, fetchSkills, fetchLanguages } =
-    useServices();
-
   const {
-    updateClientInfo,
+    user,
+    loadAccount,
+    updateUserInfo,
     updatedUser,
-    successMessage,
-    isLoading: updateLoading,
-  } = useClient();
+    isLoading: isUpdating,
+  } = useAccounts();
+  const [industries, setIndustries] = useState([]);
+  const { categories, fetchSkills, fetchLanguages } = useServices();
 
   const originalValues = {
     bio: user?.data.bio || "",
@@ -71,28 +70,34 @@ export default function ProfileSettings() {
   }, [updatedUser]);
 
   useEffect(() => {
+    if (categories) {
+      const { data } = categories;
+      if (Array.isArray(data)) {
+        const namesArray = data.map((category) => category.name);
+        setIndustries(namesArray);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (isEditing) {
       fetchSkills();
       fetchLanguages();
     }
   }, [isEditing]);
 
-  console.log(languages, skills);
-
   return (
     <div className="relative">
       <Formik
         initialValues={originalValues}
-        validationSchema={Yup.object({
-          bio: Yup.string().trim(),
-        })}
+        validationSchema={profileSchema}
         onSubmit={(values) => {
-          updateClientInfo(user.data._id, values);
+          updateUserInfo(user.data._id, values);
           setIsEditing(false);
         }}
       >
         {({ values, errors, touched, resetForm, setFieldValue }) => (
-          <div className="grid grid-cols-3 ">
+          <div className="grid grid-cols-3 gap-x-10">
             <div className="px-4 sm:px-0">
               <h2 className="text-base font-semibold leading-7 text-neutral-700">
                 Profile Information
@@ -100,6 +105,8 @@ export default function ProfileSettings() {
               <p className="mt-1 text-sm leading-6 text-neutral-600">
                 Introduce yourself to the people.
               </p>
+
+              <ProgressBar progress={user?.data?.profile_completion || 0} />
             </div>
             <Form className="col-span-2">
               <button
@@ -110,7 +117,7 @@ export default function ProfileSettings() {
                 <BiPencil className="w-5 h-5 inline" />
               </button>
               {isEditing ? (
-                <div className=" space-y-4 max-w-lg">
+                <div className=" space-y-6 max-w-lg">
                   <div>
                     <label htmlFor="bio" className="font-medium text-sm">
                       Bio
@@ -160,6 +167,7 @@ export default function ProfileSettings() {
                       </div>
                     </fieldset>
                   </div>
+
                   {values.client_scope === "company" && (
                     <div className="flex gap-4">
                       <div>
@@ -168,7 +176,7 @@ export default function ProfileSettings() {
                         </label>
                         <Field
                           className={`form-input ${
-                            errors.bio && touched.bio && "field-error"
+                            errors.company_name && touched.company_name && "field-error"
                           }`}
                           rows="4"
                           name="company_name"
@@ -190,7 +198,9 @@ export default function ProfileSettings() {
                         </label>
                         <Field
                           className={`form-input ${
-                            errors.bio && touched.bio && "field-error"
+                            errors.company_website_link &&
+                            touched.company_website_link &&
+                            "field-error"
                           }`}
                           name="company_website_link"
                           id="company_website_link"
@@ -204,20 +214,21 @@ export default function ProfileSettings() {
                       </div>
                     </div>
                   )}
+
                   <div>
                     <label className="text-base font-semibold text-neutral-700">
                       Industry
                     </label>
-                    {isEditing && (
-                      <p className="text-sm text-neutral-500">
-                        {"Select an industry you're working in"}
-                      </p>
+                    <p className="text-sm text-neutral-500">
+                      {"Select an industry you're working in"}
+                    </p>
+                    {industries.length > 0 && (
+                      <ComboSelectBox
+                        items={industries}
+                        defaultItem={values.industry}
+                        setValue={(item) => setFieldValue("industry", item)}
+                      />
                     )}
-                    <ComboSelectBox
-                      items={industries}
-                      defaultItem={values.industry}
-                      setValue={(item) => setFieldValue("industry", item)}
-                    />
                   </div>
 
                   <div>
@@ -226,19 +237,27 @@ export default function ProfileSettings() {
                     </label>
                     {isEditing && (
                       <p className="text-sm text-neutral-500">
-                        {"Choose skills you're looking for (select upto 5 skills)"}
+                        {"Choose skills you're looking for (select 3 to 10 skills)"}
                       </p>
                     )}
                     <Field name="preferred_skills">
                       {({ field }) => (
                         <ComboboxMultiple
+                          {...field}
                           items={sampleSkills.skills}
                           setValue={(items) => setFieldValue("preferred_skills", items)}
                           defaultItems={values.preferred_skills}
+                          isEditing={isEditing}
+                          isDisabled={values.preferred_skills.length >= 10}
                           placeholder="Select Skills"
                         />
                       )}
                     </Field>
+                    <ErrorMessage
+                      name="preferred_skills"
+                      component={"p"}
+                      className="field-error__message"
+                    />
                   </div>
                 </div>
               ) : (
@@ -257,10 +276,10 @@ export default function ProfileSettings() {
                   </button>
                   <button
                     type="submit"
-                    disabled={updateLoading}
+                    disabled={isUpdating}
                     className="bg-primary-500 font-medium px-2 py-1.5 text-sm rounded-md hover:bg-primary-700 text-white disabled:bg-neutral-100 disabled:text-neutral-500 "
                   >
-                    {updateLoading ? <Spinner /> : "Update"}
+                    {isUpdating ? <Spinner /> : "Update"}
                   </button>
                 </div>
               )}
@@ -274,18 +293,18 @@ export default function ProfileSettings() {
 
 function ProfileInformation({ data }) {
   return (
-    <div className="mt-6 max-w-xl border-t border-neutral-100">
+    <div className="mt-6 max-w-2xl border-t border-neutral-100">
       <dl className="divide-y divide-neutral-100">
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Bio</dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0 max-h-72 overflow-auto">
             {data.bio}
           </dd>
         </div>
         {data.company_name && (
           <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-neutral-700">Company</dt>
-            <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2  sm:mt-0">
+            <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3  sm:mt-0">
               {data.company_name}
               {data.company_website_link && (
                 <Link href={data.company_website_link} target="_blank">
@@ -297,7 +316,7 @@ function ProfileInformation({ data }) {
         )}
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Industry</dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             {data.industry}
           </dd>
         </div>
@@ -305,7 +324,7 @@ function ProfileInformation({ data }) {
           <dt className="text-sm font-medium leading-6 text-neutral-700">
             Preferred Skills
           </dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             <ul className="flex flex-wrap gap-2">
               {data.preferred_skills.map((item) => (
                 <li

@@ -103,7 +103,9 @@ function CreateProject() {
             <Formik
               initialValues={projectInitialValues}
               validationSchema={projectSchema}
+              enctype="multipart/form-data"
               onSubmit={(values) => {
+                console.log(values);
                 postProject(values);
               }}
             >

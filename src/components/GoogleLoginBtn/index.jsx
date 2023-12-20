@@ -7,6 +7,7 @@ export function GoogleLoginBtn({ userType }) {
     <GoogleLogin
       text="continue_with"
       width={320}
+      useOneTap
       onSuccess={(credentialResponse) => {
         handleGoogleAuth(credentialResponse.credential, userType);
       }}

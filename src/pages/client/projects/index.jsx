@@ -37,12 +37,17 @@ function ClientProjects() {
       <WebLayout>
         <section className="min-h-screen">
           {user && (
-            <WarningAlert>
-              <p>
-                Your profile is <b>{user.data.profile_completion}%</b> completed. Complete
-                your profile to 100% to start posting projects.
-              </p>
-            </WarningAlert>
+            <div className="container mx-auto">
+              {user.data.profile_completion !== 100 && (
+                <WarningAlert>
+                  <p>
+                    Your profile is <b>{user.data.profile_completion}%</b> completed.
+                    Complete your profile to 100% to start posting gigs and bidding on
+                    projects.
+                  </p>
+                </WarningAlert>
+              )}
+            </div>
           )}
           <div className="container mx-auto m-4 p-4 rounded-md  ">
             <h1 className="text-2xl font-display font-bold text-primary-950 mb-10">

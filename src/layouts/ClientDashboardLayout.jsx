@@ -1,5 +1,7 @@
 import DashboardNavigation from "@/components/DashboardNavigation";
 import WebLayout from "./WebLayout";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 
 const clientTabs = [
   { name: "Overview", href: "/client/dashboard", current: false },
@@ -11,14 +13,16 @@ const clientTabs = [
 
 export default function ClientDashboardLayout({ children }) {
   return (
-    <WebLayout>
+    <>
+      <Header />
       <div className="container mx-auto my-4">
-        <div className="text-xl font-semibold mb-6">
+        <div className="text-xl font-semibold mb-2">
           <h1 className="">Client Dashboard</h1>
         </div>
         <DashboardNavigation initialTabs={clientTabs} />
         {children}
       </div>
-    </WebLayout>
+      <Footer />
+    </>
   );
 }

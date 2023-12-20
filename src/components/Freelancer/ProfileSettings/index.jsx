@@ -10,38 +10,22 @@ import { useServices } from "@/context/ServiceContext";
 import { Combobox } from "@headlessui/react";
 import { classNames } from "@/utils/generics";
 import { HiX } from "react-icons/hi";
-
-const industries = [
-  "Technology and IT",
-  "Design and Creative",
-  "Writing and Content",
-  "Marketing and Advertising",
-  "Business and Finance",
-  "Healthcare",
-  "Education",
-  "E-commerce",
-  "Real Estate",
-  "Travel and Hospitality",
-  "Legal",
-  "Manufacturing and Engineering",
-  "Consulting",
-  "Fashion and Beauty",
-  "Energy and Environment",
-  "Art and Entertainment",
-  "Telecommunications",
-  "Nonprofit and Social Services",
-  "Food and Beverage",
-  "Fitness and Wellness",
-];
+import ProgressBar from "@/components/ProgressBar";
+import ComboboxMultiple from "@/components/Comboboxes/ComboboxMultiple";
+import sampleSkills from "@/json/sample-skills.json";
 
 const languageProficiencies = ["Fluent", "Native", "Conversational"];
 export default function FreelancerProfileSettings() {
   const [isEditing, setIsEditing] = useState(false);
   const [isAddLangOpen, setIsAddLangOpen] = useState(false);
+  const [industries, setIndustries] = useState([]);
+  const [services, setServices] = useState([]);
+
   const [selectedLanguage, setSelectedLanguage] = useState({
     name: "",
     proficiency: languageProficiencies[0],
   });
+  const [skills, setSkills] = useState([]);
   const {
     user,
     loadAccount,
@@ -49,7 +33,15 @@ export default function FreelancerProfileSettings() {
     isLoading: isUpdating,
     updateUserInfo,
   } = useAccounts();
-  const { skills, languages, fetchSkills, fetchLanguages } = useServices();
+  const {
+    categories,
+    skills: fetchedSkills,
+    subCategories,
+    languages,
+    fetchSkills,
+    fetchLanguages,
+  } = useServices();
+
   const originalValues = {
     bio: user?.data.bio || "",
     skills: user?.data.skills || [],
@@ -57,6 +49,7 @@ export default function FreelancerProfileSettings() {
     languages: user?.data.languages || [],
     profile_title: user?.data.profile_title || "",
     industry: user?.data.industry || "",
+    main_service: user?.data.main_service || "",
     languages: user?.data.languages || "",
   };
 
@@ -75,9 +68,41 @@ export default function FreelancerProfileSettings() {
   }, [updatedUser]);
 
   useEffect(() => {
+    if (categories) {
+      const { data } = categories;
+      if (Array.isArray(data)) {
+        const namesArray = data.map((category) => category.name);
+        setIndustries(namesArray);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (subCategories) {
+      const { data } = subCategories;
+      if (Array.isArray(data)) {
+        const namesArray = data
+          .filter((item) => item?.category?.name === "Programming & Development")
+          .map((category) => category.name);
+        setServices(namesArray);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     fetchLanguages();
     fetchSkills();
   }, [isEditing]);
+
+  useEffect(() => {
+    if (fetchedSkills) {
+      const { data } = fetchedSkills;
+      if (Array.isArray(data)) {
+        const skillsNames = data.map((skill) => skill.name);
+        setSkills(skillsNames);
+      }
+    }
+  }, [fetchedSkills]);
 
   return (
     <div className="relative">
@@ -87,7 +112,8 @@ export default function FreelancerProfileSettings() {
           bio: Yup.string().trim().required("Describe yourself first"),
           profile_title: Yup.string().trim().max(100).required("Enter profile title"),
           industry: Yup.string().trim(),
-          skills: Yup.array().required("Select at least one skill tag"),
+          main_service: Yup.string().trim(),
+          skills: Yup.array().min(3).max(10).required("Select at least one skill tag"),
           languages: Yup.array()
             .of(
               Yup.object({
@@ -106,7 +132,7 @@ export default function FreelancerProfileSettings() {
         }}
       >
         {({ values, errors, touched, resetForm, setFieldValue }) => (
-          <div className="grid grid-cols-3 ">
+          <div className="grid grid-cols-3 gap-x-10">
             <div className="px-4 sm:px-0">
               <h2 className="text-base font-semibold leading-7 text-neutral-700">
                 Profile Information
@@ -114,6 +140,8 @@ export default function FreelancerProfileSettings() {
               <p className="mt-1 text-sm leading-6 text-neutral-600">
                 Introduce yourself to the people.
               </p>
+
+              <ProgressBar progress={user?.data?.profile_completion || 0} />
             </div>
             <Form className="col-span-2">
               <button
@@ -139,7 +167,9 @@ export default function FreelancerProfileSettings() {
                       maxLength="100"
                       placeholder="e.g. UI | UX Developer"
                     />
-                    <span className="text-sm float-right">{values.bio.length}/100</span>
+                    <span className="text-sm float-right">
+                      {values.profile_title.length}/100
+                    </span>
                     <ErrorMessage
                       name="profile_title"
                       component={"p"}
@@ -179,10 +209,64 @@ export default function FreelancerProfileSettings() {
                     )}
                     <ComboSelectBox
                       items={industries}
-                      defaultItem={values.industry}
+                      defaultItem={values.industry || industries[0]}
                       setValue={(item) => setFieldValue("industry", item)}
                     />
                   </div>
+                  <div>
+                    <label className="text-base font-semibold text-neutral-700">
+                      Main Service
+                    </label>
+                    {isEditing && (
+                      <p className="text-sm text-neutral-500">
+                        {"Select a main service you offer"}
+                      </p>
+                    )}
+                    <ComboSelectBox
+                      items={services}
+                      defaultItem={values.main_service || services[0]}
+                      setValue={(item) => setFieldValue("main_service", item)}
+                    />
+                    <ErrorMessage
+                      name="main_service"
+                      component={"p"}
+                      className="field-error__message"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="skills"
+                      className="text-base font-semibold text-neutral-700"
+                    >
+                      Skills
+                    </label>
+                    {isEditing && (
+                      <p className="text-sm text-neutral-500">
+                        {"Select your skills and expertise"}
+                      </p>
+                    )}
+                    {skills.length > 0 && (
+                      <Field name="skills">
+                        {({ field }) => (
+                          <ComboboxMultiple
+                            {...field}
+                            items={skills}
+                            defaultItems={values.skills}
+                            placeholder={"Select Skills"}
+                            isEditing={isEditing}
+                            setValue={(items) => setFieldValue("skills", items)}
+                          />
+                        )}
+                      </Field>
+                    )}
+                    <ErrorMessage
+                      name="skills"
+                      component={"p"}
+                      className="field-error__message"
+                    />
+                  </div>
+
                   {/* Add Languages */}
                   <div>
                     <label className="text-base font-semibold text-neutral-700">
@@ -301,21 +385,6 @@ export default function FreelancerProfileSettings() {
                     </div>
                   </div>
 
-                  <div>
-                    <label
-                      htmlFor="skills"
-                      className="text-base font-semibold text-neutral-700"
-                    >
-                      Skills
-                    </label>
-                    {isEditing && (
-                      <p className="text-sm text-neutral-500">
-                        {"Select your skills and expertise"}
-                      </p>
-                    )}
-                    {skills && <Field name="skills"></Field>}
-                  </div>
-
                   <div className="flex justify-between items-center">
                     <div className="w-full">
                       <label
@@ -370,80 +439,75 @@ export default function FreelancerProfileSettings() {
 }
 
 function ProfileInformation({ data }) {
+  console.log(data);
   return (
-    <div className="mt-6 max-w-xl border-t border-neutral-100">
+    <div className="mt-6 max-w-2xl border-t border-neutral-100">
       <dl className="divide-y divide-neutral-100">
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Title</dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            Frontend Developer
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
+            {data.profile_title}
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Bio</dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit
-            adipisci mollitia molestiae hic doloribus reiciendis possimus quasi tenetur,
-            esse sed. A odit dicta dolore, commodi ullam similique voluptates enim,
-            officia maxime animi eligendi optio totam perspiciatis pariatur. Eaque quam
-            quos sed! Hic totam inventore soluta accusamus delectus, architecto maxime.
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
+            {data.bio}
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Industry</dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            Programming & Development
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
+            {data.industry}
+          </dd>
+        </div>
+        <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt className="text-sm font-medium leading-6 text-neutral-700">Main Service</dt>
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
+            {data.main_service}
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Skills</dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             <ul className="flex flex-wrap gap-2">
-              <li
-                className={
-                  "inline-flex items-center gap-1 text-xs rounded-lg bg-neutral-500 text-white font-medium py-1.5 px-2"
-                }
-              >
-                <span>Skill</span>
-              </li>
+              {data.skills.map((skill) => (
+                <li
+                  key={skill}
+                  className={
+                    "inline-flex items-center gap-1 text-xs rounded-lg bg-neutral-500 text-white font-medium py-1.5 px-2"
+                  }
+                >
+                  <span>{skill}</span>
+                </li>
+              ))}
             </ul>
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Languages</dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             <ul className="divide-y">
-              <li
-                className={
-                  "flex justify-between items-center rounded-sm gap-1 text-sm  bg-neutral-50 text-white py-2 px-2"
-                }
-              >
-                <span className="text-neutral-700 font-medium">English</span>
-                <span className="text-neutral-500">Fluent</span>
-              </li>
-              <li
-                className={
-                  "flex justify-between items-center rounded-sm gap-1 text-sm  bg-neutral-50 text-white py-4 px-2"
-                }
-              >
-                <span className="text-neutral-700 font-medium">Urdu</span>
-                <span className="text-neutral-500">Native</span>
-              </li>
-              <li
-                className={
-                  "flex justify-between items-center rounded-sm gap-1 text-sm  bg-neutral-50 text-white py-2 px-2"
-                }
-              >
-                <span className="text-neutral-700 font-medium">Punjabi</span>
-                <span className="text-neutral-500">Native</span>
-              </li>
+              {data.languages.map((lang) => (
+                <li
+                  key={lang.name}
+                  className={
+                    "flex justify-between items-center rounded-sm gap-1 text-sm  bg-neutral-50 text-white py-2 px-2"
+                  }
+                >
+                  <span className="text-neutral-700 font-medium">{lang.name}</span>
+                  <span className="text-neutral-500">{lang.proficiency}</span>
+                </li>
+              ))}
             </ul>
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Hourly Rate</dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-2 sm:mt-0">
-            <h5 className="text-neutral-700 font-medium text-2xl mb-2">$25</h5>
+          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
+            <h5 className="text-neutral-700 font-medium text-2xl mb-2">
+              ${data.hourly_rate}
+            </h5>
           </dd>
         </div>
       </dl>
@@ -451,7 +515,13 @@ function ProfileInformation({ data }) {
   );
 }
 
-function LanguageSelectBox({ items, isDisabled, defaultItem, setValue, placeholder }) {
+export function LanguageSelectBox({
+  items,
+  isDisabled,
+  defaultItem,
+  setValue,
+  placeholder,
+}) {
   const [query, setQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState(defaultItem || null);
 

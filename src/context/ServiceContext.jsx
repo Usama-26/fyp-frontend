@@ -174,8 +174,6 @@ function ServicesProvider({ children }) {
         getCategory,
         getSubCategory,
         getService,
-        fetchSubCategories,
-        fetchServices,
         fetchLanguages,
         getSubCategoriesByCategory,
         getServicesByCategory,

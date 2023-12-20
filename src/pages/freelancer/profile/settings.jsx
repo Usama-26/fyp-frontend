@@ -36,7 +36,8 @@ function FreelancerSettings() {
                 <WarningAlert>
                   <p>
                     Your profile is <b>{user.data.profile_completion}%</b> completed.
-                    Complete your profile to 100% to start posting projects.
+                    Complete your profile to 100% to start posting gigs and bidding on
+                    projects.
                   </p>
                 </WarningAlert>
               )}

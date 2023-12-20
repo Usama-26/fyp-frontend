@@ -7,9 +7,9 @@ export const uploadFilesToCloudinary = async (files) => {
 
   const data = new FormData();
 
-  files.forEach((file) => {
-    data.append(`${file.name}`, file);
-  });
+  // files.forEach((file, index) => {
+  // });
+  data.append(`${files.name}`, files);
 
   data.append("upload_preset", unsignedUploadPreset);
 

@@ -7,6 +7,7 @@ import { useAccounts } from "@/context/AccountContext";
 import { useProjects } from "@/context/ProjectContext";
 import Link from "next/link";
 import dayjs from "dayjs";
+import ProjectEmptyState from "@/components/EmptyStates/ProjectEmptyState";
 
 const statuses = {
   Complete: "text-green-700 bg-green-50 ring-green-600/20",
@@ -61,44 +62,55 @@ export default function ClientProjects() {
       });
     }
   }, [clientProjects]);
-
+  console.log(clientProjects);
   return (
     <ClientDashboardLayout>
       <div className="flex gap-2">
         <div className="basis-9/12 border rounded-md">
           <div className="p-4">
-            <Tab.Group as={"div"}>
-              <Tab.List as="ul" className={"w-full flex border-b"}>
-                {projectsTabs.map((tab, index) => (
-                  <Tab key={index} as="li" className={"outline-none focus:outline-none"}>
-                    {({ selected }) => (
-                      <button
-                        className={classNames(
-                          selected
-                            ? "text-primary-700  border-primary-700"
-                            : "border-transparent text-neutral-500 hover:border-neutral-400 hover:text-neutral-700",
-                          "p-4 text-sm border-b-2 focus:outline-none font-medium"
-                        )}
-                      >
-                        {`${tab.name} (${tab.count})`}
-                      </button>
-                    )}
-                  </Tab>
-                ))}
-              </Tab.List>
+            {!clientProjects?.data?.length === 0 ? (
+              <Tab.Group as={"div"}>
+                <Tab.List as="ul" className={"w-full flex border-b"}>
+                  {projectsTabs.map((tab, index) => (
+                    <Tab
+                      key={index}
+                      as="li"
+                      className={"outline-none focus:outline-none"}
+                    >
+                      {({ selected }) => (
+                        <button
+                          className={classNames(
+                            selected
+                              ? "text-primary-700  border-primary-700"
+                              : "border-transparent text-neutral-500 hover:border-neutral-400 hover:text-neutral-700",
+                            "p-4 text-sm border-b-2 focus:outline-none font-medium"
+                          )}
+                        >
+                          {`${tab.name} (${tab.count})`}
+                        </button>
+                      )}
+                    </Tab>
+                  ))}
+                </Tab.List>
 
-              <Tab.Panels as="div" className={"p-4"}>
-                <Tab.Panel>
-                  <InProgressProjects projects={filteredProjects?.inProgress} />
-                </Tab.Panel>
-                <Tab.Panel>
-                  <ListedProjects projects={filteredProjects?.listed} />
-                </Tab.Panel>
-                <Tab.Panel>
-                  <CompletedProjects projects={filteredProjects?.completed} />
-                </Tab.Panel>
-              </Tab.Panels>
-            </Tab.Group>
+                <Tab.Panels as="div" className={"p-4"}>
+                  <Tab.Panel>
+                    <InProgressProjects projects={filteredProjects?.inProgress} />
+                  </Tab.Panel>
+                  <Tab.Panel>
+                    <ListedProjects projects={filteredProjects?.listed} />
+                  </Tab.Panel>
+                  <Tab.Panel>
+                    <CompletedProjects projects={filteredProjects?.completed} />
+                  </Tab.Panel>
+                </Tab.Panels>
+              </Tab.Group>
+            ) : (
+              <ProjectEmptyState
+                isDisabled={user?.data?.profile_completion !== 100}
+                message={"Complete your profile 100% to start posting projects. "}
+              />
+            )}
           </div>
         </div>
         <div className="basis-3/12 rounded-md border"></div>

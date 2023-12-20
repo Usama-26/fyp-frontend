@@ -21,7 +21,7 @@ export default function ComboboxMultiple({
     query === ""
       ? items
       : items.filter((item) => {
-          return item.toLowerCase().includes(query.toLowerCase());
+          return item?.toLowerCase().includes(query.toLowerCase());
         });
 
   const removeItem = (item) => {
@@ -52,9 +52,9 @@ export default function ComboboxMultiple({
 
         {filteredItems.length > 0 && !isDisabled && (
           <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-opacity-5 focus:outline-none sm:text-sm">
-            {filteredItems.map((item) => (
+            {filteredItems.map((item, index) => (
               <Combobox.Option
-                key={item}
+                key={index}
                 value={item}
                 className={({ active }) =>
                   classNames(

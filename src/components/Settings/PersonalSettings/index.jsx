@@ -9,6 +9,7 @@ import countries from "@/json/countries";
 import ComboSelectBox from "@/components/Comboboxes/ComboSelectBox";
 import { CameraIcon, CheckBadgeIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
+import ProgressBar from "@/components/ProgressBar";
 
 export default function PersonalSettings() {
   const [isEditing, setIsEditing] = useState(false);
@@ -59,7 +60,7 @@ export default function PersonalSettings() {
       }}
     >
       {({ values, errors, touched, resetForm, setFieldValue }) => (
-        <div className="relative grid grid-cols-3 mx-auto">
+        <div className="relative grid grid-cols-3 gap-x-10">
           <div className="px-4 sm:px-0">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
               Personal Information
@@ -67,10 +68,11 @@ export default function PersonalSettings() {
             <p className="mt-1 text-sm leading-6 text-gray-600">
               This information will be displayed publicly so be careful what you share.
             </p>
+            <ProgressBar progress={user?.data?.profile_completion || 0} />
           </div>
           {isEditing ? (
             <Form encType="multipart/form-data" className="space-y-4">
-              <div className=" space-y-4 max-w-md">
+              <div className=" space-y-4 max-w-lg">
                 <div>
                   <label htmlFor="firsName" className="font-medium text-sm">
                     First Name
@@ -231,7 +233,7 @@ export default function PersonalSettings() {
                     className="rounded-full aspect-square object-cover w-40 h-40"
                   />
                 ) : (
-                  <span className="w-40 h-40 flex justify-center items-center rounded-full text-xl text-center text-white font-semibold bg-primary-500">
+                  <span className="w-40 h-40 flex justify-center items-center rounded-full text-5xl text-center text-white font-semibold bg-primary-500">
                     {user?.data.firstName[0]}
                   </span>
                 )}

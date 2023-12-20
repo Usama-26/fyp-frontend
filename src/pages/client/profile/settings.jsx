@@ -29,12 +29,14 @@ function ClientProfileSettings() {
       <WebLayout>
         <main className="relative max-w-screen-2xl mx-auto">
           {user.data.profile_completion !== 100 && (
-            <WarningAlert>
-              <p>
-                Your profile is <b>{user.data.profile_completion}%</b> completed. Complete
-                your profile to 100% to start posting projects.
-              </p>
-            </WarningAlert>
+            <div className="container mx-auto">
+              <WarningAlert>
+                <p>
+                  Your profile is <b>{user.data.profile_completion}%</b> completed.
+                  Complete your profile to 100% to start posting projects.
+                </p>
+              </WarningAlert>
+            </div>
           )}
           <div className="my-4 rounded-md shadow-custom-sm shadow-neutral-300 min-h-[25rem] max-w-7xl mx-auto">
             <Tab.Group as={"div"}>

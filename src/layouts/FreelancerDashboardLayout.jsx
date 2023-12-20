@@ -1,5 +1,7 @@
 import DashboardNavigation from "@/components/DashboardNavigation";
 import WebLayout from "./WebLayout";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const freelancerTabs = [
   { name: "Overview", href: "/freelancer/dashboard", current: false },
@@ -11,14 +13,16 @@ const freelancerTabs = [
 
 export default function FreelancerDashboardLayout({ children }) {
   return (
-    <WebLayout>
-      <div className="container mx-auto my-8">
-        <div className="text-xl font-semibold mb-6">
+    <>
+      <Header />
+      <div className="container mx-auto my-4">
+        <div className="text-xl font-semibold mb-2">
           <h1 className="">Freelancer Dashboard</h1>
         </div>
         <DashboardNavigation initialTabs={freelancerTabs} />
         {children}
+        <Footer />
       </div>
-    </WebLayout>
+    </>
   );
 }

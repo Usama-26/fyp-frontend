@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer";
-import NavBar from "@/components/Header";
+import Header from "@/components/Header";
 import { useState, useEffect } from "react";
 import ServiceExplorer from "@/components/ServiceExplorer";
 // import { useRouter } from "next/router";
@@ -28,7 +28,7 @@ export default function WebLayout({ children }) {
   // }, [isPageLoading]);
   return (
     <>
-      <NavBar />
+      <Header />
       <ServiceExplorer />
       {children}
       <Footer />

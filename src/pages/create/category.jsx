@@ -1,7 +1,10 @@
 import ImageDropzone from "@/components/ImageDropzone";
 import WebLayout from "@/layouts/WebLayout";
 import { postData } from "@/utils/api/genericAPI";
-import { uploadImageToCloudinary } from "@/utils/cloudinaryUpload";
+import {
+  uploadFilesToCloudinary,
+  uploadImageToCloudinary,
+} from "@/utils/cloudinaryUpload";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
@@ -22,8 +25,9 @@ export default function AddCategory() {
 
     setIsLoading(true);
 
-    const response = await uploadImageToCloudinary(files[0]);
-
+    const response = await uploadFilesToCloudinary(files[0]);
+    console.log(files);
+    console.log(response);
     if (response.status !== 200) {
       setMessage("Something went wrong ❌. Please Try Again.");
       setIsLoading(false);
@@ -62,7 +66,6 @@ export default function AddCategory() {
           validationSchema={categorySchema}
           onSubmit={(values, { resetForm }) => {
             handleSubmit(values);
-            resetForm({ values: null });
           }}
         >
           {({ values, errors, touched, submitCount }) => (
