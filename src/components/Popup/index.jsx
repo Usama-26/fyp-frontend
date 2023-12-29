@@ -29,7 +29,7 @@ export default function Popup({ label, children }) {
             >
               <Popover.Panel
                 className={
-                  "absolute p-4 top-12 left-0 z-50 max-w-lg min-w-[400px] bg-white shadow rounded-lg"
+                  "absolute p-4 top-12 left-0 z-50 max-w-lg bg-white shadow-custom-md shadow-neutral-300 rounded-lg"
                 }
               >
                 {children}

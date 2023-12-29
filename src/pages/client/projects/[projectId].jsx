@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { isEmpty } from "@/utils/generics";
 import {
+  ArrowDownTrayIcon,
   ChatBubbleLeftIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   CheckCircleIcon,
@@ -32,13 +33,41 @@ import Chip from "@/components/Chip";
 import SimpleNotification from "@/components/Notifications/simple";
 import { Dialog, Transition } from "@headlessui/react";
 import { useProposals } from "@/context/ProposalContext";
-import CheckoutModal from "@/components/CheckoutModal";
+import CheckoutModal from "@/components/Modals/CheckoutModal";
+import { BiFile } from "react-icons/bi";
+import StarRating from "@/components/StarRating";
+import { useContractWrite } from "wagmi";
+import { escrowABI, escrowAddress } from "@/contract";
+import { useAccount } from "wagmi";
+import { useConnect } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
 dayjs.extend(relativeTime);
 
 function ViewProject() {
-  const { project, isLoading: isProjectLoading, getProjectById } = useProjects();
-  const { user } = useAccounts();
+  const {
+    project,
+    isLoading: isProjectLoading,
+    getProjectById,
+    updateProject,
+  } = useProjects();
   const router = useRouter();
+  const { isConnected, address } = useAccount();
+  const { connect, error } = useConnect({ connector: new InjectedConnector() });
+  const { isSuccess, writeAsync } = useContractWrite({
+    abi: escrowABI,
+    address: escrowAddress,
+    functionName: "releasePayment",
+  });
+
+  const releasePayment = async () => {
+    connect();
+    try {
+      const res = await writeAsync?.({ args: [project.data._id] });
+      await updateProject(project.data._id, { status: "completed" });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getProjectById(router.query.projectId);
@@ -64,20 +93,22 @@ function ViewProject() {
             )} */}
             <div className="flex gap-2">
               <div className="basis-9/12 rounded-md border">
-                {isProjectLoading && (
+                {isProjectLoading && isEmpty(project) && (
                   <div className="flex h-96 items-center text-neutral-500 justify-center">
                     <Spinner /> <span>Loading...</span>
                   </div>
                 )}
                 {!isEmpty(project) && (
                   <div className="divide-y">
-                    <div className="px-4 py-2">
-                      <h1 className="text-xl font-semibold text-primary-500 ">
-                        {project.data.title}
-                      </h1>
-                      <p className="text-sm text-neutral-500">
-                        Posted {dayjs(project.data.createdAt).fromNow()}
-                      </p>
+                    <div className="px-4 py-2 flex justify-between items-center">
+                      <div>
+                        <h1 className="text-xl font-semibold text-primary-500 ">
+                          {project.data.title}
+                        </h1>
+                        <p className="text-sm text-neutral-500">
+                          Posted {dayjs(project.data.createdAt).fromNow()}
+                        </p>
+                      </div>
                     </div>
                     <div className="px-4 py-2 flex gap-12 text-center text-sm ">
                       <div>
@@ -110,7 +141,7 @@ function ViewProject() {
                     <div className=" p-4">
                       <h2 className="font-medium mb-2">Required Skills</h2>
                       <div className="flex flex-wrap gap-2">
-                        {project.data.tags.map((tag) => (
+                        {project.data.tags[0].split(",").map((tag) => (
                           <Chip key={tag} value={tag} />
                         ))}
                       </div>
@@ -118,11 +149,30 @@ function ViewProject() {
                     <div className=" p-4">
                       <h2 className="font-medium mb-2">Attachments</h2>
                       {project.data.attachments.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {project.data.attachments.map((tag) => (
-                            <Chip key={tag} value={tag} />
+                        <ul>
+                          {project.data.attachments.map((file) => (
+                            <li
+                              key={file.public_id}
+                              className="flex items-center justify-between pl-4 pr-5 text-sm leading-6"
+                            >
+                              <div className="bg-neutral-200 m-2 rounded-md inline-flex items-center p-1  text-xs">
+                                <BiFile className="w-5 h-5" />
+                                <p className="p-1">
+                                  <span>{file.filename}</span>
+                                  <span className="ml-2">{file.size}</span>
+                                  <Link
+                                    target="_blank"
+                                    href={file.secure_url}
+                                    download={file.public_id}
+                                    className="hover:text-primary-700"
+                                  >
+                                    <ArrowDownTrayIcon className="inline w-4 h-4" />
+                                  </Link>
+                                </p>
+                              </div>
+                            </li>
                           ))}
-                        </div>
+                        </ul>
                       ) : (
                         <p>No Attachments</p>
                       )}
@@ -130,25 +180,110 @@ function ViewProject() {
                   </div>
                 )}
               </div>
-              <div className="basis-4/12 border rounded-md py-4 px-1">
-                {isProjectLoading && (
-                  <div className="flex h-96 items-center text-neutral-500 justify-center">
-                    <Spinner /> <span>Loading...</span>
+
+              {!isEmpty(project) && project.data.status === "assigned" && (
+                <div className="basis-4/12 border rounded-md py-4 px-1">
+                  <h6 className="font-medium mb-4 px-1">Assigned to</h6>
+
+                  <div className="flex justify-center text-center mt-8">
+                    <Image
+                      src={project.data.assigned_to.profile_photo}
+                      width={1024}
+                      height={683}
+                      className="w-20 h-20 aspect-square object-cover rounded-full"
+                      alt="Profile Picture"
+                    />
                   </div>
-                )}
-                {!isEmpty(project) && project.data.proposals.length > 0 && (
+                  <h1 className="text-lg font-medium text-center hover:underline">
+                    <Link href={`/explore/freelancer/${project.data.assigned_to._id}`}>
+                      {project.data.assigned_to.firstName}{" "}
+                      {project.data.assigned_to.lastName[0]}.
+                    </Link>
+                  </h1>
+                  <div className="mt-2">
+                    <h6 className="font-medium mb-4 px-1">Deliverables</h6>
+                    <div className="border px-1 py-4 text-center">
+                      {project.data.deliverables.length > 0 ? (
+                        <ul>
+                          {project.data.deliverables.map((file) => (
+                            <li
+                              key={file.public_id}
+                              className="flex items-center justify-between pl-4 pr-5 text-sm leading-6"
+                            >
+                              <div className="bg-neutral-200 m-2 rounded-md inline-flex items-center p-1  text-xs">
+                                <BiFile className="w-5 h-5" />
+                                <p className="p-1">
+                                  <span>{file.filename}</span>
+                                  <span className="ml-2">{file.size}</span>
+                                  <Link
+                                    target="_blank"
+                                    href={file.secure_url}
+                                    download={file.public_id}
+                                    className="hover:text-primary-700"
+                                  >
+                                    <ArrowDownTrayIcon className="inline w-4 h-4" />
+                                  </Link>
+                                </p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-center">No Deliverables Yet</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-center mt-8">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                      onClick={releasePayment}
+                    >
+                      Complete Project
+                    </button>
+                  </div>
+                </div>
+              )}
+              {!isEmpty(project) && project.data.status === "listed" && (
+                <div className="basis-4/12 border rounded-md py-4 px-1">
+                  {isProjectLoading && (
+                    <div className="flex h-96 items-center text-neutral-500 justify-center">
+                      <Spinner /> <span>Loading...</span>
+                    </div>
+                  )}
+                  {!isEmpty(project) && project.data.proposals.length > 0 ? (
+                    <div>
+                      <h6 className="font-medium mb-4 px-1">Received Proposals</h6>
+                      <ProposalsList
+                        project={project?.data}
+                        proposals={project?.data.proposals}
+                      />
+                    </div>
+                  ) : (
+                    <div className="text-center text-neutral-500">
+                      <h6 className="font-medium mb-4 px-1 ">No Proposals Yet</h6>
+                      <p className="text-sm px-10">
+                        {"We'll show your proposals when your project receives any."}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+              {!isEmpty(project) && project.data.status === "completed" && (
+                <div className="basis-4/12 border rounded-md py-4 px-1">
+                  {isProjectLoading && (
+                    <div className="flex h-96 items-center text-neutral-500 justify-center">
+                      <Spinner /> <span>Loading...</span>
+                    </div>
+                  )}
                   <div>
-                    <h6 className="font-medium mb-4 px-1">Proposals Received</h6>
-                    <ProposalsList proposals={project?.data.proposals} />
+                    <CheckCircleIcon className="w-28 h-28 mx-auto fill-success-600" />
+                    <h3 className="font-semibold text-center">
+                      Project is Completed Successfully.
+                    </h3>
                   </div>
-                )}
-                {isEmpty(project) && !isProjectLoading && (
-                  <div>
-                    <h4 className="text-lg font-semibold">{"No Proposals"}</h4>
-                    <p>{"We'll notify you when your project receives a proposal"}</p>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -160,7 +295,7 @@ function ViewProject() {
 
 export default withRouteProtect(ViewProject, ["client"]);
 
-function ProposalsList({ proposals }) {
+function ProposalsList({ proposals, project }) {
   const [isProposalViewOpen, setIsProposalViewOpen] = useState(false);
   const [activeProposal, setActiveProposal] = useState("");
   return (
@@ -209,13 +344,14 @@ function ProposalsList({ proposals }) {
         proposalId={activeProposal}
         open={isProposalViewOpen}
         setOpen={setIsProposalViewOpen}
+        project={project}
       />
     </>
   );
 }
 
-function ViewProposal({ open, setOpen, proposalId }) {
-  const { proposal, isLoading, error, getProposalById } = useProposals();
+function ViewProposal({ open, setOpen, proposalId, project }) {
+  const { proposal, isLoading, getProposalById } = useProposals();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const freelancer = proposal?.data?.freelancer_id;
@@ -335,7 +471,7 @@ function ViewProposal({ open, setOpen, proposalId }) {
                               <h4 className="font-semibold text-base mb-2">
                                 Cover Letter
                               </h4>
-                              <p>{proposal.data.cover_letter}</p>
+                              <p>{proposal.data.comment}</p>
                             </div>
                             {/* Work Examples */}
                             <div className="mb-5">
@@ -410,12 +546,12 @@ function ViewProposal({ open, setOpen, proposalId }) {
                           {/* Action Center */}
 
                           <div className="text-end text-base">
-                            <button
+                            {/* <button
                               type="button"
                               className="py-2 px-4 text-center  text-neutral-700 border rounded-md border-neutral-500 font-medium hover:text-white hover:bg-neutral-500 "
                             >
                               Reject Proposal
-                            </button>
+                            </button> */}
                             <button
                               type="button"
                               onClick={() => setIsCheckoutOpen(true)}
@@ -426,7 +562,12 @@ function ViewProposal({ open, setOpen, proposalId }) {
                           </div>
                         </div>
                       </div>
-                      <CheckoutModal open={isCheckoutOpen} setOpen={setIsCheckoutOpen} />
+                      <CheckoutModal
+                        project={project}
+                        open={isCheckoutOpen}
+                        setOpen={setIsCheckoutOpen}
+                        freelancer={freelancer}
+                      />
                     </div>
                   )}
                 </Dialog.Panel>
@@ -436,5 +577,68 @@ function ViewProposal({ open, setOpen, proposalId }) {
         </div>
       </Dialog>
     </Transition.Root>
+  );
+}
+
+function Review({}) {
+  const [rating, setRating] = useState(0);
+  return (
+    <div className="mx-8 my-4 rounded-md shadow-custom-md shadow-neutral-300 p-4">
+      <h2 className="font-medium mb-2">Leave A Review</h2>
+      <Formik
+        initialValues={{
+          comment: "",
+          rating: 0,
+        }}
+        validationSchema={{}}
+        onSubmit={(values) => {}}
+      >
+        {({ values, errors, touched, submitCount, isValid, setFieldValue }) => (
+          <Form className="space-y-8">
+            <div className="">
+              <label htmlFor="comment" className="block text-lg font-semibold mb-4">
+                Comment
+              </label>
+              <Field
+                as="textarea"
+                rows="5"
+                className={`form-input resize-none ${
+                  errors.comment && touched.comment && submitCount > 0 && "field-error"
+                }`}
+                type="comment"
+                name="comment"
+                id="comment"
+                maxLength={2000}
+              />
+              <span className="text-sm float-right">{values.comment.length}/2000</span>
+
+              {errors.comment && touched.comment && submitCount > 0 ? (
+                <ErrorMessage
+                  name="comment"
+                  component={"p"}
+                  className="field-error__message"
+                />
+              ) : (
+                <p className="text-sm italic text-neutral-500">
+                  {"Write your proposal here."}
+                </p>
+              )}
+            </div>
+
+            <div className=" py-4 text-end border-t">
+              <button
+                type="submit"
+                disabled={!isValid}
+                className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium items-center"
+              >
+                {/* <span>{isLoading ? <Spinner /> : "Send Proposal"}</span> */}
+                Submit Review
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+      <StarRating size={20} onSetRating={setRating} />
+    </div>
   );
 }

@@ -36,35 +36,35 @@ export default function ProfileCard({ data }) {
         <h3 className="font-semibold text-lg text-primary-400">
           {data.firstName} {data.lastName[0]}.
         </h3>
-        <p className="text-sm text-neutral-500">Expert Laravel, PHP Developer</p>
-        <span className="inline-flex items-center space-x-1">
-          <HiOutlineLocationMarker className="inline w-4 h-4 stroke-neutral-700" />
+        <p className="text-sm text-neutral-500">{data.profile_title}</p>
+        <span className="inline-flex items-center space-x-1 text-sm text-neutral-500">
+          <HiOutlineLocationMarker className="inline-block w-4 h-4 " />
           &nbsp;
-          <span className="text-xs">Ohio, United States</span>
+          <span>{data.country}</span>
         </span>
         <br />
         <span className="inline-flex self-start items-center text-sm font-medium">
           <HiStar className=" w-5 h-5 fill-amber-500" />
           &nbsp;
-          <span>5.0 &nbsp;</span>
-          <span className="text-neutral-500 font-normal">{"(24 Reviews)"}</span>
+          <span>0.0 &nbsp;</span>
+          <span className="text-neutral-500 font-normal">{"(0 Reviews)"}</span>
         </span>
       </div>
 
       {/* Work Info */}
-      <div className="flex justify-between text-xs">
+      <div className="flex justify-between text-sm">
         <span className="inline-flex">
           <HiOutlineBriefcase className="w-5 h-5" />
           &nbsp;
           <span>
-            <span className="font-medium">24</span> Projects Completed
+            <span className="font-medium">0</span> Projects Completed
           </span>
         </span>
 
         <div className="font-medium text-end">
-          <span>0.015 ETH/hr</span>
+          <span>${data.hourly_rate}/hr</span>
           <br />
-          <span className="text-neutral-500">$25/hr</span>
+          <span className="text-neutral-500"> 0.015 ETH/hr</span>
         </div>
       </div>
       <div>

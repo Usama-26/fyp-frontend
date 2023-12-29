@@ -1,4 +1,4 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik, useFormik } from "formik";
 import Head from "next/head";
 import * as Yup from "yup";
 import WebLayout from "@/layouts/WebLayout";
@@ -23,6 +23,8 @@ import axios from "axios";
 import { BsChevronDown } from "react-icons/bs";
 import Datepicker from "react-tailwindcss-datepicker";
 import { BiFile } from "react-icons/bi";
+import { SiPayloadcms } from "react-icons/si";
+import Spinner from "@/components/Spinner";
 
 const projectSchema = Yup.object({
   title: Yup.string()
@@ -69,9 +71,8 @@ function CreateProject() {
   const [selectedService, setSelectedService] = useState({});
   const [deliveryDate, setDeliveryDate] = useState({});
   const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
-  const [attachments, setAttachments] = useState([]);
   const { categories } = useServices();
-  const { postProject, error } = useProjects();
+  const { postProject, isLoading: isPosting } = useProjects();
   const router = useRouter();
 
   const projectInitialValues = {
@@ -91,7 +92,6 @@ function CreateProject() {
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [formStep]);
-  console.log(error);
   return (
     <>
       <Head>
@@ -103,14 +103,12 @@ function CreateProject() {
             <Formik
               initialValues={projectInitialValues}
               validationSchema={projectSchema}
-              enctype="multipart/form-data"
               onSubmit={(values) => {
-                console.log(values);
                 postProject(values);
               }}
             >
               {({ values, errors, touched, isValid, setFieldValue, submitCount }) => (
-                <Form>
+                <Form encType="multipart/form-data">
                   {formStep === 0 ? (
                     <div className="rounded-md shadow-custom-md shadow-neutral-300 divide-y ">
                       {/* Basic Info Section */}
@@ -285,7 +283,7 @@ function CreateProject() {
                                     isEditing={true}
                                     isDisabled={
                                       isEmpty(selectedSubCategory) ||
-                                      values.tags.length >= 5
+                                      values.tags.length >= 10
                                     }
                                     defaultItems={values.tags}
                                     setValue={(skills) => {
@@ -312,8 +310,9 @@ function CreateProject() {
                           </label>
                           <FileDropzone
                             files={values.attachments}
-                            setFiles={(attachments) =>
-                              setFieldValue("attachments", attachments)
+                            setFiles={
+                              (attachments) => setFieldValue("attachments", attachments)
+                              // setAttachments(attachments)
                             }
                           />
                         </div>
@@ -376,6 +375,7 @@ function CreateProject() {
                         service: selectedService.name,
                       }}
                       onFormStep={setFormStep}
+                      isPosting={isPosting}
                     />
                   )}
                 </Form>
@@ -629,7 +629,7 @@ function ProjectPricingForm({
   );
 }
 
-function ReviewForm({ formData, onFormStep }) {
+function ReviewForm({ formData, onFormStep, isPosting }) {
   return (
     <div className=" rounded-md shadow-custom-md grid grid-cols-4 shadow-neutral-300 p-8">
       <div className="px-4 sm:px-0 flex justify-between col-span-1">
@@ -739,9 +739,10 @@ function ReviewForm({ formData, onFormStep }) {
               </button>
               <button
                 type="submit"
+                disabled={isPosting}
                 className=" mr-12 px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm"
               >
-                <span>Post Project</span>
+                {isPosting ? <Spinner /> : <span>Post Project</span>}
               </button>
             </div>
           </div>

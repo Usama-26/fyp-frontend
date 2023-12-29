@@ -21,6 +21,9 @@ function reducer(state, action) {
     case "account/forgotPassword":
       return { ...state, successMessage: action.payload, isLoading: false };
 
+    case "account/verifyEmail":
+      return { ...state, successMessage: action.payload, isLoading: false };
+
     case "user/updateInfo":
       return {
         ...state,
@@ -107,6 +110,29 @@ function AccountsProvider({ children }) {
         },
       });
       dispatch({ type: "account/login", payload: response.data });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
+    }
+  };
+
+  const verifyEmail = async (data) => {
+    dispatch({ type: "loading" });
+    const token = window.localStorage.getItem("token");
+    try {
+      const response = await postData(
+        `${BASE_URL}/auth/sendEmail`,
+        { email: data },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch({ type: "account/verifyEmail", payload: response.data.message });
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
@@ -271,6 +297,7 @@ function AccountsProvider({ children }) {
         error,
         successMessage,
         updatedUser,
+        verifyEmail,
         handleSignup,
         handleLogin,
         handleLogout,

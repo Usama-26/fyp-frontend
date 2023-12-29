@@ -10,6 +10,7 @@ import ComboSelectBox from "@/components/Comboboxes/ComboSelectBox";
 import { CameraIcon, CheckBadgeIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import ProgressBar from "@/components/ProgressBar";
+import SimpleNotification from "@/components/Notifications/simple";
 
 export default function PersonalSettings() {
   const [isEditing, setIsEditing] = useState(false);
@@ -17,7 +18,9 @@ export default function PersonalSettings() {
     user,
     loadAccount,
     isLoading,
+    verifyEmail,
     updateUserProfilePhoto,
+    successMessage,
     updateUserInfo,
     updatedUser,
   } = useAccounts();
@@ -45,222 +48,231 @@ export default function PersonalSettings() {
   }, [updatedUser]);
 
   return (
-    <Formik
-      initialValues={originalValues}
-      validationSchema={Yup.object({
-        firstName: Yup.string().trim().required("First Name is required"),
-        lastName: Yup.string().trim().required("Last Name is required"),
-        email: Yup.string().trim().required("Email is required"),
-        address: Yup.string().trim(),
-        country: Yup.string().trim(),
-      })}
-      onSubmit={(values) => {
-        updateUserInfo(user.data._id, values);
-        setIsEditing(false);
-      }}
-    >
-      {({ values, errors, touched, resetForm, setFieldValue }) => (
-        <div className="relative grid grid-cols-3 gap-x-10">
-          <div className="px-4 sm:px-0">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Personal Information
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              This information will be displayed publicly so be careful what you share.
-            </p>
-            <ProgressBar progress={user?.data?.profile_completion || 0} />
-          </div>
-          {isEditing ? (
-            <Form encType="multipart/form-data" className="space-y-4">
-              <div className=" space-y-4 max-w-lg">
-                <div>
-                  <label htmlFor="firsName" className="font-medium text-sm">
-                    First Name
-                  </label>
-                  <Field
-                    className={`form-input disabled:border-neutral-300 text-sm disabled:bg-transparent disabled:text-neutral-500 ${
-                      errors.firstName && touched.firstName && "field-error"
-                    }`}
-                    type="text"
-                    name="firstName"
-                    id="firstName"
-                    disabled={!isEditing ? true : false}
-                    placeholder="First Name"
-                  />
-                  <ErrorMessage
-                    name="firstName"
-                    component={"p"}
-                    className="field-error__message"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="lastName" className="font-medium text-sm">
-                    Last Name
-                  </label>
-                  <Field
-                    className={`form-input disabled:border-neutral-300 text-sm disabled:bg-transparent disabled:text-neutral-500 ${
-                      errors.lastName && touched.lastName && "field-error"
-                    }`}
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    disabled={!isEditing ? true : false}
-                    placeholder="Last Name"
-                  />
-                  <ErrorMessage
-                    name="lastName"
-                    component={"p"}
-                    className="field-error__message"
-                  />
-                </div>
-              </div>
-              <div className=" space-y-4 max-w-md">
-                <div>
-                  <label htmlFor="email" className="font-medium text-sm">
-                    Email Address
-                  </label>
-                  <Field
-                    className={`form-input disabled:border-neutral-300 text-sm disabled:bg-transparent disabled:text-neutral-500 ${
-                      errors.email && touched.email && "field-error"
-                    }`}
-                    type="text"
-                    name="email"
-                    id="email"
-                    disabled={!isEditing ? true : false}
-                    placeholder="Email"
-                  />
-                  <ErrorMessage
-                    name="email"
-                    component={"p"}
-                    className="field-error__message"
-                  />
-                  {user.data.email_verified ? (
-                    <span className="text-sm font-medium italic text-success-500">
-                      <CheckBadgeIcon className="w-5 h-5 mr-2 inline-block " />
-                      <span>Email Verified</span>
-                    </span>
-                  ) : (
-                    <button className="text-sm hover:underline text-primary-500">
-                      Verify Email
-                    </button>
-                  )}
-                </div>
-                <div>
-                  <label htmlFor="address" className="font-medium text-sm">
-                    Address
-                  </label>
-                  <Field
-                    className={`form-input disabled:border-neutral-300 text-sm disabled:bg-transparent disabled:text-neutral-500 ${
-                      errors.address && touched.address && "field-error"
-                    }`}
-                    type="text"
-                    name="address"
-                    id="address"
-                    disabled={!isEditing ? true : false}
-                    placeholder="Enter Address"
-                  />
-                  <ErrorMessage
-                    name="address"
-                    component={"p"}
-                    className="field-error__message"
-                  />
-                </div>
-                <div className="w-full">
-                  <Field name="country">
-                    {({ field }) => (
-                      <div className="w-full">
-                        <label htmlFor="country" className="font-medium text-sm">
-                          Country
-                        </label>
-                        <ComboSelectBox
-                          items={countries}
-                          isDisabled={!isEditing}
-                          defaultItem={field.value}
-                          setValue={(item) => setFieldValue("country", item)}
-                        />
-                      </div>
-                    )}
-                  </Field>
-                  <ErrorMessage
-                    name="country"
-                    component="p"
-                    className="field-error__message"
-                  />
-                </div>
-              </div>
-
-              {isEditing && (
-                <div className="space-x-2 text-end">
-                  <button
-                    onClick={() => {
-                      resetForm({ values: originalValues });
-                      setIsEditing(false);
-                    }}
-                    className="font-medium px-2 py-1.5 rounded bg-neutral-200 hover:bg-neutral-300  text-sm"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="bg-primary-500 font-medium px-2 py-1.5 text-sm rounded-md hover:bg-primary-700 text-white disabled:bg-neutral-100 disabled:text-neutral-500 "
-                  >
-                    {isLoading ? <Spinner /> : "Save Changes"}
-                  </button>
-                </div>
-              )}
-            </Form>
-          ) : (
-            <PersonalInformation data={values} />
-          )}
-          <div>
-            <div className=" text-end">
-              <button
-                onClick={toggleIsEditing}
-                className="rounded-full p-2 bg-neutral-200 hover:bg-primary-400 hover:text-white text-sm font-medium"
-              >
-                <BiPencil className="w-5 h-5 inline" />
-              </button>
-            </div>
-            <div className=" text-center mt-10">
-              <span className="relative group w-40 h-40 rounded-full overflow-hidden inline-block mx-auto">
-                {user?.data.profile_photo ? (
-                  <Image
-                    src={user?.data.profile_photo}
-                    width={500}
-                    height={500}
-                    alt="Profile Photo"
-                    className="rounded-full aspect-square object-cover w-40 h-40"
-                  />
-                ) : (
-                  <span className="w-40 h-40 flex justify-center items-center rounded-full text-5xl text-center text-white font-semibold bg-primary-500">
-                    {user?.data.firstName[0]}
-                  </span>
-                )}
-                {isLoading && (
-                  <span className="absolute top-0 left-0 inline-flex w-full h-full z-10 bg-white/50 items-center justify-center ">
-                    <Spinner />
-                  </span>
-                )}
-                <label
-                  htmlFor="profile_photo"
-                  className="absolute invisible group-hover:visible cursor-pointer bottom-0 py-2 left-0 inline-block w-full text-center bg-black/50"
-                >
-                  <CameraIcon className="w-8 h-8 fill-white inline-block" />
-                </label>
-              </span>
-              <input
-                type="file"
-                onChange={handleProfilePhotoUpdate}
-                accept="image/*"
-                className="hidden"
-                id="profile_photo"
-              />
-            </div>
-          </div>
-        </div>
+    <>
+      {successMessage && (
+        <SimpleNotification heading={"Email Sent"} message={successMessage} />
       )}
-    </Formik>
+      <Formik
+        initialValues={originalValues}
+        validationSchema={Yup.object({
+          firstName: Yup.string().trim().required("First Name is required"),
+          lastName: Yup.string().trim().required("Last Name is required"),
+          email: Yup.string().trim().required("Email is required"),
+          address: Yup.string().trim(),
+          country: Yup.string().trim(),
+        })}
+        onSubmit={(values) => {
+          updateUserInfo(user.data._id, values);
+          setIsEditing(false);
+        }}
+      >
+        {({ values, errors, touched, resetForm, setFieldValue }) => (
+          <div className="relative grid grid-cols-3 gap-x-10">
+            <div className="px-4 sm:px-0">
+              <h2 className="text-base font-semibold leading-7 text-gray-900">
+                Personal Information
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                This information will be displayed publicly so be careful what you share.
+              </p>
+              <ProgressBar progress={user?.data?.profile_completion || 0} />
+            </div>
+            {isEditing ? (
+              <Form encType="multipart/form-data" className="space-y-4">
+                <div className=" space-y-4 max-w-lg">
+                  <div>
+                    <label htmlFor="firsName" className="font-medium text-sm">
+                      First Name
+                    </label>
+                    <Field
+                      className={`form-input disabled:border-neutral-300 text-sm disabled:bg-transparent disabled:text-neutral-500 ${
+                        errors.firstName && touched.firstName && "field-error"
+                      }`}
+                      type="text"
+                      name="firstName"
+                      id="firstName"
+                      disabled={!isEditing ? true : false}
+                      placeholder="First Name"
+                    />
+                    <ErrorMessage
+                      name="firstName"
+                      component={"p"}
+                      className="field-error__message"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="font-medium text-sm">
+                      Last Name
+                    </label>
+                    <Field
+                      className={`form-input disabled:border-neutral-300 text-sm disabled:bg-transparent disabled:text-neutral-500 ${
+                        errors.lastName && touched.lastName && "field-error"
+                      }`}
+                      type="text"
+                      name="lastName"
+                      id="lastName"
+                      disabled={!isEditing ? true : false}
+                      placeholder="Last Name"
+                    />
+                    <ErrorMessage
+                      name="lastName"
+                      component={"p"}
+                      className="field-error__message"
+                    />
+                  </div>
+                </div>
+                <div className=" space-y-4 max-w-md">
+                  <div>
+                    <label htmlFor="email" className="font-medium text-sm">
+                      Email Address
+                    </label>
+                    <Field
+                      className={`form-input disabled:border-neutral-300 text-sm disabled:bg-transparent disabled:text-neutral-500 ${
+                        errors.email && touched.email && "field-error"
+                      }`}
+                      type="text"
+                      name="email"
+                      id="email"
+                      disabled={!isEditing ? true : false}
+                      placeholder="Email"
+                    />
+                    <ErrorMessage
+                      name="email"
+                      component={"p"}
+                      className="field-error__message"
+                    />
+                    {user.data.email_verified ? (
+                      <span className="text-sm font-medium italic text-success-500">
+                        <CheckBadgeIcon className="w-5 h-5 mr-2 inline-block " />
+                        <span>Email Verified</span>
+                      </span>
+                    ) : (
+                      <button
+                        disabled={isLoading}
+                        onClick={() => verifyEmail(user?.data?.email)}
+                        className="text-sm hover:underline text-primary-500"
+                      >
+                        {isLoading ? <Spinner /> : "Verify Email"}
+                      </button>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="address" className="font-medium text-sm">
+                      Address
+                    </label>
+                    <Field
+                      className={`form-input disabled:border-neutral-300 text-sm disabled:bg-transparent disabled:text-neutral-500 ${
+                        errors.address && touched.address && "field-error"
+                      }`}
+                      type="text"
+                      name="address"
+                      id="address"
+                      disabled={!isEditing ? true : false}
+                      placeholder="Enter Address"
+                    />
+                    <ErrorMessage
+                      name="address"
+                      component={"p"}
+                      className="field-error__message"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Field name="country">
+                      {({ field }) => (
+                        <div className="w-full">
+                          <label htmlFor="country" className="font-medium text-sm">
+                            Country
+                          </label>
+                          <ComboSelectBox
+                            items={countries}
+                            isDisabled={!isEditing}
+                            defaultItem={field.value}
+                            setValue={(item) => setFieldValue("country", item)}
+                          />
+                        </div>
+                      )}
+                    </Field>
+                    <ErrorMessage
+                      name="country"
+                      component="p"
+                      className="field-error__message"
+                    />
+                  </div>
+                </div>
+
+                {isEditing && (
+                  <div className="space-x-2 text-end">
+                    <button
+                      onClick={() => {
+                        resetForm({ values: originalValues });
+                        setIsEditing(false);
+                      }}
+                      className="font-medium px-2 py-1.5 rounded bg-neutral-200 hover:bg-neutral-300  text-sm"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isLoading}
+                      className="bg-primary-500 font-medium px-2 py-1.5 text-sm rounded-md hover:bg-primary-700 text-white disabled:bg-neutral-100 disabled:text-neutral-500 "
+                    >
+                      {isLoading ? <Spinner /> : "Save Changes"}
+                    </button>
+                  </div>
+                )}
+              </Form>
+            ) : (
+              <PersonalInformation data={values} />
+            )}
+            <div>
+              <div className=" text-end">
+                <button
+                  onClick={toggleIsEditing}
+                  className="rounded-full p-2 bg-neutral-200 hover:bg-primary-400 hover:text-white text-sm font-medium"
+                >
+                  <BiPencil className="w-5 h-5 inline" />
+                </button>
+              </div>
+              <div className=" text-center mt-10">
+                <span className="relative group w-40 h-40 rounded-full overflow-hidden inline-block mx-auto">
+                  {user?.data.profile_photo ? (
+                    <Image
+                      src={user?.data.profile_photo}
+                      width={500}
+                      height={500}
+                      alt="Profile Photo"
+                      className="rounded-full aspect-square object-cover w-40 h-40"
+                    />
+                  ) : (
+                    <span className="w-40 h-40 flex justify-center items-center rounded-full text-5xl text-center text-white font-semibold bg-primary-500">
+                      {user?.data.firstName[0]}
+                    </span>
+                  )}
+                  {isLoading && (
+                    <span className="absolute top-0 left-0 inline-flex w-full h-full z-10 bg-white/50 items-center justify-center ">
+                      <Spinner />
+                    </span>
+                  )}
+                  <label
+                    htmlFor="profile_photo"
+                    className="absolute invisible group-hover:visible cursor-pointer bottom-0 py-2 left-0 inline-block w-full text-center bg-black/50"
+                  >
+                    <CameraIcon className="w-8 h-8 fill-white inline-block" />
+                  </label>
+                </span>
+                <input
+                  type="file"
+                  onChange={handleProfilePhotoUpdate}
+                  accept="image/*"
+                  className="hidden"
+                  id="profile_photo"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </Formik>
+    </>
   );
 }
 

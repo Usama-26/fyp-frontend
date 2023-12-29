@@ -10,6 +10,7 @@ import { useAccounts } from "@/context/AccountContext";
 import FreelancerProfileSettings from "@/components/Freelancer/ProfileSettings";
 import Head from "next/head";
 import { useServices } from "@/context/ServiceContext";
+import PaymentSettings from "@/components/Settings/PaymentSettings";
 
 const profileTabs = [
   "Personal",
@@ -73,7 +74,9 @@ function FreelancerSettings() {
                 <Tab.Panel>
                   <SecuritySettings />
                 </Tab.Panel>
-                <Tab.Panel>{/* <PaymentSettings /> */}</Tab.Panel>
+                <Tab.Panel>
+                  <PaymentSettings />
+                </Tab.Panel>
                 <Tab.Panel>
                   <NotificationSettings />
                 </Tab.Panel>

@@ -8,17 +8,17 @@ import Image from "next/image";
 import { BsGear } from "react-icons/bs";
 import { GoDotFill } from "react-icons/go";
 import { FcBriefcase } from "react-icons/fc";
-import { BiSolidOffer, BiSolidBriefcaseAlt } from "react-icons/bi";
+import { BiSolidOffer } from "react-icons/bi";
 import { IoMdExit } from "react-icons/io";
 import { classNames } from "@/utils/generics";
 import { useAccounts } from "@/context/AccountContext";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { TbLayoutDashboard } from "react-icons/tb";
-import { MdDashboard, MdSpaceDashboard } from "react-icons/md";
+import { MdSpaceDashboard } from "react-icons/md";
+import Spinner from "../Spinner";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isLoggedIn, handleLogout } = useAccounts();
+  const { isLoggedIn, isLoading, handleLogout } = useAccounts();
 
   const openMenu = () => {
     setIsMenuOpen(true);
@@ -36,7 +36,9 @@ export default function Header() {
             <Logo />
             <Navigation isOpen={isMenuOpen} onOpen={openMenu} onClose={closeMenu} />
           </div>
-          {isLoggedIn ? <UserMenu onLogout={handleLogout} /> : <AuthMenu />}
+          {isLoggedIn && <UserMenu onLogout={handleLogout} />}
+          {!isLoading && !isLoggedIn && <AuthMenu />}
+          {isLoading && <Spinner />}
         </div>
       </header>
       <MegaMenu isOpen={isMenuOpen} onOpen={openMenu} onClose={closeMenu} />

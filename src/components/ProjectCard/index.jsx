@@ -46,7 +46,7 @@ export default function ProjectCard(props) {
             <p className="text-sm line-clamp-2">{props.description}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {props.tags.map((tag) => (
+            {props.tags[0].split(",").map((tag) => (
               <Chip key={tag} value={tag} />
             ))}
           </div>
@@ -135,13 +135,13 @@ function ViewProject({ open, setOpen, projectData }) {
                           {projectData.title}
                         </h1>
                         <p className="py-4">{projectData.description}</p>
-                        {categories && subCategories && services ? (
+                        {categories && !isEmpty(subCategories) && !isEmpty(services) ? (
                           <div>
                             <h5 className="font-medium py-2 text-base">Under</h5>
                             <ul className="flex items-center gap-2">
                               <li className="rounded-md bg-neutral-100 p-1 ">
                                 {
-                                  categories.data.find(
+                                  categories?.data?.find(
                                     (category) => category._id === projectData.category
                                   ).name
                                 }
@@ -151,7 +151,7 @@ function ViewProject({ open, setOpen, projectData }) {
                               </li>
                               <li className="rounded-md bg-neutral-100 p-1">
                                 {
-                                  subCategories.data.find(
+                                  subCategories?.data?.find(
                                     (subcategory) =>
                                       subcategory._id === projectData.sub_category
                                   ).name
@@ -165,7 +165,7 @@ function ViewProject({ open, setOpen, projectData }) {
                         <div>
                           <h5 className="font-medium py-2 text-base">Required Skills</h5>
                           <div className="flex flex-wrap gap-2">
-                            {projectData.tags.map((tag) => (
+                            {projectData.tags[0].split(",").map((tag) => (
                               <Chip key={tag} value={tag} />
                             ))}
                           </div>
@@ -202,14 +202,6 @@ function ViewProject({ open, setOpen, projectData }) {
                           {!isEmpty(client) && (
                             <div className="pt-4 flex justify-between max-w-xl">
                               <div>
-                                <h6 className="font-medium mb-1">Payment</h6>
-                                <p>
-                                  {client.data.payment_verified
-                                    ? "Verified"
-                                    : "Not Verified"}
-                                </p>
-                              </div>
-                              <div>
                                 <h6 className="font-medium mb-1">Member since</h6>
                                 <p>
                                   {dayjs(client.data.createdAt).format("MMMM DD, YYYY")}
@@ -224,29 +216,36 @@ function ViewProject({ open, setOpen, projectData }) {
                         </div>
                       </div>
                       <div className="basis-1/4 py-10 px-6 text-center">
-                        {user ? (
-                          user.data.user_type === "freelancer" && (
+                        {user && user.data.user_type === "freelancer" ? (
+                          user.data.profile_completion === 100 ? (
                             <Link
                               href={
-                                projectData.proposals.includes(
+                                projectData.proposals.some(
                                   (proposal) => proposal.freelancer_id === user.data._id
                                 )
                                   ? `/freelancer/proposals/`
                                   : `/freelancer/proposals/send/${projectData._id}`
                               }
-                              className="block py-1.5 px-4 text-base  uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700 "
+                              className="block py-1.5 px-4 text-base uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"
                             >
-                              {projectData.proposals.includes(
-                                (proposal) => proposal.freelander._id === user._id
+                              {projectData.proposals.some(
+                                (proposal) => proposal.freelancer_id === user.data._id
                               )
                                 ? "View Proposals"
                                 : "Send Proposal"}
                             </Link>
+                          ) : (
+                            <Link
+                              href="/freelancer/profile/settings"
+                              className="block py-1.5 px-4 uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"
+                            >
+                              Complete Profile
+                            </Link>
                           )
                         ) : (
                           <Link
-                            href={`/freelancer/join`}
-                            className="block py-1.5 px-4 uppercase text-center text-primary-700 border rounded-lg border-primary-700  font-medium hover:text-white hover:bg-primary-700 "
+                            href="/freelancer/join"
+                            className="block py-1.5 px-4 uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"
                           >
                             Sign up
                           </Link>

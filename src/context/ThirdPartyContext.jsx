@@ -1,4 +1,5 @@
 import { getData } from "@/utils/api/genericAPI";
+import axios from "axios";
 import { createContext, useReducer, useContext } from "react";
 
 function reducer(state, action) {
@@ -44,10 +45,20 @@ function ThirdPartyServicesProvider({ children }) {
       }
     }
   };
+  const convertToEthereum = async (setInEthereum) => {
+    try {
+      const response = await axios.get(
+        "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+      );
+      setInEthereum(response.data.ethereum.usd);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <ThirdPartyContext.Provider
-      value={{ isLoading, error, universities, fetchUniversities }}
+      value={{ isLoading, error, universities, fetchUniversities, convertToEthereum }}
     >
       {children}
     </ThirdPartyContext.Provider>

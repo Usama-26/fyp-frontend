@@ -3,11 +3,10 @@ import { useAccounts } from "@/context/AccountContext";
 import ClientDashboardLayout from "@/layouts/ClientDashboardLayout";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import Link from "next/link";
 import { AiFillStar } from "react-icons/ai";
 
 const stats = [
-  { name: "Projects Posted", stat: "5" },
+  { name: "Projects Posted", stat: "0" },
   { name: "Total Payments", stat: "$ 0" },
   { name: "Job Success Rate", stat: "0 %" },
 ];
@@ -75,10 +74,12 @@ function UserInfo({}) {
             <h1 className="text-lg font-medium text-center">
               {user.data.firstName} {user.data.lastName[0]}.
             </h1>
-            <p className="text-center text-sm text-neutral-500">UI | UX Developer</p>
+            <p className="text-center text-sm text-neutral-500">
+              {user.data.profile_title || ""}
+            </p>
             <p className="text-center text-sm">{user.data.country}</p>
           </div>
-          <div className="p-4 border-b">
+          {/* <div className="p-4 border-b">
             <div className="flex justify-between text-sm">
               <span>Payment Status</span>
               {user.data.payment_method ? (
@@ -97,7 +98,7 @@ function UserInfo({}) {
                 </span>
               )}
             </div>
-          </div>
+          </div> */}
           <div className="p-4 border-b">
             <div className="flex justify-between items-center text-sm">
               <span>Reviews</span>
@@ -107,15 +108,15 @@ function UserInfo({}) {
                     <AiFillStar key={i} className="inline fill-amber-400 w-4 h-4" />
                   ))}
                 </span>
-                <span className="text-neutral-500 ml-1 font-medium">{`(54)`}</span>
+                <span className="text-neutral-500 ml-1 font-medium">{`(0.0)`}</span>
               </span>
             </div>
           </div>
           <div className="p-4 border-b">
             <div className="flex justify-between items-center text-sm">
-              <span>Total Earnings</span>
+              <span>Total Spent</span>
               <span>
-                <span className="text-neutral-500 ml-1 font-medium">$ 5400</span>
+                <span className="text-neutral-500 ml-1 font-medium">$ 0</span>
               </span>
             </div>
           </div>

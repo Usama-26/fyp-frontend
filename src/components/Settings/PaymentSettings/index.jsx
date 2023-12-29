@@ -1,5 +1,6 @@
 import PaymentMethodEmptyState from "@/components/EmptyStates/PaymentMethodEmptyState";
-import { useState } from "react";
+import { useAccounts } from "@/context/AccountContext";
+import { useEffect, useState } from "react";
 import { IoMdEye } from "react-icons/io";
 import { useDisconnect } from "wagmi";
 import { useAccount } from "wagmi";
@@ -12,6 +13,15 @@ export default function PaymentSettings() {
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
+
+  const { user, updateUserInfo } = useAccounts();
+
+  useEffect(() => {
+    if (isConnected) {
+      updateUserInfo(user.data._id, { wallet_address: address });
+    }
+  }, [isConnected]);
+  console.log(isConnected);
   return (
     <div>
       {isConnected ? (

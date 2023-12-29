@@ -108,6 +108,8 @@ function ProposalProvider({ children }) {
         isLoading,
         error,
         proposal,
+        freelancerProposals,
+        fetchFreelancerProposals,
         getProposalById,
       }}
     >

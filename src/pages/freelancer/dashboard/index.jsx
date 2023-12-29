@@ -10,7 +10,7 @@ export default function FreelancerOverview() {
   return (
     <FreelancerDashboardLayout>
       <div className="flex gap-2">
-        <div className="basis-9/12 rounded-md"></div>
+        <div className="basis-9/12 rounded-md border"></div>
         <UserInfo />
       </div>
     </FreelancerDashboardLayout>
@@ -52,10 +52,12 @@ function UserInfo({}) {
                 {user.data.firstName} {user.data.lastName[0]}.
               </Link>
             </h1>
-            <p className="text-center text-sm text-neutral-500">UI | UX Developer</p>
+            <p className="text-center text-sm text-neutral-500">
+              {user.data.profile_title}
+            </p>
             <p className="text-center text-sm">{user.data.country}</p>
           </div>
-          <div className="p-4 border-b">
+          {/* <div className="p-4 border-b">
             <div className="flex justify-between text-sm">
               <span>Payment Status</span>
               {user.data.payment_method ? (
@@ -74,7 +76,7 @@ function UserInfo({}) {
                 </span>
               )}
             </div>
-          </div>
+          </div> */}
           <div className="p-4 border-b">
             <div className="flex justify-between items-center text-sm">
               <span>Reviews</span>
@@ -84,7 +86,7 @@ function UserInfo({}) {
                     <AiFillStar key={i} className="inline fill-amber-400 w-4 h-4" />
                   ))}
                 </span>
-                <span className="text-neutral-500 ml-1 font-medium">{`(54)`}</span>
+                <span className="text-neutral-500 ml-1 font-medium">{`(0)`}</span>
               </span>
             </div>
           </div>
@@ -92,7 +94,7 @@ function UserInfo({}) {
             <div className="flex justify-between items-center text-sm">
               <span>Total Earnings</span>
               <span>
-                <span className="text-neutral-500 ml-1 font-medium">$ 5400</span>
+                <span className="text-neutral-500 ml-1 font-medium">$ 0</span>
               </span>
             </div>
           </div>

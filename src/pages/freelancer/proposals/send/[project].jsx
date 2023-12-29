@@ -16,21 +16,29 @@ import { useClient } from "@/context/ClientContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { isEmpty } from "@/utils/generics";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowDownTrayIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+} from "@heroicons/react/20/solid";
 import Link from "next/link";
 import Chip from "@/components/Chip";
 import SimpleNotification from "@/components/Notifications/simple";
+import FileDropzone from "@/components/FIleDropzone";
+import { BiFile } from "react-icons/bi";
 
 const proposalSchema = Yup.object({
   cover_letter: Yup.string().max(2000).required("Cover Letter Required"),
   bid_amount: Yup.number().max(1000).required("Enter A Valid Bid Amount"),
   delivery_date: Yup.string().max(1000).required("Set A Delivery Date"),
+  attachments: Yup.array(),
 });
 
 const initialProposalValues = {
   cover_letter: "",
   bid_amount: 0,
   delivery_date: "",
+  attachments: [],
 };
 
 dayjs.extend(relativeTime);
@@ -55,7 +63,7 @@ function SendProposal() {
 
   useEffect(() => {
     if (!isEmpty(proposal)) {
-      router.push("/freelancer/proposals");
+      // router.push("/freelancer/proposals");
     }
   }, [proposal]);
 
@@ -63,6 +71,7 @@ function SendProposal() {
     if (successMessage) {
       setTimeout(() => {
         clearMessage();
+        router.push("/freelancer/dashboard");
       }, 5000);
     }
   }, [successMessage]);
@@ -75,7 +84,7 @@ function SendProposal() {
       <WebLayout>
         <section>
           <div className="container mx-auto my-8">
-            {successMessage && (
+            {proposal && (
               <SimpleNotification
                 heading={"Proposal Sent"}
                 message={
@@ -93,7 +102,7 @@ function SendProposal() {
                 {!isEmpty(project) && (
                   <div className="border-y">
                     <div className="px-4 py-2">
-                      <h1 className="text-xl font-semibold text-primary-500 ">
+                      <h1 className="text-lg font-semibold text-primary-500 ">
                         {project.data.title}
                       </h1>
                       <p className="text-sm text-neutral-500">
@@ -129,7 +138,7 @@ function SendProposal() {
                     <div className="border-b p-4">
                       <h2 className="font-medium mb-2">Required Skills</h2>
                       <div className="flex flex-wrap gap-2">
-                        {project.data.tags.map((tag) => (
+                        {project.data.tags[0].split(",").map((tag) => (
                           <Chip key={tag} value={tag} />
                         ))}
                       </div>
@@ -137,18 +146,36 @@ function SendProposal() {
                     <div className="border-b p-4">
                       <h2 className="font-medium mb-2">Attachments</h2>
                       {project.data.attachments.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {project.data.attachments.map((tag) => (
-                            <Chip key={tag} value={tag} />
+                        <ul>
+                          {project.data.attachments.map((file) => (
+                            <li
+                              key={file.public_id}
+                              className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
+                            >
+                              <div className="bg-neutral-200 m-2 rounded-md inline-flex items-center p-1  text-xs">
+                                <BiFile className="w-5 h-5" />
+                                <p className="p-1">
+                                  <span>{file.filename}</span>
+                                  <span className="ml-2">{file.size}</span>
+                                </p>
+                                <Link
+                                  className="hover:text-primary-500"
+                                  href={file.secure_url}
+                                  download={file.public_id}
+                                >
+                                  <ArrowDownTrayIcon className="inline-block w-4 h-4" />
+                                </Link>
+                              </div>
+                            </li>
                           ))}
-                        </div>
+                        </ul>
                       ) : (
                         <p>No Attachments</p>
                       )}
                     </div>
                     {/* Cover Letter */}
                     {project?.data?.proposals.some(
-                      (proposal) => proposal.freelancer_id === user?.data?.id
+                      (proposal) => proposal.freelancer_id._id === user?.data?.id
                     ) ? (
                       <div className="mx-8 my-4 rounded-md shadow-custom-md shadow-neutral-300 p-12">
                         <h5 className="text-center font-semibold text-lg">
@@ -159,6 +186,14 @@ function SendProposal() {
                             "We'll let you know if your proposal receives a response from the client"
                           }
                         </p>
+                        <div className="text-center mt-10">
+                          <Link
+                            href={"/freelancer/dashboard/proposals/"}
+                            className="px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium items-center"
+                          >
+                            View Proposals
+                          </Link>
+                        </div>
                       </div>
                     ) : (
                       <CoverLetter project={project} />
@@ -188,21 +223,18 @@ function CoverLetter({ project }) {
       <Formik
         initialValues={initialProposalValues}
         validationSchema={proposalSchema}
-        onSubmit={(values, { resetForm }) => {
+        onSubmit={(values) => {
           sendProposal({
             ...values,
             freelancer_id: user.data._id,
             project_id: project.data._id,
           });
-          if (proposal) {
-            resetForm({ values: null });
-          }
         }}
       >
         {({ values, errors, touched, submitCount, isValid, setFieldValue }) => (
           <Form className="space-y-8">
             <div className="">
-              <label htmlFor="cover_letter" className="block text-xl font-semibold mb-4">
+              <label htmlFor="cover_letter" className="block text-lg font-semibold mb-4">
                 Cover Letter
               </label>
               <Field
@@ -235,9 +267,26 @@ function CoverLetter({ project }) {
                 </p>
               )}
             </div>
+            <div className="">
+              <label htmlFor="cover_letter" className="block text-lg font-semibold">
+                Work Examples
+              </label>
+              <p className="text-sm italic text-neutral-500 mb-4">
+                {"Attach files to showcase your related work."}
+              </p>
+
+              <Field>
+                {({ field }) => (
+                  <FileDropzone
+                    files={values.attachments}
+                    setFiles={(files) => setFieldValue("attachments", files)}
+                  />
+                )}
+              </Field>
+            </div>
             <div className="flex justify-between">
               <div>
-                <label htmlFor="bid_amount" className="block text-xl font-semibold mb-4">
+                <label htmlFor="bid_amount" className="block text-lg font-semibold mb-2">
                   Offer Your Price
                 </label>
                 <Field
@@ -266,7 +315,7 @@ function CoverLetter({ project }) {
               <div>
                 <label
                   htmlFor="deliver_date"
-                  className="block text-xl font-semibold mb-4"
+                  className="block text-lg font-semibold mb-2"
                 >
                   {"When you'll deliver"}
                 </label>
@@ -315,6 +364,7 @@ function CoverLetter({ project }) {
 
 function ClientInfo({}) {
   const { client, isLoading: isClientLoading } = useClient();
+
   return (
     <div className="basis-3/12 border">
       {isClientLoading && (
@@ -349,7 +399,7 @@ function ClientInfo({}) {
             </h1>
             <p className="text-center text-sm">{client.data.country}</p>
           </div>
-          <div className="p-4 border-b">
+          {/* <div className="p-4 border-b">
             <div className="flex justify-between text-sm">
               <span>Payment Status</span>
               {client.data.payment_method ? (
@@ -368,7 +418,7 @@ function ClientInfo({}) {
                 </span>
               )}
             </div>
-          </div>
+          </div> */}
           <div className="p-4 border-b">
             <div className="flex justify-between text-sm">
               <span>Projects Posted</span>

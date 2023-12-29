@@ -1,7 +1,7 @@
 import { BASE_URL } from "@/constants";
-import { getData, postData, updateData } from "@/utils/api/genericAPI";
+import { deleteData, getData, postData, updateData } from "@/utils/api/genericAPI";
 import { useRouter } from "next/router";
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -14,14 +14,26 @@ function reducer(state, action) {
     case "project/updateProject":
       return { ...state, successMessage: action.payload, isLoading: false };
 
+    case "project/deleteProject":
+      return { ...state, successMessage: action.payload, isLoading: false };
+
     case "project/fetchClientProjects":
       return { ...state, isLoading: false, clientProjects: action.payload };
+
+    case "project/fetchFreelancerProjects":
+      return { ...state, isLoading: false, freelancerProjects: action.payload };
 
     case "project/fetchProjects":
       return { ...state, isLoading: false, projects: action.payload };
 
     case "loading":
       return { ...state, isLoading: true, error: "" };
+
+    case "clearMessage":
+      return { ...state, successMessage: "" };
+
+    case "clearError":
+      return { ...state, error: "" };
 
     case "rejected":
       return { ...state, error: action.payload, isLoading: false };
@@ -41,14 +53,23 @@ const initialState = {
   project: {},
   projects: {},
   clientProjects: {},
+  freelancerProjects: {},
   successMessage: "",
 };
 
 function ProjectProvider({ children }) {
-  const [{ isLoading, error, project, projects, clientProjects }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [
+    {
+      isLoading,
+      error,
+      successMessage,
+      project,
+      projects,
+      clientProjects,
+      freelancerProjects,
+    },
+    dispatch,
+  ] = useReducer(reducer, initialState);
   const router = useRouter();
 
   const fetchClientProjects = async (userId) => {
@@ -68,12 +89,29 @@ function ProjectProvider({ children }) {
     }
   };
 
+  const fetchFreelancerProjects = async (userId) => {
+    const token = window.localStorage.getItem("token");
+    try {
+      const response = await getData(
+        `${BASE_URL}/projects/get_freelancer_projects/${userId}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      dispatch({ type: "project/fetchFreelancerProjects", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
   const fetchProjects = async () => {
     try {
       const response = await getData(`${BASE_URL}/projects?status=listed`);
-      dispatch({ type: "project/fetchProjects", payload: response.data });
+      dispatch({ type: "project/fetchProjects", payload: response?.data });
     } catch (error) {
-      dispatch({ type: "rejected", payload: error.response.data.message });
+      dispatch({ type: "rejected", payload: error?.response?.data?.message });
     }
   };
 
@@ -88,10 +126,22 @@ function ProjectProvider({ children }) {
   };
 
   const postProject = async (data) => {
-    const token = window.localStorage.getItem("token");
     dispatch({ type: "loading" });
+    const token = window.localStorage.getItem("token");
+    const payload = new FormData();
+    for (const field in data) {
+      if (Object.hasOwnProperty.call(data, field)) {
+        if (field === "attachments" && Array.isArray(data[field])) {
+          data[field].forEach((file) => {
+            payload.append(`attachments`, file);
+          });
+        } else {
+          payload.append(field, data[field]);
+        }
+      }
+    }
     try {
-      const response = await postData(`${BASE_URL}/projects/`, data, {
+      const response = await postData(`${BASE_URL}/projects/`, payload, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -99,7 +149,11 @@ function ProjectProvider({ children }) {
       dispatch({ type: "project/postProject", payload: response.data.message });
       router.push("/client/projects");
     } catch (error) {
-      dispatch({ type: "rejected", payload: error.response.data.message });
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
 
@@ -119,19 +173,43 @@ function ProjectProvider({ children }) {
     }
   };
 
+  const deleteProject = async (id) => {
+    const token = window.localStorage.getItem("token");
+    dispatch({ type: "loading" });
+    try {
+      const response = await deleteData(`${BASE_URL}/projects`, id, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch({ type: "project/deleteProject", payload: response.data.message });
+    } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
+  useEffect(() => {
+    dispatch({ type: "clearMessage" });
+    dispatch({ type: "clearError" });
+  }, [router]);
+
   return (
     <ProjectContext.Provider
       value={{
         isLoading,
         error,
+        successMessage,
         projects,
         project,
         clientProjects,
+        freelancerProjects,
         fetchProjects,
         getProjectById,
         updateProject,
         postProject,
+        deleteProject,
         fetchClientProjects,
+        fetchFreelancerProjects,
       }}
     >
       {children}

@@ -8,7 +8,6 @@ import WebLayout from "@/layouts/WebLayout";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
 import { useProjects } from "@/context/ProjectContext";
 import { PlusIcon } from "@heroicons/react/20/solid";
 
@@ -74,7 +73,7 @@ function ClientProjects() {
               </div>
             )}
 
-            {!isLoading && error && (
+            {!isLoading && error && projects.length === 0 && (
               <div className="">
                 <h4 className="text-center my-16 font-medium text-neutral-500 text-lg">
                   Something went wrong while loading your projects. Try refreshing the

@@ -1,4 +1,4 @@
-import { getData } from "@/utils/api/genericAPI";
+import { getData, postData } from "@/utils/api/genericAPI";
 import { createContext, useReducer, useEffect, useContext } from "react";
 import { BASE_URL } from "@/constants";
 
@@ -11,11 +11,15 @@ function reducer(state, action) {
     case "services/fetch":
       return { ...state, services: action.payload, isLoading: false };
     case "languages/fetch":
-      return { ...state, languages: action.payload, isLoading: false };
+      return { ...state, languages: action.payload, isLoading: false, error: "" };
+    case "subcategory/create":
+      return { ...state, successMessage: action.payload, isLoading: false, error: "" };
+    case "service/create":
+      return { ...state, successMessage: action.payload, isLoading: false, error: "" };
     case "skills/fetch":
       return { ...state, skills: action.payload, isLoading: false };
     case "loading":
-      return { ...state, isLoading: true };
+      return { ...state, isLoading: true, successMessage: "", error: "" };
     case "rejected":
       return { ...state, error: action.payload, isLoading: false };
     case "reset":
@@ -31,13 +35,23 @@ const initialState = {
   skills: [],
   isLoading: false,
   error: "",
+  successMessage: "",
 };
 
 const ServicesContext = createContext();
 
 function ServicesProvider({ children }) {
   const [
-    { categories, services, subCategories, skills, languages, isLoading, error },
+    {
+      categories,
+      services,
+      subCategories,
+      skills,
+      languages,
+      isLoading,
+      error,
+      successMessage,
+    },
     dispatch,
   ] = useReducer(reducer, initialState);
 
@@ -145,10 +159,32 @@ function ServicesProvider({ children }) {
   };
 
   const getService = async (path) => {
+    dispatch({ type: "loading" });
     try {
       const response = await getData(`${BASE_URL}/services/get_by_path/${path}`);
       return response.data.data;
     } catch (error) {
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
+  const addSubCategory = async (data) => {
+    dispatch({ type: "loading" });
+    try {
+      const response = await postData(`${BASE_URL}/subCategories/`, data);
+      dispatch({ type: "subcategory/create", payload: response.data.status });
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+  const addService = async (data) => {
+    dispatch({ type: "loading" });
+    try {
+      const response = await postData(`${BASE_URL}/services/`, data);
+      dispatch({ type: "service/create", payload: response.data.status });
+    } catch (error) {
+      console.log(error);
       dispatch({ type: "rejected", payload: error.response.data.message });
     }
   };
@@ -167,14 +203,20 @@ function ServicesProvider({ children }) {
         services,
         isLoading,
         error,
+        successMessage,
         skills,
         languages,
         dispatch,
+        addSubCategory,
         fetchSkills,
+        addService,
         getCategory,
         getSubCategory,
         getService,
         fetchLanguages,
+        fetchServices,
+        fetchCategories,
+        fetchSubCategories,
         getSubCategoriesByCategory,
         getServicesByCategory,
       }}

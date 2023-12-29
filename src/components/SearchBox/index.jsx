@@ -53,9 +53,7 @@ export default function SearchBox({
       if (!query) {
         return;
       }
-      selectedSuggestion
-        ? handleSearchUsingSuggestion(selectedSuggestion)
-        : onSearch();
+      selectedSuggestion ? handleSearchUsingSuggestion(selectedSuggestion) : onSearch();
       handleBlur();
     } else if (e.key === "ArrowUp" && query) {
       e.preventDefault();
@@ -84,7 +82,7 @@ export default function SearchBox({
 
   return (
     <div
-      className={`w-full relative flex items-center border rounded-lg bg-white text-neutral-700`}
+      className={`w-full relative flex items-center border rounded-lg bg-white text-neutral-700 z-50`}
     >
       <input
         type="text"
