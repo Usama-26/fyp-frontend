@@ -6,8 +6,6 @@ import WebLayout from "@/layouts/WebLayout";
 import { isEmpty } from "@/utils/generics";
 import { Field, Form, Formik } from "formik";
 
-const rawSkills = [];
-
 export default function AddService() {
   const {
     categories,
@@ -21,10 +19,6 @@ export default function AddService() {
     successMessage,
   } = useServices();
 
-  const skills = [...new Set(rawSkills)];
-
-  console.log(successMessage);
-
   const refresh = () => {
     fetchCategories();
     fetchSubCategories();
@@ -33,14 +27,13 @@ export default function AddService() {
 
   return (
     <WebLayout>
-      <button onClick={refresh}>Refresh</button>
       {categories && !isEmpty(subCategories) && (
         <Formik
           initialValues={{
             category: categories.data[0]._id,
             sub_category: subCategories.data[0]._id,
             name: "",
-            tags: [...skills],
+            tags: [],
           }}
           onSubmit={(values) => {
             console.log(values);
@@ -49,6 +42,13 @@ export default function AddService() {
         >
           {({ values }) => (
             <Form className="max-w-lg mx-auto space-y-4 my-10">
+              <button
+                type="button"
+                onClick={refresh}
+                className="px-2 py-1 rounded-md text-white font-medium text-sm bg-primary-500 hover:bg-primary-600"
+              >
+                {isLoading ? <Spinner /> : "Refresh"}
+              </button>
               {error && (
                 <ErrorAlert>
                   <p>{error}</p>
@@ -60,7 +60,6 @@ export default function AddService() {
                   <p>{successMessage}</p>
                 </SuccessAlert>
               )}
-              {JSON.stringify(values)}
               <Field as="select" name="category" className="form-input">
                 {categories.data.map((category) => (
                   <option key={category._id} value={category._id}>
@@ -68,6 +67,7 @@ export default function AddService() {
                   </option>
                 ))}
               </Field>
+              {JSON.stringify(values.category)}
 
               <Field as="select" name="sub_category" className="form-input">
                 {subCategories.data
@@ -78,6 +78,7 @@ export default function AddService() {
                     </option>
                   ))}
               </Field>
+              {JSON.stringify(values.sub_category)}
 
               <Field name="name" className="form-input" placeholder="Add A Name" />
               <button
