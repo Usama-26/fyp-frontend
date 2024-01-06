@@ -1,67 +1,128 @@
-import { useAccounts } from "@/context/AccountContext";
-import { isEmpty } from "@/utils/generics";
-import React, { useEffect, useState } from "react";
-import { StreamChat } from "stream-chat";
-import {
+const {
   Chat,
+  ChannelList,
   Channel,
   ChannelHeader,
-  ChannelList,
+  Window,
   MessageList,
   MessageInput,
   Thread,
-  Window,
-} from "stream-chat-react";
-import "stream-chat-react/dist/css/v2/index.css";
+  Avatar,
+  useChatContext,
+} = require("stream-chat-react");
+const { useAccounts } = require("@/context/AccountContext");
+import ClientDashboardLayout from "@/layouts/ClientDashboardLayout";
+import withRouteProtect from "@/helpers/withRouteProtect";
+import Spinner from "@/components/Spinner";
+import Head from "next/head";
+import { useEffect } from "react";
+import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 
-const filters = { type: "messaging" };
-const options = { state: true, presence: true, limit: 10 };
-const sort = { last_message_at: -1 };
-
-export default function Inbox() {
-  const [client, setClient] = useState(null);
-  const { user } = useAccounts();
+function Inbox() {
+  const { isLoading, createChatUser, chatClient, error } = useAccounts();
 
   useEffect(() => {
-    const newClient = new StreamChat("vth4fpnzn8rm");
-
-    const token = window.localStorage.getItem("token");
-
-    const handleConnectionChange = ({ online = false }) => {
-      if (!online) return console.log("connection lost");
-      setClient(newClient);
-    };
-
-    newClient.on("connection.changed", handleConnectionChange);
-    if (!isEmpty(user)) {
-      newClient.connectUser(
-        {
-          id: user?.data?.id,
-          name: "Dave Matthews",
-        },
-        token
-      );
-    }
-
-    return () => {
-      newClient.off("connection.changed", handleConnectionChange);
-      newClient.disconnectUser().then(() => console.log("connection closed"));
-    };
+    createChatUser();
   }, []);
-
-  if (!client) return null;
-
   return (
-    <Chat client={client}>
-      <ChannelList filters={filters} sort={sort} options={options} />
-      <Channel>
-        <Window>
-          <ChannelHeader />
-          <MessageList />
-          <MessageInput />
-        </Window>
-        <Thread />
-      </Channel>
-    </Chat>
+    <>
+      <Head>
+        <title>Inbox | ChainWork</title>
+      </Head>
+      <ClientDashboardLayout>
+        <div className="min-h-[24rem]">
+          {isLoading && !chatClient && (
+            <div className="h-96 flex items-center justify-center">
+              <Spinner />
+              <span className="text-sm">Loading...</span>
+            </div>
+          )}
+
+          {!isLoading && error && (
+            <div className="h-[24rem] flex items-center justify-center">
+              <div>
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-warning-100">
+                  <ExclamationTriangleIcon
+                    className="h-6 w-6 text-warning-600"
+                    aria-hidden="true"
+                  />
+                </div>
+                <p className="text-center text-neutral-500">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {chatClient && (
+            <Chat client={chatClient}>
+              <div className="border flex max-h-[32rem] pt-5">
+                <div className="basis-3/12">
+                  <Channels />
+                </div>
+                <div className="basis-9/12">
+                  <Channel>
+                    <Window>
+                      <CustomChannelHeader />
+                      <MessageList />
+                      <MessageInput />
+                    </Window>
+                    <Thread />
+                  </Channel>
+                </div>
+              </div>
+            </Chat>
+          )}
+        </div>
+      </ClientDashboardLayout>
+    </>
   );
 }
+
+export default withRouteProtect(Inbox, ["client"]);
+
+function Channels() {
+  const { client } = useChatContext();
+  const filter = { members: { $in: [client.userID] } };
+  return (
+    <ChannelList
+      filters={filter}
+      Preview={(props) => <CustomChannelPreview {...props} client={client} />}
+    />
+  );
+}
+
+function CustomChannelHeader() {
+  const { client, channel } = useChatContext();
+
+  const members = Object.values(channel?.state?.members).filter(
+    ({ user }) => user.id !== client.userID
+  );
+
+  return <ChannelHeader title={members[0].user.fullName} />;
+}
+
+const CustomChannelPreview = (props) => {
+  const members = Object.values(props.channel?.state?.members).filter(
+    ({ user }) => user.id !== props.client.userID
+  );
+
+  return (
+    <div
+      className={`flex items-center gap-2 hover:bg-primary-100 p-2 cursor-pointer ${
+        props.channel?.id === props.activeChannel?.id ? "bg-primary-100" : ""
+      }`}
+      onClick={() => props.setActiveChannel(props.channel)}
+    >
+      <Avatar
+        image={members[0]?.user?.image}
+        name={members[0]?.user?.fullName || members[0]?.user?.id}
+        size={48}
+      />
+      <div className="text-sm">
+        <p className="font-medium">
+          {members[0]?.user?.fullName || members[0]?.user?.id}
+        </p>
+        <p className="text-neutral-500">{props.lastMessage?.text || "Nothing Yet"}</p>
+      </div>
+    </div>
+  );
+};

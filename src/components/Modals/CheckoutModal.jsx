@@ -32,7 +32,7 @@ export default function CheckoutModal({ open, setOpen, project, freelancer }) {
       const response = writeAsync?.({
         args: [
           project._id,
-          freelancer.wallet_address,
+          "0xad99F2FF10E4E6517A8e5CD3AD0775417c89dCb2",
           parseEther(`${parseFloat((project.budget / inEthereum).toFixed(5))}`),
         ],
         from: address,

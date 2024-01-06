@@ -1,4 +1,4 @@
-import { ErrorMessage, Field, Form, Formik, useFormik } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import Head from "next/head";
 import * as Yup from "yup";
 import WebLayout from "@/layouts/WebLayout";
@@ -10,11 +10,9 @@ import FileDropzone from "@/components/FIleDropzone";
 import { useServices } from "@/context/ServiceContext";
 import { Listbox, Transition } from "@headlessui/react";
 import {
-  ArrowDownTrayIcon,
   CheckIcon,
   ChevronRightIcon,
   ChevronUpDownIcon,
-  PaperClipIcon,
 } from "@heroicons/react/20/solid";
 import { classNames, isEmpty } from "@/utils/generics";
 import sampleSkills from "@/json/sample-skills";
@@ -23,7 +21,6 @@ import axios from "axios";
 import { BsChevronDown } from "react-icons/bs";
 import Datepicker from "react-tailwindcss-datepicker";
 import { BiFile } from "react-icons/bi";
-import { SiPayloadcms } from "react-icons/si";
 import Spinner from "@/components/Spinner";
 
 const projectSchema = Yup.object({
@@ -72,9 +69,9 @@ function CreateProject() {
   const [deliveryDate, setDeliveryDate] = useState({});
   const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
   const { categories } = useServices();
-  const { postProject, isLoading: isPosting } = useProjects();
+  const { postProject, isLoading: isPosting, error } = useProjects();
   const router = useRouter();
-
+  console.log(error);
   const projectInitialValues = {
     title: "",
     description: "",

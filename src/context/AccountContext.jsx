@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { BASE_URL } from "@/constants";
 import { createContext, useContext, useReducer, useEffect } from "react";
+import { useChatClient } from "@/hooks/useChatClient";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -35,6 +36,12 @@ function reducer(state, action) {
     case "account/resetPassword":
       return { ...state, successMessage: action.payload, isLoading: false };
 
+    case "account/chatAccount":
+      return { ...state, chatUser: action.payload, isLoading: false };
+
+    case "channel/create":
+      return { ...state, channel: action.payload, isLoading: false };
+
     case "clearMessage":
       return { ...state, successMessage: "" };
 
@@ -62,14 +69,35 @@ const initialState = {
   user: null,
   updatedUser: {},
   successMessage: "",
+  chatUser: null,
+  channel: null,
 };
 
 const AccountsContext = createContext();
 
 function AccountsProvider({ children }) {
   const router = useRouter();
-  const [{ isLoading, isLoggedIn, updatedUser, error, user, successMessage }, dispatch] =
-    useReducer(reducer, initialState);
+  const [
+    {
+      isLoading,
+      isLoggedIn,
+      updatedUser,
+      error,
+      user,
+      chatUser,
+      successMessage,
+      channel,
+    },
+    dispatch,
+  ] = useReducer(reducer, initialState);
+
+  const chatClient = useChatClient({
+    user: {
+      id: chatUser?.data?.id,
+      email: chatUser?.data?.email,
+    },
+    tokenOrProvider: chatUser?.chatToken,
+  });
 
   const handleSignup = async (data) => {
     dispatch({ type: "loading" });
@@ -236,7 +264,11 @@ function AccountsProvider({ children }) {
       );
       dispatch({ type: "user/updateInfo", payload: response.data });
     } catch (error) {
-      dispatch({ type: "rejected", payload: error.response.data.message });
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
 
@@ -252,6 +284,43 @@ function AccountsProvider({ children }) {
       dispatch({ type: "user/updateInfo", payload: response.data });
     } catch (error) {
       dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
+  const createChatUser = async () => {
+    const token = window.localStorage.getItem("token");
+    dispatch({ type: "loading" });
+    try {
+      const response = await getData(`${BASE_URL}/chat/create_chat_user`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch({ type: "account/chatAccount", payload: response.data });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
+    }
+  };
+
+  const createChannel = async (channelId, channelData) => {
+    dispatch({ type: "loading" });
+    try {
+      const newChannel = await chatClient
+        .channel("messaging", channelId, channelData)
+        .watch();
+      dispatch({ type: "channel/create", payload: newChannel });
+      router.replace("/client/dashboard/inbox");
+    } catch (error) {
+      console.log(error);
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
     }
   };
 
@@ -278,15 +347,13 @@ function AccountsProvider({ children }) {
     }
   }, [user, router]);
 
-  // useEffect(() => {
-  //   if (error) {
-  //     dispatch({ type: "reset" });
-  //   }
-  // }, [error]);
-
   useEffect(() => {
     clearMessage();
   }, [router]);
+
+  useEffect(() => {
+    createChatUser();
+  }, []);
 
   return (
     <AccountsContext.Provider
@@ -297,6 +364,9 @@ function AccountsProvider({ children }) {
         error,
         successMessage,
         updatedUser,
+        chatUser,
+        chatClient,
+        channel,
         verifyEmail,
         handleSignup,
         handleLogin,
@@ -309,6 +379,8 @@ function AccountsProvider({ children }) {
         resetPassword,
         clearMessage,
         updatePassword,
+        createChatUser,
+        createChannel,
       }}
     >
       {children}

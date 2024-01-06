@@ -141,7 +141,7 @@ function ViewProject() {
                     <div className=" p-4">
                       <h2 className="font-medium mb-2">Required Skills</h2>
                       <div className="flex flex-wrap gap-2">
-                        {project.data.tags[0].split(",").map((tag) => (
+                        {project.data.tags.map((tag) => (
                           <Chip key={tag} value={tag} />
                         ))}
                       </div>
@@ -353,8 +353,16 @@ function ProposalsList({ proposals, project }) {
 function ViewProposal({ open, setOpen, proposalId, project }) {
   const { proposal, isLoading, getProposalById } = useProposals();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const { user, createChannel } = useAccounts();
 
   const freelancer = proposal?.data?.freelancer_id;
+
+  const handleSendMessage = async () => {
+    await createChannel(`${user.data.firstName}-${freelancer.firstName}`, {
+      name: `${user.data.firstName}-${freelancer.firstName}`.toLowerCase(),
+      members: [`${user.data._id}`, `${freelancer._id}`],
+    });
+  };
 
   useEffect(() => {
     if (proposalId) {
@@ -442,6 +450,7 @@ function ViewProposal({ open, setOpen, proposalId, project }) {
                               </div>
                               <div className="ml-4 mt-4 flex flex-shrink-0">
                                 <button
+                                  onClick={handleSendMessage}
                                   type="button"
                                   className="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-700 shadow-sm ring-1 ring-inset ring-neutral-300 hover:ring-primary-300 hover:bg-primary-50 hover:text-primary-500"
                                 >

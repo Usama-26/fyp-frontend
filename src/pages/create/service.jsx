@@ -36,7 +36,6 @@ export default function AddService() {
             tags: [],
           }}
           onSubmit={(values) => {
-            console.log(values);
             addService(values);
           }}
         >

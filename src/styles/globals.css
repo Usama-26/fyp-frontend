@@ -1,3 +1,8 @@
+@import "~stream-chat-react/dist/css/v2/index.css";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+@import "react-quill/dist/quill.snow.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -41,4 +46,7 @@
   .profile-tabs button {
     @apply w-full text-center p-3 hover:border-b-2 font-medium;
   }
+}
+.str-chat__avatar-fallback {
+  @apply !bg-primary-500;
 }

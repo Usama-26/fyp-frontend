@@ -33,7 +33,6 @@ export default function AddSubCategory() {
             tags: [],
           }}
           onSubmit={(values) => {
-            console.log(values);
             addSubCategory({ ...values, tags: JSON.parse(values.tags) });
           }}
         >

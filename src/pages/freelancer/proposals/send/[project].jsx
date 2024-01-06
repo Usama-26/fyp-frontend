@@ -138,7 +138,7 @@ function SendProposal() {
                     <div className="border-b p-4">
                       <h2 className="font-medium mb-2">Required Skills</h2>
                       <div className="flex flex-wrap gap-2">
-                        {project.data.tags[0].split(",").map((tag) => (
+                        {project.data.tags.map((tag) => (
                           <Chip key={tag} value={tag} />
                         ))}
                       </div>

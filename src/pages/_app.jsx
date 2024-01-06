@@ -1,7 +1,5 @@
 import "@/styles/globals.css";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import "react-quill/dist/quill.snow.css";
+
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { sepolia, createConfig, configureChains } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
@@ -15,7 +13,6 @@ import { ClientProvider } from "@/context/ClientContext";
 import { ThirdPartyServicesProvider } from "@/context/ThirdPartyContext";
 import { ProposalProvider } from "@/context/ProposalContext";
 import { WagmiConfig } from "wagmi";
-import { useAccount } from "wagmi";
 
 export const inter = Inter({
   subsets: ["latin"],

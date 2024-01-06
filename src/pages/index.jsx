@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import sampleSkills from "@/json/sample-skills.json";
 import WebLayout from "@/layouts/WebLayout";
 import SearchBox from "@/components/SearchBox";
 import Image from "next/image";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useAccounts } from "@/context/AccountContext";
 
 export default function Home() {
+  const router = useRouter();
+  const { isLoggedIn, user } = useAccounts();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.replace(`/${user.data.user_type}/dashboard`);
+    }
+  });
   return (
     <>
       <Head>
