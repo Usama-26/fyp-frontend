@@ -11,7 +11,8 @@ export const useChatClient = ({
   tokenOrProvider,
 }: UseClientOptions): StreamChat | undefined => {
   const [chatClient, setChatClient] = useState<StreamChat>();
-  const apiKey = process.env.NEXT_PUBLIC_GETSTREAM_API_KEY;
+  const apiKey = "vth4fpnzn8rm";
+  // const apiKey = process.env.NEXT_PUBLIC_GETSTREAM_API_KEY;
 
   useEffect(() => {
     if (user && tokenOrProvider) {
