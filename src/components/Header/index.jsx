@@ -36,7 +36,7 @@ export default function Header() {
             <Logo />
             <Navigation isOpen={isMenuOpen} onOpen={openMenu} onClose={closeMenu} />
           </div>
-          {isLoggedIn && <UserMenu onLogout={handleLogout} />}
+          {isLoggedIn && !isLoading && <UserMenu onLogout={handleLogout} />}
           {!isLoading && !isLoggedIn && <AuthMenu />}
           {isLoading && <Spinner />}
         </div>
@@ -141,7 +141,7 @@ function AuthMenu() {
 }
 
 function UserMenu({ onLogout }) {
-  const { user, error } = useAccounts();
+  const { user } = useAccounts();
   const { firstName, lastName, user_type } = user?.data;
 
   return (

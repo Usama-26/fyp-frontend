@@ -4,6 +4,10 @@ import { useRouter } from "next/router";
 import { BASE_URL } from "@/constants";
 import { createContext, useContext, useReducer, useEffect } from "react";
 import { useChatClient } from "@/hooks/useChatClient";
+import { useAccount } from "wagmi";
+import { useDisconnect } from "wagmi";
+import { useConnect } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -90,6 +94,12 @@ function AccountsProvider({ children }) {
     },
     dispatch,
   ] = useReducer(reducer, initialState);
+
+  const { address: walletAddress, isConnected, connector } = useAccount();
+  const { connect, error: walletConnectionError } = useConnect({
+    connector: new InjectedConnector(),
+  });
+  const { disconnect, status, isSuccess: isDisconnected } = useDisconnect();
 
   const chatClient = useChatClient({
     user: {
@@ -348,6 +358,22 @@ function AccountsProvider({ children }) {
   }, [user, router]);
 
   useEffect(() => {
+    if (isConnected && user) {
+      updateUserInfo(user?.data?._id, { wallet_address: walletAddress || "" });
+    }
+
+    if (isDisconnected) {
+      updateUserInfo(user?.data?._id, { wallet_address: "" });
+    }
+  }, [isConnected, isDisconnected]);
+
+  useEffect(() => {
+    if (user?.data?.wallet_address && !isConnected) {
+      connect();
+    }
+  }, [user]);
+
+  useEffect(() => {
     clearMessage();
   }, [router]);
 
@@ -367,6 +393,13 @@ function AccountsProvider({ children }) {
         chatUser,
         chatClient,
         channel,
+        isConnected,
+        connector,
+        status,
+        walletAddress,
+        walletConnectionError,
+        connect,
+        disconnect,
         verifyEmail,
         handleSignup,
         handleLogin,

@@ -1,5 +1,5 @@
 import { BASE_URL } from "@/constants";
-import { getData, postData, updateData } from "@/utils/api/genericAPI";
+import { getData, getOne, postData, updateData } from "@/utils/api/genericAPI";
 import { createContext, useContext, useReducer } from "react";
 
 function reducer(state, action) {
@@ -12,6 +12,9 @@ function reducer(state, action) {
 
     case "project/sendDeliverables":
       return { ...state, successMessage: action.payload, isLoading: false };
+
+    case "freelancer/getOne":
+      return { ...state, freelancer: action.payload, isLoading: false };
 
     case "freelancer/update":
       return { ...state, freelancer: action.payload, isLoading: false };
@@ -46,7 +49,7 @@ const initialState = {
 
 function FreelancerProvider({ children }) {
   const [
-    { isLoading, error, proposals, proposal, freelancers, successMessage },
+    { isLoading, error, proposals, proposal, freelancers, freelancer, successMessage },
     dispatch,
   ] = useReducer(reducer, initialState);
 
@@ -55,6 +58,24 @@ function FreelancerProvider({ children }) {
     try {
       const response = await getData(`${BASE_URL}/users/freelancers?${query}`);
       dispatch({ type: "freelancers/getAll", payload: response.data });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        if (error.code === "ERR_NETWORK") {
+          dispatch({ type: "rejected", payload: error?.message });
+        } else {
+          dispatch({ type: "rejected", payload: error?.response?.data.message });
+        }
+      }
+    }
+  };
+
+  const getFreelancerById = async (id) => {
+    dispatch({ type: "loading" });
+    try {
+      const response = await getOne(`${BASE_URL}/users`, id);
+      dispatch({ type: "freelancer/getOne", payload: response.data });
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
@@ -162,10 +183,12 @@ function FreelancerProvider({ children }) {
         proposal,
         successMessage,
         freelancers,
+        freelancer,
         clearMessage,
         sendProposal,
         sendDeliverables,
         getAllFreelancers,
+        getFreelancerById,
         updateFreelancer,
       }}
     >

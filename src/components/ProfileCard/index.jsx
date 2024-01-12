@@ -68,7 +68,7 @@ export default function ProfileCard({ data }) {
         </div>
       </div>
       <div>
-        <ViewProfileBtn path={"#"} />
+        <ViewProfileBtn path={`/explore/freelancer/${data._id}`} />
       </div>
     </div>
   );

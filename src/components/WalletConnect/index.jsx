@@ -1,12 +1,7 @@
 import { useAccounts } from "@/context/AccountContext";
-import { useEffect } from "react";
-import { useAccount } from "wagmi";
-import { useConnect, useDisconnect } from "wagmi";
-import { InjectedConnector } from "wagmi/connectors/injected";
 
 export default function WalletConnect() {
-  const { connect, error } = useConnect({ connector: new InjectedConnector() });
-  const { address, isConnected } = useAccount();
+  const { connect } = useAccounts();
   const handleConnect = () => {
     connect();
   };

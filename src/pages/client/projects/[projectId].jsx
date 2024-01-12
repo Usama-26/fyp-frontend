@@ -571,6 +571,7 @@ function ViewProposal({ open, setOpen, proposalId, project }) {
                           </div>
                         </div>
                       </div>
+                      w
                       <CheckoutModal
                         project={project}
                         open={isCheckoutOpen}

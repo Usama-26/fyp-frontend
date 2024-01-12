@@ -1,4 +1,3 @@
-import { PlusIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import WalletConnect from "../WalletConnect";
 

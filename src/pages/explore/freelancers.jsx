@@ -52,18 +52,19 @@ export default function ExploreFreelancers() {
         ? `hourly_rate[lte]=${hourly_rate.max}&hourly_rate[gte]=${hourly_rate.min}`
         : "";
 
-    const categoryStr = category ? `industry=${category}` : "";
-    const languageStr = language ? `language=${language}` : "";
-
-    router.replace(
-      `/explore/freelancers?${hourlyRateStr && hourlyRateStr}${
-        categoryStr && categoryStr
-      }${languageStr && languageStr}`
-    );
+    const categoryStr = category ? `&industry=${category}` : "";
+    const languageStr = language ? `&language=${language}` : "";
+    let filter = `${hourlyRateStr && hourlyRateStr}${categoryStr && categoryStr}${
+      languageStr && languageStr
+    }`;
+    if (filter.startsWith("&")) {
+      filter = filter.slice(1, filter.length);
+    }
+    router.replace(`/explore/freelancers?${filter}`);
   };
 
   useEffect(() => {
-    getAllFreelancers(router.asPath.split("?")[1]);
+    router.asPath.split("?")[1] && getAllFreelancers(router.asPath.split("?")[1]);
   }, [router.asPath]);
 
   const clearFilters = () => {
@@ -76,11 +77,11 @@ export default function ExploreFreelancers() {
     getAllFreelancers();
   }, []);
 
-  console.log(freelancers);
-
   return (
     <>
-      <Head>Explore Freelancers | ChainWork</Head>
+      <Head>
+        <title>Explore Freelancers | ChainWork</title>
+      </Head>
       <WebLayout>
         <section className="bg-gradient-to-br from-primary-500 to-primary-700 py-12 text-center text-white">
           <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium font-display">

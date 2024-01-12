@@ -83,7 +83,7 @@ function ViewProject({ open, setOpen, projectData }) {
 
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+      <Dialog as="div" className="relative z-50" onClose={setOpen}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
@@ -242,6 +242,13 @@ function ViewProject({ open, setOpen, projectData }) {
                               Complete Profile
                             </Link>
                           )
+                        ) : user.data.user_type === "client" ? (
+                          <Link
+                            href={`/client/projects/${projectData._id}`}
+                            className="block py-1.5 px-4 uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"
+                          >
+                            View Project
+                          </Link>
                         ) : (
                           <Link
                             href="/freelancer/join"

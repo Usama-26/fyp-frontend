@@ -47,6 +47,7 @@
     @apply w-full text-center p-3 hover:border-b-2 font-medium;
   }
 }
+
 .str-chat__avatar-fallback {
   @apply !bg-primary-500;
 }

@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import { useAccounts } from "@/context/AccountContext";
 import Spinner from "@/components/Spinner";
@@ -12,20 +12,22 @@ import { classNames } from "@/utils/generics";
 import { HiX } from "react-icons/hi";
 import ProgressBar from "@/components/ProgressBar";
 import ComboboxMultiple from "@/components/Comboboxes/ComboboxMultiple";
-import sampleSkills from "@/json/sample-skills.json";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const languageProficiencies = ["Fluent", "Native", "Conversational"];
+
 export default function FreelancerProfileSettings() {
   const [isEditing, setIsEditing] = useState(false);
   const [isAddLangOpen, setIsAddLangOpen] = useState(false);
   const [industries, setIndustries] = useState([]);
   const [services, setServices] = useState([]);
-
+  const [skills, setSkills] = useState([]);
   const [selectedLanguage, setSelectedLanguage] = useState({
     name: "",
     proficiency: languageProficiencies[0],
   });
-  const [skills, setSkills] = useState([]);
+
   const {
     user,
     loadAccount,
@@ -33,6 +35,7 @@ export default function FreelancerProfileSettings() {
     isLoading: isUpdating,
     updateUserInfo,
   } = useAccounts();
+
   const {
     categories,
     skills: fetchedSkills,
@@ -180,17 +183,31 @@ export default function FreelancerProfileSettings() {
                     <label htmlFor="bio" className="font-medium text-sm">
                       Bio
                     </label>
-                    <Field
-                      className={`form-input resize-none ${
-                        errors.bio && touched.bio && "field-error"
-                      }`}
-                      rows="8"
-                      name="bio"
-                      id="bio"
-                      as="textarea"
-                      maxLength="2000"
+                    <ReactQuill
+                      value={values.bio}
+                      modules={{
+                        toolbar: [
+                          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                          [
+                            "bold",
+                            "italic",
+                            "underline",
+                            "strike",
+                            "blockquote",
+                            "code-block",
+                            "link",
+                          ],
+                          [{ list: "ordered" }, { list: "bullet" }],
+                          [{ indent: "-1" }, { indent: "+1" }],
+                          [{ align: [] }],
+                        ],
+                      }}
                       placeholder="Tell us about yourself"
+                      className="rounded-md border-neutral-500 p-0.5 border"
+                      onChange={(value) => setFieldValue("bio", value)}
+                      theme="snow"
                     />
+
                     <span className="text-sm float-right">{values.bio.length}/2000</span>
                     <ErrorMessage
                       name="bio"
@@ -439,7 +456,6 @@ export default function FreelancerProfileSettings() {
 }
 
 function ProfileInformation({ data }) {
-  console.log(data);
   return (
     <div className="mt-6 max-w-2xl border-t border-neutral-100">
       <dl className="divide-y divide-neutral-100">
@@ -451,9 +467,10 @@ function ProfileInformation({ data }) {
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Bio</dt>
-          <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
-            {data.bio}
-          </dd>
+          <dd
+            dangerouslySetInnerHTML={{ __html: data.bio }}
+            className="prose mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0"
+          ></dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-neutral-700">Industry</dt>
