@@ -56,7 +56,10 @@ function FreelancerProvider({ children }) {
   const getAllFreelancers = async (query) => {
     dispatch({ type: "loading" });
     try {
-      const response = await getData(`${BASE_URL}/users/freelancers?${query}`);
+      const response = await getData(
+        `${BASE_URL}/users/freelancers${query ? `?${query}` : ""}`
+      );
+
       dispatch({ type: "freelancers/getAll", payload: response.data });
     } catch (error) {
       if (error.code === "ERR_NETWORK") {

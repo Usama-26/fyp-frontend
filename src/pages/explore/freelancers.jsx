@@ -9,6 +9,7 @@ import { useFreelancer } from "@/context/FreelancerContext";
 import { isEmpty } from "@/utils/generics";
 import { useRouter } from "next/router";
 import { useServices } from "@/context/ServiceContext";
+import { Popover } from "@headlessui/react";
 const defaultFilters = {
   hourly_rate: { min: 0, max: 0 },
   category: null,
@@ -20,13 +21,19 @@ export default function ExploreFreelancers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState(defaultFilters);
   const { freelancers, getAllFreelancers } = useFreelancer();
-  const { categories } = useServices();
-  const categoriesList = categories?.data;
+  const { subCategories, languages } = useServices();
+  const subCategoriesList = subCategories?.data;
+  const languagesList = languages?.data;
   const router = useRouter();
 
+  let freelancersList = freelancers?.data;
+  let searchStr = "";
   const handleSearch = (query = searchQuery) => {
-    console.log("Actual Query :", query);
+    searchStr = query ? `skills[in]=${query}` : "";
+    applyFilters();
   };
+
+  const handleLanguageFilter = (e) => {};
 
   const handleCategoryFilter = (e) => {
     setFilters((prev) => ({ ...prev, category: e.target.value }));
@@ -47,16 +54,17 @@ export default function ExploreFreelancers() {
   const applyFilters = () => {
     const { hourly_rate, category, language } = filters;
 
+    const categoryStr = category ? `&main_service=${category}` : "";
+    const languageStr = language ? `&language=${language}` : "";
     const hourlyRateStr =
       hourly_rate.min && hourly_rate.max
-        ? `hourly_rate[lte]=${hourly_rate.max}&hourly_rate[gte]=${hourly_rate.min}`
+        ? `&hourly_rate[lte]=${hourly_rate.max}&hourly_rate[gte]=${hourly_rate.min}`
         : "";
 
-    const categoryStr = category ? `&industry=${category}` : "";
-    const languageStr = language ? `&language=${language}` : "";
-    let filter = `${hourlyRateStr && hourlyRateStr}${categoryStr && categoryStr}${
-      languageStr && languageStr
-    }`;
+    let filter = `${searchStr && searchStr}${hourlyRateStr && hourlyRateStr}${
+      categoryStr && categoryStr
+    }${languageStr && languageStr}`;
+
     if (filter.startsWith("&")) {
       filter = filter.slice(1, filter.length);
     }
@@ -69,7 +77,7 @@ export default function ExploreFreelancers() {
 
   const clearFilters = () => {
     setFilters(defaultFilters);
-    router.replace("/explore/freelancers");
+    router.replace(`/explore/freelancers?${searchStr}`);
     getAllFreelancers();
   };
 
@@ -103,33 +111,64 @@ export default function ExploreFreelancers() {
         <section className="my-8">
           <div className="container mx-auto mt-10">
             <div className="flex gap-4">
-              <Popup label={"Languages"}></Popup>
-              <Popup label={"Category"}>
+              <Popup label={"Languages"}>
+                <h6 className="text-sm text-neutral-500 mb-2">Languages</h6>
+                <div className="space-y-4 w-60">
+                  <div className="h-60 overflow-auto space-y-2">
+                    {languagesList?.map((language) => (
+                      <div key={language.name} className="flex items-center">
+                        <input
+                          id={language.name}
+                          name="languageFilter"
+                          type="checkbox"
+                          value={language.name}
+                          onChange={handleLanguageFilter}
+                          className="h-4 w-4 border-neutral-300 text-primary-600 focus:ring-primary-600"
+                        />
+                        <label
+                          htmlFor={language.name}
+                          className="ml-3 block text-sm font-medium leading-6 text-neutral-700 cursor-pointer"
+                        >
+                          {language.name}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                  <div onClick={applyFilters} className="mt-2 text-end">
+                    <Popover.Button className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm">
+                      Apply
+                    </Popover.Button>
+                  </div>
+                </div>
+              </Popup>
+              <Popup label={"Service"}>
                 <h6 className="text-sm text-neutral-500 mb-2">Categories</h6>
                 <div className="space-y-4 w-60">
-                  {categoriesList?.map((category) => (
-                    <div key={category.id} className="flex items-center">
-                      <input
-                        id={category.id}
-                        name="categoryFilter"
-                        type="radio"
-                        value={category._id}
-                        defaultChecked={filters.category === category._id && true}
-                        onChange={handleCategoryFilter}
-                        className="h-4 w-4 border-neutral-300 text-primary-600 focus:ring-primary-600"
-                      />
-                      <label
-                        htmlFor={category.id}
-                        className="ml-3 block text-sm font-medium leading-6 text-neutral-700"
-                      >
-                        {category.name}
-                      </label>
-                    </div>
-                  ))}
+                  <div className="h-60 overflow-auto space-y-2">
+                    {subCategoriesList?.map((category) => (
+                      <div key={category.id} className="flex items-center">
+                        <input
+                          id={category.name}
+                          name="categoryFilter"
+                          type="radio"
+                          value={category.name}
+                          defaultChecked={filters.category === category._id && true}
+                          onChange={handleCategoryFilter}
+                          className="h-4 w-4 border-neutral-300 text-primary-600 focus:ring-primary-600"
+                        />
+                        <label
+                          htmlFor={category.name}
+                          className="ml-3 block text-sm font-medium leading-6 text-neutral-700 cursor-pointer"
+                        >
+                          {category.name}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                   <div onClick={applyFilters} className="mt-2 text-end">
-                    <button className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm">
+                    <Popover.Button className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm">
                       Apply
-                    </button>
+                    </Popover.Button>
                   </div>
                 </div>
               </Popup>
@@ -144,7 +183,7 @@ export default function ExploreFreelancers() {
                       type="number"
                       name="minRate"
                       id="minRate"
-                      // value={filters.hourly_rate.min}
+                      value={filters.hourly_rate.min}
                       min={10}
                       max={filters.hourly_rate.max}
                       className="font-semibold p-2 rounded-md border border-neutral-500 focus:ring-2 focus:border-primary-500 placeholder:text-neutral-400 outline-none disabled:border-neutral-300 disabled:bg-transparent disabled:text-neutral-500 text-sm"
@@ -158,7 +197,7 @@ export default function ExploreFreelancers() {
                       type="number"
                       name="maxRate"
                       id="maxRate"
-                      // value={filters.hourly_rate.max}
+                      value={filters.hourly_rate.max}
                       min={filters.hourly_rate.min}
                       max={500}
                       className="font-semibold p-2 rounded-md border border-neutral-500 focus:ring-2 focus:border-primary-500 placeholder:text-neutral-400 outline-none disabled:border-neutral-300 disabled:bg-transparent disabled:text-neutral-500 text-sm"
@@ -167,24 +206,26 @@ export default function ExploreFreelancers() {
                   </label>
                 </div>
                 <div onClick={applyFilters} className="mt-2 text-end">
-                  <button className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm">
+                  <Popover.Button className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium  inline-flex gap-2 items-center text-sm">
                     Apply
-                  </button>
+                  </Popover.Button>
                 </div>
               </Popup>
-              <button
-                onClick={clearFilters}
-                className="text-sm hover:underline underline-offset-2 hover:text-primary-500"
-              >
-                Clear Filters X
-              </button>
+              {!(filters === defaultFilters) && (
+                <button
+                  onClick={clearFilters}
+                  className="text-sm hover:underline underline-offset-2 hover:text-primary-500"
+                >
+                  Clear Filters X
+                </button>
+              )}
             </div>
           </div>
         </section>
         <section className="container mx-auto my-10">
           <div className="grid grid-cols-4 gap-4">
             {!isEmpty(freelancers) &&
-              freelancers.data.map(
+              freelancersList.map(
                 (freelancer) =>
                   freelancer.profile_completion === 100 && (
                     <ProfileCard key={freelancer.id} data={freelancer} />

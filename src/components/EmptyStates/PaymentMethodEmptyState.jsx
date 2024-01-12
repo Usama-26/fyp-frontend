@@ -1,5 +1,6 @@
 import Image from "next/image";
 import WalletConnect from "../WalletConnect";
+import { useAccounts } from "@/context/AccountContext";
 
 export default function PaymentMethodEmptyState() {
   return (

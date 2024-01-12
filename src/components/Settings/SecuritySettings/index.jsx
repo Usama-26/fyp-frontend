@@ -1,6 +1,7 @@
 import SimpleNotification from "@/components/Notifications/simple";
 import Spinner from "@/components/Spinner";
 import { useAccounts } from "@/context/AccountContext";
+import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { BiPencil } from "react-icons/bi";
@@ -48,6 +49,7 @@ export default function SecuritySettings() {
           message={"Your password has been updated successfully."}
         />
       )}
+
       <Formik
         initialValues={initialValues}
         validationSchema={Yup.object({
@@ -219,14 +221,34 @@ export default function SecuritySettings() {
               </Form>
             ) : (
               <div className="relative">
-                <button
-                  onClick={toggleIsEditing}
-                  type="button"
-                  className="mt-4 w-full flex justify-between items-center py-4 px-2 border-y hover:bg-gray-50 hover:text-primary-700 cursor-pointer"
-                >
-                  <h4 className="font-medium">Change Password</h4>
-                  <BiPencil className="w-5 h-5" />
-                </button>
+                {user?.data?.with_google ? (
+                  <div>
+                    <div className="flex justify-between items-center">
+                      <h5 className="font-medium text-success-700 text-xl">
+                        {"You're all secured!"}
+                      </h5>
+                      <span>
+                        <CheckCircleIcon className="fill-success-500 w-8 h-8" />
+                      </span>
+                    </div>
+                    <div className="p-2 mt-4 rounded-md bg-success-100 text-success-700">
+                      <p className="text-sm">
+                        {
+                          "You signed up using your Google Account! It doesn't require you to create or change your password."
+                        }
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={toggleIsEditing}
+                    type="button"
+                    className="mt-4 w-full flex justify-between items-center py-4 px-2 border-y hover:bg-gray-50 hover:text-primary-700 cursor-pointer"
+                  >
+                    <h4 className="font-medium">Change Password</h4>
+                    <BiPencil className="w-5 h-5" />
+                  </button>
+                )}
               </div>
             )}
           </div>

@@ -193,6 +193,7 @@ function ServicesProvider({ children }) {
     fetchCategories();
     fetchSubCategories();
     fetchServices();
+    fetchLanguages();
   }, []);
 
   return (

@@ -42,6 +42,7 @@ export default function SearchBox({
   const clearQuery = () => {
     setQuery("");
   };
+
   const handleKeyPress = (e) => {
     if (!isFocused) {
       handleFocus();
@@ -82,7 +83,7 @@ export default function SearchBox({
 
   return (
     <div
-      className={`w-full relative flex items-center border rounded-lg bg-white text-neutral-700 z-50`}
+      className={`w-full relative flex items-center border rounded-lg bg-white text-neutral-700 z-30`}
     >
       <input
         type="text"
