@@ -4,7 +4,7 @@ import { Combobox } from "@headlessui/react";
 import { classNames } from "@/utils/generics";
 
 
-export default function ComboSelectBox({ items, isDisabled, defaultItem, setValue }) {
+export default function ComboSelectBox({ items, isDisabled, defaultItem, setValue, placeholder }) {
   const [query, setQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState(defaultItem || null);
 
@@ -33,6 +33,7 @@ export default function ComboSelectBox({ items, isDisabled, defaultItem, setValu
           className="w-full rounded-md form-input bg-white py-1.5 pl-3 pr-10 disabled:text-neutral-500 disabled:border-neutral-300 text-neutral-700 shadow-sm sm:text-sm sm:leading-6 outline-none"
           onChange={(event) => setQuery(event.target.value)}
           displayValue={(item) => item}
+          placeholder={placeholder || 'Select Item'}
         />
         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
           <ChevronUpDownIcon className="h-5 w-5 text-neutral-400" aria-hidden="true" />

@@ -20,6 +20,7 @@ const languageProficiencies = ["Fluent", "Native", "Conversational"];
 export default function FreelancerProfileSettings() {
   const [isEditing, setIsEditing] = useState(false);
   const [isAddLangOpen, setIsAddLangOpen] = useState(false);
+  const [selectedIndustry, setSelectedIndustry] = useState("");
   const [industries, setIndustries] = useState([]);
   const [services, setServices] = useState([]);
   const [skills, setSkills] = useState([]);
@@ -76,6 +77,7 @@ export default function FreelancerProfileSettings() {
       if (Array.isArray(data)) {
         const namesArray = data.map((category) => category.name);
         setIndustries(namesArray);
+        setSelectedIndustry(namesArray[0]);
       }
     }
   }, []);
@@ -85,12 +87,12 @@ export default function FreelancerProfileSettings() {
       const { data } = subCategories;
       if (Array.isArray(data)) {
         const namesArray = data
-          .filter((item) => item?.category?.name === "Programming & Development")
+          .filter((item) => item?.category?.name === selectedIndustry)
           .map((category) => category.name);
         setServices(namesArray);
       }
     }
-  }, []);
+  }, [selectedIndustry]);
 
   useEffect(() => {
     fetchLanguages();
@@ -226,8 +228,12 @@ export default function FreelancerProfileSettings() {
                     )}
                     <ComboSelectBox
                       items={industries}
+                      placeholder={"Select Industry"}
                       defaultItem={values.industry || industries[0]}
-                      setValue={(item) => setFieldValue("industry", item)}
+                      setValue={(item) => {
+                        setFieldValue("industry", item);
+                        setSelectedIndustry(item);
+                      }}
                     />
                   </div>
                   <div>
@@ -460,32 +466,32 @@ function ProfileInformation({ data }) {
     <div className="mt-6 max-w-2xl border-t border-neutral-100">
       <dl className="divide-y divide-neutral-100">
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-neutral-700">Title</dt>
+          <dt className="font-medium leading-6 text-neutral-700">Profile Title</dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             {data.profile_title}
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-neutral-700">Bio</dt>
+          <dt className="font-medium leading-6 text-neutral-700">Bio</dt>
           <dd
             dangerouslySetInnerHTML={{ __html: data.bio }}
             className="prose mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0"
           ></dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-neutral-700">Industry</dt>
+          <dt className="font-medium leading-6 text-neutral-700">Industry</dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             {data.industry}
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-neutral-700">Main Service</dt>
+          <dt className="font-medium leading-6 text-neutral-700">Main Service</dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             {data.main_service}
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-neutral-700">Skills</dt>
+          <dt className="font-medium leading-6 text-neutral-700">Skills</dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             <ul className="flex flex-wrap gap-2">
               {data.skills.map((skill) => (
@@ -502,7 +508,7 @@ function ProfileInformation({ data }) {
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-neutral-700">Languages</dt>
+          <dt className="font-medium leading-6 text-neutral-700">Languages</dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             <ul className="divide-y">
               {data.languages.map((lang) => (
@@ -520,7 +526,7 @@ function ProfileInformation({ data }) {
           </dd>
         </div>
         <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt className="text-sm font-medium leading-6 text-neutral-700">Hourly Rate</dt>
+          <dt className="font-medium leading-6 text-neutral-700">Hourly Rate</dt>
           <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:col-span-3 sm:mt-0">
             <h5 className="text-neutral-700 font-medium text-2xl mb-2">
               ${data.hourly_rate}
@@ -559,7 +565,7 @@ export function LanguageSelectBox({
       }}
       disabled={isDisabled}
     >
-      {/* <Combobox.Label className="block text-sm font-medium leading-6 text-neutral-700">
+      {/* <Combobox.Label className="block font-medium leading-6 text-neutral-700">
         Assigned to
       </Combobox.Label> */}
       <div className="relative mt-2">
