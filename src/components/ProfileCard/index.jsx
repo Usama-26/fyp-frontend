@@ -1,6 +1,8 @@
+import { useProjects } from "@/context/ProjectContext";
+import { fetchCurrencyRate } from "@/utils/generics";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   HiOutlineLocationMarker,
   HiOutlineBriefcase,
@@ -9,6 +11,15 @@ import {
 } from "react-icons/hi";
 
 export default function ProfileCard({ data }) {
+  const { fetchFreelancerProjects, freelancerProjects } = useProjects();
+  const completedProjects = freelancerProjects?.data?.filter(
+    (project) => project.status === "completed"
+  );
+
+  useEffect(() => {
+    fetchFreelancerProjects(data._id);
+  }, []);
+
   return (
     <div className=" p-4 border space-y-4 rounded-md">
       {/* General Info */}
@@ -57,14 +68,13 @@ export default function ProfileCard({ data }) {
           <HiOutlineBriefcase className="w-5 h-5" />
           &nbsp;
           <span>
-            <span className="font-medium">0</span> Projects Completed
+            <span className="font-medium">{completedProjects?.length}</span> Projects
+            Completed
           </span>
         </span>
 
         <div className="font-medium text-end">
           <span>${data.hourly_rate}/hr</span>
-          <br />
-          <span className="text-neutral-500"> 0.015 ETH/hr</span>
         </div>
       </div>
       <div>

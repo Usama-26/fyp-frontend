@@ -201,7 +201,6 @@ export default function FreelancerProfileSettings() {
                           ],
                           [{ list: "ordered" }, { list: "bullet" }],
                           [{ indent: "-1" }, { indent: "+1" }],
-                          [{ align: [] }],
                         ],
                       }}
                       placeholder="Tell us about yourself"

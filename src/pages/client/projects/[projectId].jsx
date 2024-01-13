@@ -8,29 +8,21 @@ import { Fragment, useEffect, useState } from "react";
 import { AiFillStar } from "react-icons/ai";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useAccounts } from "@/context/AccountContext";
-import Datepicker from "react-tailwindcss-datepicker";
-import * as Yup from "yup";
-import { useFreelancer } from "@/context/FreelancerContext";
 import Spinner from "@/components/Spinner";
-import { useClient } from "@/context/ClientContext";
 import dayjs from "dayjs";
+import * as Yup from "yup";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Countdown, { zeroPad } from "react-countdown";
 import { isEmpty } from "@/utils/generics";
 import {
   ArrowDownTrayIcon,
-  ChatBubbleLeftIcon,
   ChatBubbleOvalLeftEllipsisIcon,
   CheckCircleIcon,
-  ChevronRightIcon,
-  EnvelopeIcon,
-  PhoneIcon,
   UserCircleIcon,
-  XCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import Chip from "@/components/Chip";
-import SimpleNotification from "@/components/Notifications/simple";
 import { Dialog, Transition } from "@headlessui/react";
 import { useProposals } from "@/context/ProposalContext";
 import CheckoutModal from "@/components/Modals/CheckoutModal";
@@ -38,12 +30,14 @@ import { BiFile } from "react-icons/bi";
 import StarRating from "@/components/StarRating";
 import { useContractWrite } from "wagmi";
 import { escrowABI, escrowAddress } from "@/contract";
-import { useAccount } from "wagmi";
-import { useConnect } from "wagmi";
-import { InjectedConnector } from "wagmi/connectors/injected";
+import ProjectCompleteModal from "@/components/Modals/ProjectCompleteModal";
+import { useTransaction } from "wagmi";
+import { useServices } from "@/context/ServiceContext";
 dayjs.extend(relativeTime);
 
 function ViewProject() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
   const {
     project,
     isLoading: isProjectLoading,
@@ -51,23 +45,48 @@ function ViewProject() {
     updateProject,
   } = useProjects();
   const router = useRouter();
-  const { isConnected, address } = useAccount();
-  const { connect, error } = useConnect({ connector: new InjectedConnector() });
-  const { isSuccess, writeAsync } = useContractWrite({
+  const { isSuccess, writeAsync, data } = useContractWrite({
     abi: escrowABI,
     address: escrowAddress,
     functionName: "releasePayment",
   });
 
-  const releasePayment = async () => {
-    connect();
+  const handleProjectComplete = async () => {
+    setIsCompleting(true);
     try {
-      const res = await writeAsync?.({ args: [project.data._id] });
-      await updateProject(project.data._id, { status: "completed" });
+      await writeAsync?.({ args: [project.data._id] });
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      updateProject(project.data._id, { status: "completed" });
+      setIsOpen(false);
+      setIsCompleting(false);
+    }
+  }, [isSuccess]);
+
+  const renderer = ({ days, hours, minutes, seconds, completed }) => {
+    if (completed) {
+    } else {
+      // Render a countdown
+      return (
+        <div className="text-xl font-medium text-center grid grid-cols-4 gap-x-2">
+          <span>{`${zeroPad(days)}`}</span>
+          <span>{`${zeroPad(hours)}`}</span>
+          <span>{`${zeroPad(minutes)}`}</span>
+          <span>{`${zeroPad(seconds)}`}</span>
+          <span className="text-sm font-normal">Days</span>
+          <span className="text-sm font-normal">Hours</span>
+          <span className="text-sm font-normal">Minutes</span>
+          <span className="text-sm font-normal">Seconds</span>
+        </div>
+      );
+    }
+  };
+  // console.log(data);
 
   useEffect(() => {
     getProjectById(router.query.projectId);
@@ -93,11 +112,12 @@ function ViewProject() {
             )} */}
             <div className="flex gap-2">
               <div className="basis-9/12 rounded-md border">
-                {isProjectLoading && isEmpty(project) && (
+                {isEmpty(project) && isProjectLoading && (
                   <div className="flex h-96 items-center text-neutral-500 justify-center">
                     <Spinner /> <span>Loading...</span>
                   </div>
                 )}
+
                 {!isEmpty(project) && (
                   <div className="divide-y">
                     <div className="px-4 py-2 flex justify-between items-center">
@@ -108,6 +128,11 @@ function ViewProject() {
                         <p className="text-sm text-neutral-500">
                           Posted {dayjs(project.data.createdAt).fromNow()}
                         </p>
+                      </div>
+                      <div>
+                        {project.data.status === "assigned" && (
+                          <Countdown date={project.data.deadline} renderer={renderer} />
+                        )}
                       </div>
                     </div>
                     <div className="px-4 py-2 flex gap-12 text-center text-sm ">
@@ -174,10 +199,14 @@ function ViewProject() {
                           ))}
                         </ul>
                       ) : (
-                        <p>No Attachments</p>
+                        <p className="text-sm">No Attachments</p>
                       )}
                     </div>
                   </div>
+                )}
+
+                {!isEmpty(project) && project.data.status === "completed" && (
+                  <Review project={project.data} />
                 )}
               </div>
 
@@ -208,9 +237,9 @@ function ViewProject() {
                           {project.data.deliverables.map((file) => (
                             <li
                               key={file.public_id}
-                              className="flex items-center justify-between pl-4 pr-5 text-sm leading-6"
+                              className="flex items-center justify-between text-sm leading-6"
                             >
-                              <div className="bg-neutral-200 m-2 rounded-md inline-flex items-center p-1  text-xs">
+                              <div className="bg-neutral-200 m-2 rounded-md inline-flex items-center p-1 text-xs">
                                 <BiFile className="w-5 h-5" />
                                 <p className="p-1">
                                   <span>{file.filename}</span>
@@ -236,14 +265,15 @@ function ViewProject() {
                   <div className="text-center mt-8">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-                      onClick={releasePayment}
+                      className="w-full flex justify-center rounded-md bg-indigo-600 px-3 py-2 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                      onClick={() => setIsOpen(true)}
                     >
                       Complete Project
                     </button>
                   </div>
                 </div>
               )}
+
               {!isEmpty(project) && project.data.status === "listed" && (
                 <div className="basis-4/12 border rounded-md py-4 px-1">
                   {isProjectLoading && (
@@ -269,6 +299,7 @@ function ViewProject() {
                   )}
                 </div>
               )}
+
               {!isEmpty(project) && project.data.status === "completed" && (
                 <div className="basis-4/12 border rounded-md py-4 px-1">
                   {isProjectLoading && (
@@ -283,6 +314,16 @@ function ViewProject() {
                     </h3>
                   </div>
                 </div>
+              )}
+
+              {!isEmpty(project) && (
+                <ProjectCompleteModal
+                  open={isOpen}
+                  setOpen={setIsOpen}
+                  project={project.data}
+                  isLoading={isCompleting}
+                  onComplete={handleProjectComplete}
+                />
               )}
             </div>
           </div>
@@ -590,23 +631,62 @@ function ViewProposal({ open, setOpen, proposalId, project }) {
   );
 }
 
-function Review({}) {
+function Review({ project }) {
   const [rating, setRating] = useState(0);
+  const { createReview, review, error } = useServices();
+  const { getProjectById } = useProjects();
+
+  useEffect(() => {
+    getProjectById(project._id);
+  }, [review]);
+
+  console.log(error);
   return (
     <div className="mx-8 my-4 rounded-md shadow-custom-md shadow-neutral-300 p-4">
-      <h2 className="font-medium mb-2">Leave A Review</h2>
+      <h2 className="font-medium mb-2 text-lg">Leave A Review</h2>
+
       <Formik
         initialValues={{
           comment: "",
           rating: 0,
         }}
-        validationSchema={{}}
-        onSubmit={(values) => {}}
+        validationSchema={Yup.object({
+          comment: Yup.string().required("Please write a comment."),
+          rating: Yup.number().required("Please select a star."),
+        })}
+        onSubmit={(values) => {
+          createReview({
+            ...values,
+            from: project.created_by,
+            to: project.assigned_to._id,
+            project: project._id,
+            gig: project.gig || undefined,
+          });
+        }}
       >
         {({ values, errors, touched, submitCount, isValid, setFieldValue }) => (
-          <Form className="space-y-8">
+          <Form className="space-y-6">
+            <div>
+              <label htmlFor="rating" className="block  font-semibold mb-4">
+                Select a Rating
+              </label>
+              <StarRating
+                defaultRating={values.rating}
+                onSetRating={(value) => {
+                  setRating();
+                  setFieldValue("rating", value);
+                }}
+              />
+              {errors.rating && touched.rating && submitCount > 0 && (
+                <ErrorMessage
+                  name="comment"
+                  component={"p"}
+                  className="field-error__message"
+                />
+              )}
+            </div>
             <div className="">
-              <label htmlFor="comment" className="block text-lg font-semibold mb-4">
+              <label htmlFor="comment" className="block  font-semibold mb-4">
                 Comment
               </label>
               <Field
@@ -620,19 +700,16 @@ function Review({}) {
                 id="comment"
                 maxLength={2000}
               />
-              <span className="text-sm float-right">{values.comment.length}/2000</span>
-
-              {errors.comment && touched.comment && submitCount > 0 ? (
-                <ErrorMessage
-                  name="comment"
-                  component={"p"}
-                  className="field-error__message"
-                />
-              ) : (
-                <p className="text-sm italic text-neutral-500">
-                  {"Write your proposal here."}
-                </p>
-              )}
+              <div>
+                <span className="text-sm float-right">{values.comment.length}/2000</span>
+                {errors.comment && touched.comment && submitCount > 0 && (
+                  <ErrorMessage
+                    name="comment"
+                    component={"p"}
+                    className="field-error__message"
+                  />
+                )}
+              </div>
             </div>
 
             <div className=" py-4 text-end border-t">
@@ -641,14 +718,12 @@ function Review({}) {
                 disabled={!isValid}
                 className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium items-center"
               >
-                {/* <span>{isLoading ? <Spinner /> : "Send Proposal"}</span> */}
                 Submit Review
               </button>
             </div>
           </Form>
         )}
       </Formik>
-      <StarRating size={20} onSetRating={setRating} />
     </div>
   );
 }

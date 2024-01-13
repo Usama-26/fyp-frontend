@@ -15,6 +15,8 @@ function reducer(state, action) {
     case "subcategory/create":
       return { ...state, successMessage: action.payload, isLoading: false, error: "" };
     case "service/create":
+      return { ...state, review: action.payload, isLoading: false, error: "" };
+    case "review/create":
       return { ...state, successMessage: action.payload, isLoading: false, error: "" };
     case "skills/fetch":
       return { ...state, skills: action.payload, isLoading: false };
@@ -33,6 +35,7 @@ const initialState = {
   subCategories: {},
   languages: [],
   skills: [],
+  review: null,
   isLoading: false,
   error: "",
   successMessage: "",
@@ -49,6 +52,7 @@ function ServicesProvider({ children }) {
       skills,
       languages,
       isLoading,
+      review,
       error,
       successMessage,
     },
@@ -189,6 +193,20 @@ function ServicesProvider({ children }) {
     }
   };
 
+  const createReview = async (data) => {
+    const token = localStorage.getItem("token");
+    dispatch({ type: "loading" });
+    try {
+      const response = await postData(`${BASE_URL}/reviews/`, data, {
+        headers: { authorization: `Bearer ${token}` },
+      });
+      dispatch({ type: "review/create", payload: response.data.status });
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: "rejected", payload: error.response.data.message });
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
     fetchSubCategories();
@@ -207,7 +225,9 @@ function ServicesProvider({ children }) {
         successMessage,
         skills,
         languages,
+        review,
         dispatch,
+        createReview,
         addSubCategory,
         fetchSkills,
         addService,

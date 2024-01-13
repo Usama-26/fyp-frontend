@@ -14,7 +14,7 @@ import {
   ChevronRightIcon,
   ChevronUpDownIcon,
 } from "@heroicons/react/20/solid";
-import { classNames, isEmpty } from "@/utils/generics";
+import { classNames, fetchCurrencyRate, isEmpty } from "@/utils/generics";
 import sampleSkills from "@/json/sample-skills";
 import ComboboxMultiple from "@/components/Comboboxes/ComboboxMultiple";
 import axios from "axios";
@@ -470,19 +470,8 @@ function ProjectPricingForm({
   const { values, errors, touched, submitCount, setFieldValue } = formikData;
   const [apiError, setApiError] = useState("");
 
-  const fetchCurrencyRate = async () => {
-    try {
-      const response = await axios.get(
-        "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
-      );
-      setInEthereum(response.data.ethereum.usd);
-    } catch (error) {
-      setApiError("Can't fetch ethereum");
-    }
-  };
-
   useEffect(() => {
-    fetchCurrencyRate();
+    fetchCurrencyRate(setInEthereum, setApiError);
   }, []);
 
   return (

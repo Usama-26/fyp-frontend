@@ -88,10 +88,10 @@ export default function FreelancerProfile() {
                   <h5 className="font-medium text-neutral-500 mb-2">Languages</h5>
                   <div className="flex flex-wrap gap-2 text-sm">
                     {freelancerData.languages.map((language) => (
-                      <>
+                      <div className="space-x-2" key={language.name}>
                         <span>{language.name}</span>
                         <span>.</span>
-                      </>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -164,16 +164,18 @@ export default function FreelancerProfile() {
                     </div>
                   </div>
                   <div className="ml-4 flex flex-shrink-0">
-                    <button
-                      type="button"
-                      className="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-700 shadow-sm ring-1 ring-inset ring-neutral-300 hover:ring-primary-300 hover:bg-primary-50 hover:text-primary-500"
-                    >
-                      <ChatBubbleOvalLeftEllipsisIcon
-                        className="-ml-0.5 mr-1.5 h-5 w-5 inline-block"
-                        aria-hidden="true"
-                      />
-                      <span>Send Message</span>
-                    </button>
+                    {user.data.user_type === "client" && (
+                      <button
+                        type="button"
+                        className="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-700 shadow-sm ring-1 ring-inset ring-neutral-300 hover:ring-primary-300 hover:bg-primary-50 hover:text-primary-500"
+                      >
+                        <ChatBubbleOvalLeftEllipsisIcon
+                          className="-ml-0.5 mr-1.5 h-5 w-5 inline-block"
+                          aria-hidden="true"
+                        />
+                        <span>Send Message</span>
+                      </button>
+                    )}
                   </div>
                 </div>
                 {/* Profile Information */}
