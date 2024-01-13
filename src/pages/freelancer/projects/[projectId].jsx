@@ -2,12 +2,11 @@ import { useProjects } from "@/context/ProjectContext";
 import withRouteProtect from "@/helpers/withRouteProtect";
 import WebLayout from "@/layouts/WebLayout";
 import Head from "next/head";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import { useFreelancer } from "@/context/FreelancerContext";
 import Spinner from "@/components/Spinner";
-import { useClient } from "@/context/ClientContext";
+import * as Yup from "yup";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { isEmpty } from "@/utils/generics";
@@ -16,6 +15,10 @@ import Link from "next/link";
 import Chip from "@/components/Chip";
 import { BiFile } from "react-icons/bi";
 import FileDropzone from "@/components/FIleDropzone";
+import { StarIcon } from "@heroicons/react/24/outline";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import StarRating from "@/components/StarRating";
+import { useServices } from "@/context/ServiceContext";
 dayjs.extend(relativeTime);
 
 function ViewProject() {
@@ -150,6 +153,9 @@ function ViewProject() {
                     </div>
                   </div>
                 )}
+                {!isEmpty(project) && project.data.status === "completed" && (
+                  <Review project={project.data} />
+                )}
               </div>
               <div className="basis-3/12 rounded-md border">
                 {!isEmpty(project) && project.data.status === "assigned" && (
@@ -232,3 +238,160 @@ function ViewProject() {
 }
 
 export default withRouteProtect(ViewProject, ["freelancer"]);
+
+function Review({ project }) {
+  const [rating, setRating] = useState(0);
+  const { createReview, review, isLoading } = useServices();
+  const [clientReview, setClientReview] = useState(null);
+  const [freelancerReview, setFreelancerReview] = useState(null);
+  const { getProjectById } = useProjects();
+
+  useEffect(() => {
+    const res1 = project.reviews?.filter((review) => review.from === project.created_by);
+    const res2 = project.reviews?.filter(
+      (review) => review.from === project.assigned_to._id
+    );
+    setClientReview(res1[0] || null);
+    setFreelancerReview(res2[0] || null);
+  }, [project]);
+
+  return (
+    <div className="mx-8 my-4 rounded-md shadow-custom-md shadow-neutral-300 p-4">
+      {!clientReview && !freelancerReview && (
+        <h2 className="font-medium mb-2 text-lg">Leave A Review</h2>
+      )}
+
+      {freelancerReview && (
+        <div>
+          <h4 className="text-lg font-medium mt-8">Your Review</h4>
+          <div className="flex gap-2 mb-4">
+            {Array.from({ length: 5 }, (_, i) => (
+              <StarIcon
+                key={i}
+                className={`w-8 h-8 ${
+                  i < freelancerReview.rating
+                    ? "fill-amber-500 stroke-amber-500"
+                    : "stroke-amber-500"
+                }`}
+              />
+            ))}
+            <span className="text-2xl text-gray-500 font-medium">
+              ({freelancerReview.rating}.0)
+            </span>
+          </div>
+          <div>
+            <blockquote className="italic">{`"${freelancerReview.comment}"`}</blockquote>
+          </div>
+        </div>
+      )}
+
+      {clientReview && freelancerReview && (
+        <div>
+          <h4 className="text-lg font-medium mt-8">Client Review</h4>
+          <div className="flex gap-2 mb-4">
+            {Array.from({ length: 5 }, (_, i) => (
+              <StarIcon
+                key={i}
+                className={`w-8 h-8 ${
+                  i < clientReview.rating
+                    ? "fill-amber-500 stroke-amber-500"
+                    : "stroke-amber-500"
+                }`}
+              />
+            ))}
+            <span className="text-2xl text-gray-500 font-medium">
+              ({clientReview.rating}.0)
+            </span>
+          </div>
+          <div>
+            <blockquote className="italic">{`"${clientReview.comment}"`}</blockquote>
+          </div>
+        </div>
+      )}
+
+      {!freelancerReview && (
+        <Formik
+          initialValues={{
+            comment: "",
+            rating: 0,
+          }}
+          validationSchema={Yup.object({
+            comment: Yup.string().required("Please write a comment."),
+            rating: Yup.number().required("Please select a star."),
+          })}
+          onSubmit={(values) => {
+            createReview({
+              ...values,
+              from: project.assigned_to._id,
+              to: project.created_by,
+              project: project._id,
+              gig: project.gig || undefined,
+            });
+          }}
+        >
+          {({ values, errors, touched, submitCount, isValid, setFieldValue }) => (
+            <Form className="space-y-6">
+              <div>
+                <label htmlFor="rating" className="block  font-semibold mb-4">
+                  Select a Rating
+                </label>
+                <StarRating
+                  defaultRating={values.rating}
+                  onSetRating={(value) => {
+                    setRating();
+                    setFieldValue("rating", value);
+                  }}
+                />
+                {errors.rating && touched.rating && submitCount > 0 && (
+                  <ErrorMessage
+                    name="comment"
+                    component={"p"}
+                    className="field-error__message"
+                  />
+                )}
+              </div>
+              <div className="">
+                <label htmlFor="comment" className="block  font-semibold mb-4">
+                  Comment
+                </label>
+                <Field
+                  as="textarea"
+                  rows="5"
+                  className={`form-input resize-none ${
+                    errors.comment && touched.comment && submitCount > 0 && "field-error"
+                  }`}
+                  type="comment"
+                  name="comment"
+                  id="comment"
+                  maxLength={2000}
+                />
+                <div>
+                  <span className="text-sm float-right">
+                    {values.comment.length}/2000
+                  </span>
+                  {errors.comment && touched.comment && submitCount > 0 && (
+                    <ErrorMessage
+                      name="comment"
+                      component={"p"}
+                      className="field-error__message"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className=" py-4 text-end border-t">
+                <button
+                  type="submit"
+                  disabled={!isValid}
+                  className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium items-center"
+                >
+                  {isLoading ? <Spinner /> : "Submit Review"}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      )}
+    </div>
+  );
+}
