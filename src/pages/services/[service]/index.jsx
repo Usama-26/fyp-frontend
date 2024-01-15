@@ -89,9 +89,7 @@ export default function ServicePage() {
                 </div>
 
                 <section className="">
-                  <div className="grid grid-cols-4 gap-4">
-                    <ServiceCard />
-                  </div>
+                  <div className="grid grid-cols-4 gap-4">{/* <ServiceCard /> */}</div>
                 </section>
               </div>
             </div>

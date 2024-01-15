@@ -1,7 +1,8 @@
 import React from "react";
 import Dropzone from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { BiFile } from "react-icons/bi";
-export default function FileDropzone({ files, setFiles }) {
+export default function FileDropzone({ files, setFiles, acceptableFiles = "*/*" }) {
   const clearFile = () => {
     setFiles(null);
   };
@@ -27,7 +28,7 @@ export default function FileDropzone({ files, setFiles }) {
   ));
 
   return (
-    <Dropzone onDrop={handleOnDrop}>
+    <Dropzone accept={acceptableFiles} onDrop={handleOnDrop}>
       {({ getRootProps, getInputProps }) => (
         <>
           <div

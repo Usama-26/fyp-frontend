@@ -242,7 +242,7 @@ function ViewProject({ open, setOpen, projectData }) {
                               Complete Profile
                             </Link>
                           )
-                        ) : user.data.user_type === "client" ? (
+                        ) : user && user.data.user_type === "client" ? (
                           <Link
                             href={`/client/projects/${projectData._id}`}
                             className="block py-1.5 px-4 uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"

@@ -1,6 +1,5 @@
 import { BASE_URL } from "@/constants";
-import { getData, updateData } from "@/utils/api/genericAPI";
-import { useRouter } from "next/router";
+import { getData } from "@/utils/api/genericAPI";
 import { createContext, useContext, useReducer } from "react";
 
 function reducer(state, action) {

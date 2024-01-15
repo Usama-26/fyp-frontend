@@ -1,7 +1,9 @@
+import { useAccounts } from "@/context/AccountContext";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
 export default function ProjectEmptyState({ isDisabled, message }) {
+  
   return (
     <div className="text-center">
       <svg

@@ -9,7 +9,7 @@ export default function SimpleNotification({ heading, message }) {
   useEffect(() => {
     setTimeout(() => {
       setShow(false);
-    }, 5000);
+    }, 10000);
   }, [show]);
   return (
     <>

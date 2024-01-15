@@ -13,6 +13,7 @@ import { ClientProvider } from "@/context/ClientContext";
 import { ThirdPartyServicesProvider } from "@/context/ThirdPartyContext";
 import { ProposalProvider } from "@/context/ProposalContext";
 import { WagmiConfig } from "wagmi";
+import { GigProvider } from "@/context/GigContext";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -45,13 +46,15 @@ export default function App({ Component, pageProps }) {
             <AccountsProvider>
               <ServicesProvider>
                 <ProjectProvider>
-                  <ProposalProvider>
-                    <ClientProvider>
-                      <FreelancerProvider>
-                        <Component {...pageProps} />
-                      </FreelancerProvider>
-                    </ClientProvider>
-                  </ProposalProvider>
+                  <GigProvider>
+                    <ProposalProvider>
+                      <ClientProvider>
+                        <FreelancerProvider>
+                          <Component {...pageProps} />
+                        </FreelancerProvider>
+                      </ClientProvider>
+                    </ProposalProvider>
+                  </GigProvider>
                 </ProjectProvider>
               </ServicesProvider>
             </AccountsProvider>

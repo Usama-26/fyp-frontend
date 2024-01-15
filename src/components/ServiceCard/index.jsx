@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HiClock, HiStar } from "react-icons/hi";
 
-export default function ServiceCard({ title }) {
+export default function ServiceCard({ gig }) {
   return (
     <div className="rounded-md shadow mx-auto space-y-4 hover:bg-neutral-100">
       {/* Service Image and Title */}
@@ -19,10 +19,10 @@ export default function ServiceCard({ title }) {
 
       <div className="h-14 px-3 ">
         <h1
-          title={title}
+          title={gig.title}
           className=" font-semibold text-lg line-clamp-2 hover:underline underline-offset-2"
         >
-          {title}
+          {gig.title}
         </h1>
       </div>
 
@@ -61,8 +61,7 @@ export default function ServiceCard({ title }) {
           </div>
         </div>
         <div className="font-medium text-end">
-          <h5 className="">0.015 ETH</h5>
-          <h6 className="text-neutral-500 ">$25</h6>
+          <h5 className="">${gig.price || 0}</h5>
         </div>
       </div>
     </div>

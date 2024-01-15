@@ -71,7 +71,7 @@ function CreateProject() {
   const { categories } = useServices();
   const { postProject, isLoading: isPosting, error } = useProjects();
   const router = useRouter();
-  console.log(error);
+
   const projectInitialValues = {
     title: "",
     description: "",

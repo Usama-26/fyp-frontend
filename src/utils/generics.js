@@ -19,4 +19,5 @@ const fetchCurrencyRate = async (setValue, setError) => {
     return error;
   }
 };
+
 export { isEmpty, classNames, fetchCurrencyRate };

@@ -83,7 +83,7 @@ function ClientProjects() {
             )}
 
             {!isLoading && projects?.length <= 0 ? (
-              <ProjectEmptyState />
+              <ProjectEmptyState isDisabled={user?.data?.profile_completion !== 100} />
             ) : (
               <MyProjectsList projects={projects} />
             )}

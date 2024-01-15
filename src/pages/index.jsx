@@ -6,6 +6,7 @@ import Image from "next/image";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useAccounts } from "@/context/AccountContext";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();

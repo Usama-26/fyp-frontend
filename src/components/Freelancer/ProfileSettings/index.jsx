@@ -573,12 +573,12 @@ export function LanguageSelectBox({
           onChange={(event) => setQuery(event.target.value)}
           placeholder={placeholder}
         />
-        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
           <ChevronUpDownIcon className="h-5 w-5 text-neutral-400" aria-hidden="true" />
         </Combobox.Button>
 
         {filteredItems.length > 0 && (
-          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-opacity-5 focus:outline-none sm:text-sm">
+          <Combobox.Options className="absolute z-10 mt-1 max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-opacity-5 focus:outline-none sm:text-sm">
             {filteredItems.map((item, index) => (
               <Combobox.Option
                 key={index}

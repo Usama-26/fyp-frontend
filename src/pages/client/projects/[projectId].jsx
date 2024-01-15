@@ -45,7 +45,7 @@ function ViewProject() {
     getProjectById,
     updateProject,
   } = useProjects();
-  const { review: postedReview } = useServices();
+  const { review } = useServices();
   const router = useRouter();
   const { isSuccess, writeAsync, data } = useContractWrite({
     abi: escrowABI,
@@ -73,7 +73,7 @@ function ViewProject() {
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
     } else {
-      // Render a countdown
+
       return (
         <div className="text-xl font-medium text-center grid grid-cols-4 gap-x-2">
           <span>{`${zeroPad(days)}`}</span>
