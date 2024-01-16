@@ -11,7 +11,7 @@ const withRouteProtect = (WrappedComponent, allowedUserTypes) => {
 
     useEffect(() => {
       if (!window.localStorage.getItem("token")) {
-        router.push("/");
+        router.replace("/");
       }
       if (user) {
         if (!allowedUserTypes.includes(user.data.user_type)) {

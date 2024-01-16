@@ -5,13 +5,13 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Chip from "../Chip";
 import { useAccounts } from "@/context/AccountContext";
-import Link from "next/link";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { Fragment, useEffect, useState } from "react";
 import { useServices } from "@/context/ServiceContext";
 import { useClient } from "@/context/ClientContext";
 import { isEmpty } from "@/utils/generics";
+import { useRouter } from "next/router";
 
 export default function ProjectCard(props) {
   dayjs.extend(relativeTime);
@@ -75,7 +75,24 @@ export default function ProjectCard(props) {
 function ViewProject({ open, setOpen, projectData }) {
   const { categories, services, subCategories } = useServices();
   const { getClientById, client } = useClient();
-  const { user } = useAccounts();
+  const { user, isLoggedIn } = useAccounts();
+  const router = useRouter();
+
+  const handleRouteChange = () => {
+    if (isLoggedIn) {
+      if (user?.data?.user_type === "client") {
+        if (user?.data?.projects.some((projectId) => projectId === projectData._id)) {
+          router.push(`/client/projects/${projectData._id}`);
+        } else {
+          router.push(`/explore/project/${projectData._id}`);
+        }
+      } else {
+        router.push(`/freelancer/proposals/send/${projectData._id}`);
+      }
+    } else {
+      router.push(`/freelancer/join`);
+    }
+  };
 
   useEffect(() => {
     getClientById(projectData.created_by);
@@ -216,47 +233,16 @@ function ViewProject({ open, setOpen, projectData }) {
                         </div>
                       </div>
                       <div className="basis-1/4 py-10 px-6 text-center">
-                        {user && user.data.user_type === "freelancer" ? (
-                          user.data.profile_completion === 100 ? (
-                            <Link
-                              href={
-                                projectData.proposals.some(
-                                  (proposal) => proposal.freelancer_id === user.data._id
-                                )
-                                  ? `/freelancer/proposals/`
-                                  : `/freelancer/proposals/send/${projectData._id}`
-                              }
-                              className="block py-1.5 px-4 text-base uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"
-                            >
-                              {projectData.proposals.some(
-                                (proposal) => proposal.freelancer_id === user.data._id
-                              )
-                                ? "View Proposals"
-                                : "Send Proposal"}
-                            </Link>
-                          ) : (
-                            <Link
-                              href="/freelancer/profile/settings"
-                              className="block py-1.5 px-4 uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"
-                            >
-                              Complete Profile
-                            </Link>
-                          )
-                        ) : user && user.data.user_type === "client" ? (
-                          <Link
-                            href={`/client/projects/${projectData._id}`}
-                            className="block py-1.5 px-4 uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"
-                          >
-                            View Project
-                          </Link>
-                        ) : (
-                          <Link
-                            href="/freelancer/join"
-                            className="block py-1.5 px-4 uppercase text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"
-                          >
-                            Sign up
-                          </Link>
-                        )}
+                        <button
+                          onClick={handleRouteChange}
+                          className="block w-full py-1.5 px-4 text-center text-primary-700 border rounded-lg border-primary-700 font-medium hover:text-white hover:bg-primary-700"
+                        >
+                          {isLoggedIn
+                            ? user?.data?.user_type === "client"
+                              ? "View Project"
+                              : "Send Proposal"
+                            : "Join as Freelancer"}
+                        </button>
                       </div>
                     </div>
                   </div>
