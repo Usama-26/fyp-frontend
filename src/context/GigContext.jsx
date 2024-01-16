@@ -8,6 +8,8 @@ function reducer(state, action) {
       return { ...state, gig: action.payload, isLoading: false };
     case "gig/get":
       return { ...state, gig: action.payload, isLoading: false };
+    case "gigs/getAll":
+      return { ...state, gigs: action.payload, isLoading: false };
     case "gigs/fetch":
       return { ...state, freelancerGigs: action.payload, isLoading: false };
     case "gigs/fetch_by_subcategory":
@@ -61,6 +63,25 @@ function GigProvider({ children }) {
         dispatch({ type: "rejected", payload: error?.message });
       } else {
         dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
+    }
+  };
+
+  const getAllGigs = async (query) => {
+    dispatch({ type: "loading" });
+    try {
+      const response = await getData(`${BASE_URL}/gigs${query ? `?${query}` : ""}`);
+
+      dispatch({ type: "gigs/getAll", payload: response.data });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        if (error.code === "ERR_NETWORK") {
+          dispatch({ type: "rejected", payload: error?.message });
+        } else {
+          dispatch({ type: "rejected", payload: error?.response?.data.message });
+        }
       }
     }
   };
@@ -227,6 +248,7 @@ function GigProvider({ children }) {
         fetchGigsBySubCategory,
         fetchFreelancerGigs,
         getGigById,
+        getAllGigs,
         postGig,
         updateGigOverview,
         updateGigPricing,

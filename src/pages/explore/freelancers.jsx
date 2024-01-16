@@ -113,7 +113,7 @@ export default function ExploreFreelancers() {
         <section className="my-8">
           <div className="container mx-auto mt-10">
             <div className="flex gap-4">
-              <Popup label={"Languages"}>
+              {/* <Popup label={"Languages"}>
                 <h6 className="text-sm text-neutral-500 mb-2">Languages</h6>
                 <div className="space-y-4 w-60">
                   <div className="h-60 overflow-auto space-y-2">
@@ -142,7 +142,7 @@ export default function ExploreFreelancers() {
                     </Popover.Button>
                   </div>
                 </div>
-              </Popup>
+              </Popup> */}
               <Popup label={"Service"}>
                 <h6 className="text-sm text-neutral-500 mb-2">Categories</h6>
                 <div className="space-y-4 w-60">

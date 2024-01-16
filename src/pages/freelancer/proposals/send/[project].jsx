@@ -110,7 +110,9 @@ function SendProposal() {
                     </div>
                     <div className="px-4 py-2 flex gap-12 text-center text-sm border-b">
                       <div>
-                        <h2 className="text-lg font-medium">{project.data.deadline}</h2>
+                        <h2 className="text-lg font-medium">
+                          {dayjs(project.data.deadline).format("YYYY/MM/DD")}
+                        </h2>
                         <h4>Deadline</h4>
                       </div>
                       <div>
