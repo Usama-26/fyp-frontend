@@ -9,7 +9,7 @@ function reducer(state, action) {
       return { ...state, project: action.payload, isLoading: false };
 
     case "project/postProject":
-      return { ...state, successMessage: action.payload, isLoading: false };
+      return { ...state, project: action.payload, isLoading: false };
 
     case "project/updateProject":
       return { ...state, successMessage: action.payload, isLoading: false };
@@ -146,7 +146,7 @@ function ProjectProvider({ children }) {
           authorization: `Bearer ${token}`,
         },
       });
-      dispatch({ type: "project/postProject", payload: response.data.message });
+      dispatch({ type: "project/postProject", payload: response.data });
       return response.data.data;
     } catch (error) {
       if (error.code === "ERR_NETWORK") {

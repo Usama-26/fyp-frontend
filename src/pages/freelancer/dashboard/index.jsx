@@ -1,12 +1,12 @@
 import Spinner from "@/components/Spinner";
 import { useAccounts } from "@/context/AccountContext";
+import withRouteProtect from "@/helpers/withRouteProtect";
 import FreelancerDashboardLayout from "@/layouts/FreelancerDashboardLayout";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import Link from "next/link";
 import { AiFillStar } from "react-icons/ai";
 
-export default function FreelancerOverview() {
+function FreelancerOverview() {
   return (
     <FreelancerDashboardLayout>
       <div className="flex gap-2">
@@ -16,6 +16,8 @@ export default function FreelancerOverview() {
     </FreelancerDashboardLayout>
   );
 }
+
+export default withRouteProtect(FreelancerOverview, ["freelancer"]);
 
 function UserInfo({}) {
   const { user, isLoading } = useAccounts();

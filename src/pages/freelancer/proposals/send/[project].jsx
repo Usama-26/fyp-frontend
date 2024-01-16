@@ -16,16 +16,13 @@ import { useClient } from "@/context/ClientContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { isEmpty } from "@/utils/generics";
-import {
-  ArrowDownTrayIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-} from "@heroicons/react/20/solid";
+import { ArrowDownTrayIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import Chip from "@/components/Chip";
 import SimpleNotification from "@/components/Notifications/simple";
 import FileDropzone from "@/components/FIleDropzone";
 import { BiFile } from "react-icons/bi";
+import WarningAlert from "@/components/Alerts/WarningAlert";
 
 const proposalSchema = Yup.object({
   cover_letter: Yup.string().max(2000).required("Cover Letter Required"),
@@ -47,7 +44,7 @@ function SendProposal() {
   const { project, isLoading: isProjectLoading, getProjectById } = useProjects();
   const { user } = useAccounts();
   const { getClientById } = useClient();
-  const { proposal, successMessage, clearMessage } = useFreelancer();
+  const { proposal, isLoading } = useFreelancer();
 
   const router = useRouter();
 
@@ -63,18 +60,12 @@ function SendProposal() {
 
   useEffect(() => {
     if (!isEmpty(proposal)) {
-      // router.push("/freelancer/proposals");
+      getProjectById(router.query.project);
+      setTimeout(() => {
+        router.replace("/freelancer/dashboard/proposals");
+      }, 2000);
     }
   }, [proposal]);
-
-  useEffect(() => {
-    if (successMessage) {
-      setTimeout(() => {
-        clearMessage();
-        router.push("/freelancer/dashboard");
-      }, 5000);
-    }
-  }, [successMessage]);
 
   return (
     <>
@@ -84,7 +75,15 @@ function SendProposal() {
       <WebLayout>
         <section>
           <div className="container mx-auto my-8">
-            {proposal && (
+            {!user?.data?.wallet_address && (
+              <WarningAlert>
+                <p>
+                  <b>Wallet NOT Connected: </b>
+                  <span>Please Connect Your wallet before submitting a proposal.</span>
+                </p>
+              </WarningAlert>
+            )}
+            {!isEmpty(proposal) && !isLoading && !error && (
               <SimpleNotification
                 heading={"Proposal Sent"}
                 message={
@@ -349,8 +348,11 @@ function CoverLetter({ project }) {
             <div className=" py-4 text-end border-t">
               <button
                 type="submit"
-                disabled={!isValid}
-                className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-white font-medium items-center"
+                title={
+                  !user?.data?.wallet_address ? "Connect Wallet to Send Proposal" : ""
+                }
+                disabled={!isValid || !user?.data?.wallet_address}
+                className=" px-4 py-2 rounded-md border bg-primary-500 hover:bg-primary-700 disabled:bg-neutral-400  text-white font-medium items-center"
               >
                 <span>{isLoading ? <Spinner /> : "Send Proposal"}</span>
               </button>

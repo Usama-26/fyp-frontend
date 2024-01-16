@@ -6,7 +6,6 @@ import { useAccounts } from "@/context/AccountContext";
 import withRouteProtect from "@/helpers/withRouteProtect";
 import WebLayout from "@/layouts/WebLayout";
 import Head from "next/head";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useProjects } from "@/context/ProjectContext";
 import { PlusIcon } from "@heroicons/react/20/solid";
@@ -17,6 +16,8 @@ function ClientProjects() {
   const { clientProjects, fetchClientProjects, isLoading, error } = useProjects();
   const { user } = useAccounts();
   const router = useRouter();
+
+  const inQueue = projects?.data?.filter((project) => project.status === "assigned") || 0;
 
   useEffect(() => {
     if (user) {
@@ -30,7 +31,6 @@ function ClientProjects() {
     }
   }, [clientProjects]);
 
-  console.log(projects?.data?.filter((project) => project.status === "assigned")?.length);
   return (
     <>
       <Head>
@@ -59,10 +59,7 @@ function ClientProjects() {
               </h1>
               <h1 className="text-2xl font-display font-bold text-primary-950 mb-10">
                 <span>Projects in Queue:</span>{" "}
-                {`${
-                  projects?.data?.filter((project) => project.status === "assigned")
-                    ?.length
-                }/${user?.data?.max_project_queue}`}
+                {`${inQueue}/${user?.data?.max_project_queue}`}
               </h1>
             </div>
             <div className="my-8 flex justify-between">

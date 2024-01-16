@@ -188,7 +188,7 @@ function AccountsProvider({ children }) {
 
     window.localStorage.removeItem("token");
     dispatch({ type: "account/logout" });
-    router.push("/");
+    router.replace("/");
   };
 
   const loadAccount = async (token) => {
@@ -378,8 +378,10 @@ function AccountsProvider({ children }) {
   }, [router]);
 
   useEffect(() => {
-    createChatUser();
-  }, []);
+    if (isLoggedIn) {
+      createChatUser();
+    }
+  }, [isLoggedIn]);
 
   return (
     <AccountsContext.Provider

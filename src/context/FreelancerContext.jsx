@@ -41,7 +41,7 @@ const initialState = {
   isLoading: false,
   successMessage: "",
   error: "",
-  proposal: "",
+  proposal: {},
   proposals: "",
   freelancer: {},
   freelancers: [],
@@ -134,7 +134,6 @@ function FreelancerProvider({ children }) {
         },
       });
       dispatch({ type: "proposal/sendProposal", payload: response.data });
-      router.push("/freelancer/dashboard/proposals");
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });

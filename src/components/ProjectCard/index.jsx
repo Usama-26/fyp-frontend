@@ -46,7 +46,7 @@ export default function ProjectCard(props) {
             <p className="text-sm line-clamp-2">{props.description}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {props.tags[0].split(",").map((tag) => (
+            {props.tags.map((tag) => (
               <Chip key={tag} value={tag} />
             ))}
           </div>

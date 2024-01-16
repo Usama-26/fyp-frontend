@@ -1,6 +1,7 @@
 import Spinner from "@/components/Spinner";
 import { useAccounts } from "@/context/AccountContext";
 import { useProposals } from "@/context/ProposalContext";
+import withRouteProtect from "@/helpers/withRouteProtect";
 import FreelancerDashboardLayout from "@/layouts/FreelancerDashboardLayout";
 import { Menu, Transition } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
@@ -8,7 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-export default function FreelancerProposals() {
+function FreelancerProposals() {
   const { freelancerProposals, fetchFreelancerProposals } = useProposals();
   const router = useRouter();
   const { user } = useAccounts();
@@ -138,6 +139,8 @@ export default function FreelancerProposals() {
     </FreelancerDashboardLayout>
   );
 }
+
+export default withRouteProtect(FreelancerProposals, ["freelancer"]);
 
 function UserInfo({}) {
   const { user, isLoading } = useAccounts();

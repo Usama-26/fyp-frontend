@@ -9,6 +9,7 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import ProjectEmptyState from "@/components/EmptyStates/ProjectEmptyState";
 import FreelancerDashboardLayout from "@/layouts/FreelancerDashboardLayout";
+import withRouteProtect from "@/helpers/withRouteProtect";
 
 const statuses = {
   Complete: "text-green-700 bg-green-50 ring-green-600/20",
@@ -24,7 +25,7 @@ const projectsFilter = {
   inProgress: [],
   completed: [],
 };
-export default function FreelancerProjects() {
+function FreelancerProjects() {
   const { user } = useAccounts();
   const { freelancerProjects, fetchFreelancerProjects } = useProjects();
   const [filteredProjects, setFilteredProjects] = useState(projectsFilter);
@@ -107,6 +108,8 @@ export default function FreelancerProjects() {
     </FreelancerDashboardLayout>
   );
 }
+
+export default withRouteProtect(FreelancerProjects, ["freelancer"]);
 
 function InProgressProjects({ projects }) {
   return (

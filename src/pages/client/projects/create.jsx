@@ -22,6 +22,7 @@ import { BsChevronDown } from "react-icons/bs";
 import Datepicker from "react-tailwindcss-datepicker";
 import { BiFile } from "react-icons/bi";
 import Spinner from "@/components/Spinner";
+import SimpleNotification from "@/components/Notifications/simple";
 
 const projectSchema = Yup.object({
   title: Yup.string()
@@ -69,7 +70,7 @@ function CreateProject() {
   const [deliveryDate, setDeliveryDate] = useState({});
   const [selectedPricingType, setSelectedPricingType] = useState(pricingTypes[0]);
   const { categories } = useServices();
-  const { postProject, isLoading: isPosting, error } = useProjects();
+  const { postProject, project, isLoading: isPosting, error } = useProjects();
   const router = useRouter();
 
   const projectInitialValues = {
@@ -87,6 +88,14 @@ function CreateProject() {
   };
 
   useEffect(() => {
+    if (!isEmpty(project)) {
+      setTimeout(() => {
+        router.replace("/client/projects");
+      }, 2000);
+    }
+  }, [project]);
+
+  useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [formStep]);
   return (
@@ -95,6 +104,12 @@ function CreateProject() {
         <title>Post a Project | ChainWork</title>
       </Head>
       <WebLayout>
+        {!isEmpty(project) && !isPosting && !error && (
+          <SimpleNotification
+            message={"Your Project Posted Successfully"}
+            heading={"Successfully Posted"}
+          />
+        )}
         <section>
           <div className="max-w-7xl mx-auto m-4 rounded-md">
             <Formik
