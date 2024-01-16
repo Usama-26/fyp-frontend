@@ -323,7 +323,7 @@ function AccountsProvider({ children }) {
         .channel("messaging", channelId, channelData)
         .watch();
       dispatch({ type: "channel/create", payload: newChannel });
-      router.replace("/client/dashboard/inbox");
+      router.push("/client/dashboard/inbox");
     } catch (error) {
       console.log(error);
       if (error.code === "ERR_NETWORK") {

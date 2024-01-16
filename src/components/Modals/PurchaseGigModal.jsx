@@ -79,7 +79,7 @@ export default function PurchaseGigModal({ open, setOpen, gigData, user }) {
       });
       setIsAssigning(false);
       if (updatedProject) {
-        router.replace("/client/projects");
+        router.push("/client/projects");
       }
     } catch (error) {
       setIsAssigning(false);

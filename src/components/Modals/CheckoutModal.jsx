@@ -12,8 +12,9 @@ import { useProjects } from "@/context/ProjectContext";
 import { useFreelancer } from "@/context/FreelancerContext";
 import SimpleNotification from "../Notifications/simple";
 import Spinner from "../Spinner";
+import dayjs from "dayjs";
 
-export default function CheckoutModal({ open, setOpen, project, freelancer }) {
+export default function CheckoutModal({ open, setOpen, project, freelancer, proposal }) {
   const { isConnected, address } = useAccount();
   const [isAssigning, setIsAssigning] = useState();
   const [inEthereum, setInEthereum] = useState();
@@ -27,7 +28,7 @@ export default function CheckoutModal({ open, setOpen, project, freelancer }) {
   });
   const cancelButtonRef = useRef(null);
 
-  const handlePayment = async () => {
+  const handlePayment = async (project) => {
     try {
       const response = writeAsync?.({
         args: [
@@ -47,9 +48,22 @@ export default function CheckoutModal({ open, setOpen, project, freelancer }) {
   const assignProject = async () => {
     setIsAssigning(true);
     try {
-      const res = await handlePayment();
-      updateProject(project._id, { status: "assigned", assigned_to: freelancer._id });
+      const updatedProject = await updateProject(project._id, {
+        deadline: proposal.delivery_date,
+        budget: proposal.bid_amount,
+        status: "assigned",
+        assigned_to: freelancer._id,
+      });
+
+      const paymentRes = await handlePayment(updatedProject);
+      const update = await updateProject(updatedProject?._id, {
+        transactions: { escrow_transaction_id: paymentRes?.hash },
+      });
+
       setIsAssigning(false);
+      if (updatedProject) {
+        router.push("/client/projects");
+      }
     } catch (error) {
       setIsAssigning(false);
       console.log(error);

@@ -19,10 +19,12 @@ import { StarIcon } from "@heroicons/react/24/outline";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import StarRating from "@/components/StarRating";
 import { useServices } from "@/context/ServiceContext";
+import SimpleNotification from "@/components/Notifications/simple";
 dayjs.extend(relativeTime);
 
 function ViewProject() {
   const { project, isLoading: isProjectLoading, getProjectById } = useProjects();
+  const { review } = useServices();
   const router = useRouter();
   const {
     sendDeliverables,
@@ -37,8 +39,10 @@ function ViewProject() {
   };
 
   useEffect(() => {
-    getProjectById(router.query.projectId);
-  }, [router]);
+    if (review || router?.query?.projectId) {
+      getProjectById(router.query.projectId);
+    }
+  }, [router, review]);
 
   useEffect(() => {
     if (successMessage) {
@@ -57,14 +61,12 @@ function ViewProject() {
       <WebLayout>
         <section>
           <div className="container mx-auto my-8">
-            {/* {successMessage && (
+            {review && (
               <SimpleNotification
-                heading={"Proposal Sent"}
-                message={
-                  "Your proposal submitted successfully. We'll notify you if client reviews your proposal. "
-                }
+                heading={"Review Submitted"}
+                message={"Your revies has been submitted successfully."}
               />
-            )} */}
+            )}
             <div className="flex gap-2">
               <div className="basis-9/12 rounded-md border">
                 {isProjectLoading && isEmpty(project) && (
@@ -240,11 +242,9 @@ function ViewProject() {
 export default withRouteProtect(ViewProject, ["freelancer"]);
 
 function Review({ project }) {
-  const [rating, setRating] = useState(0);
-  const { createReview, review, isLoading } = useServices();
+  const { createReview, isLoading } = useServices();
   const [clientReview, setClientReview] = useState(null);
   const [freelancerReview, setFreelancerReview] = useState(null);
-  const { getProjectById } = useProjects();
 
   useEffect(() => {
     const res1 = project.reviews?.filter((review) => review.from === project.created_by);
@@ -338,7 +338,6 @@ function Review({ project }) {
                 <StarRating
                   defaultRating={values.rating}
                   onSetRating={(value) => {
-                    setRating();
                     setFieldValue("rating", value);
                   }}
                 />
