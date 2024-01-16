@@ -39,13 +39,13 @@ export default function GallerySlider({ slides }) {
     fixedWidth: 110,
     fixedHeight: 70,
     arrows: false,
-    // cover: true,
-    // focus: "center",
+    cover: true,
+    focus: "center",
     isNavigation: true,
   };
 
   return (
-    <div className="wrapper">
+    <div className="wrapper relative">
       <Splide
         options={mainOptions}
         ref={mainRef}
@@ -53,14 +53,15 @@ export default function GallerySlider({ slides }) {
       >
         {renderSlides()}
       </Splide>
-
-      <Splide
-        options={thumbsOptions}
-        ref={thumbsRef}
-        aria-label="The carousel with thumbnails. Selecting a thumbnail will change the main carousel"
-      >
-        {renderSlides()}
-      </Splide>
+      <div className="bg-neutral-950/50 absolute w-full bottom-0 rounded-md">
+        <Splide
+          options={thumbsOptions}
+          ref={thumbsRef}
+          aria-label="The carousel with thumbnails. Selecting a thumbnail will change the main carousel"
+        >
+          {renderSlides()}
+        </Splide>
+      </div>
     </div>
   );
 }

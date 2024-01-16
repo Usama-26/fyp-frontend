@@ -399,6 +399,7 @@ function AccountsProvider({ children }) {
         walletAddress,
         walletConnectionError,
         connect,
+        connector,
         disconnect,
         verifyEmail,
         handleSignup,

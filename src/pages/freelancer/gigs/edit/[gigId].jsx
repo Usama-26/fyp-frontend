@@ -5,7 +5,6 @@ import GigPreview from "@/components/Gig/Edit/Preview";
 import { useGigs } from "@/context/GigContext";
 import withRouteProtect from "@/helpers/withRouteProtect";
 import { isEmpty } from "@/utils/generics";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 const { default: WebLayout } = require("@/layouts/WebLayout");
@@ -16,7 +15,7 @@ const steps = [
     id: "01",
     name: "Overview",
     href: "?step=01",
-    status: "upcoming",
+    status: "completed",
   },
   {
     id: "02",

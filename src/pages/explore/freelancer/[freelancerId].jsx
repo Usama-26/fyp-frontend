@@ -119,7 +119,7 @@ export default function FreelancerProfile() {
                       href={"/auth/signup"}
                       className="block w-full py-2 rounded-md uppercase font-medium text-white text-center bg-primary-500 hover:bg-primary-600"
                     >
-                      SIGN UP
+                      Contact
                     </Link>
                   )}
                   {isLoggedIn && user?.data?.user_type === "client" && (
@@ -164,7 +164,7 @@ export default function FreelancerProfile() {
                     </div>
                   </div>
                   <div className="ml-4 flex flex-shrink-0">
-                    {user.data.user_type === "client" && (
+                    {user?.data?.user_type === "client" && (
                       <button
                         type="button"
                         className="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-700 shadow-sm ring-1 ring-inset ring-neutral-300 hover:ring-primary-300 hover:bg-primary-50 hover:text-primary-500"

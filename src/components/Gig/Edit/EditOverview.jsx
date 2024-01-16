@@ -66,7 +66,7 @@ export default function EditOverview({ step, gigData }) {
               validationSchema={overviewSchema}
               onSubmit={(values) => {
                 step.status = "complete";
-                updateGigOverview(values);
+                updateGigOverview(gigData._id, values);
               }}
             >
               {({ values, errors, touched, submitCount, setFieldValue }) => (

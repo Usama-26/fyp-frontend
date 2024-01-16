@@ -13,7 +13,7 @@ export default function SearchBox({
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const inputRef = useRef(null);
-
+  // console.log(searchArray);
   const refineQuery = query.trim();
   const limitedSuggestions =
     suggestions?.length > 10 ? suggestions.slice(0, 10) : suggestions;
@@ -23,8 +23,8 @@ export default function SearchBox({
     setQuery(inputText);
     setSelectedSuggestion(null);
 
-    const filteredSuggestions = searchArray.filter((skill) =>
-      skill.toLowerCase().includes(inputText.trim().toLowerCase())
+    const filteredSuggestions = searchArray.filter((item) =>
+      item?.toLowerCase().includes(inputText.trim().toLowerCase())
     );
 
     setSuggestions(filteredSuggestions);

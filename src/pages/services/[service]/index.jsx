@@ -1,21 +1,31 @@
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import WebLayout from "@/layouts/WebLayout";
 import { useRouter } from "next/router";
-import ServiceCard from "@/components/ServiceCard";
 import Popup from "@/components/Popup";
 import { useServices } from "@/context/ServiceContext";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useGigs } from "@/context/GigContext";
+import ServiceCard from "@/components/ServiceCard";
 
 export default function ServicePage() {
   const router = useRouter();
-  const [subCategory, setSubCategory] = useState({});
-  const { getSubCategory, error } = useServices();
+  const [subCategory, setSubCategory] = useState(null);
+  const { getSubCategory } = useServices();
+  const { fetchGigsBySubCategory, gigs } = useGigs();
+
+  const gigsArray = gigs?.data || null;
 
   const fetchSubCategory = async () => {
     const data = await getSubCategory(router.query.service);
     setSubCategory(data);
   };
+
+  useEffect(() => {
+    if (subCategory) {
+      fetchGigsBySubCategory(subCategory._id);
+    }
+  }, [subCategory]);
 
   useEffect(() => {
     fetchSubCategory();
@@ -85,11 +95,15 @@ export default function ServicePage() {
               </div>
               <div>
                 <div className="flex justify-between mb-4">
-                  <p className="text-sm">{`0 services available`}</p>
+                  <p className="text-sm">{`${gigs?.length} services available`}</p>
                 </div>
 
                 <section className="">
-                  <div className="grid grid-cols-4 gap-4">{/* <ServiceCard /> */}</div>
+                  <div className="grid grid-cols-4 gap-4">
+                    {gigsArray?.map((gig) => (
+                      <ServiceCard key={gig._id} gig={gig} />
+                    ))}
+                  </div>
                 </section>
               </div>
             </div>

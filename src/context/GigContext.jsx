@@ -10,6 +10,10 @@ function reducer(state, action) {
       return { ...state, gig: action.payload, isLoading: false };
     case "gigs/fetch":
       return { ...state, freelancerGigs: action.payload, isLoading: false };
+    case "gigs/fetch_by_subcategory":
+      return { ...state, gigs: action.payload, isLoading: false };
+    case "gigs/fetch_by_service":
+      return { ...state, gigs: action.payload, isLoading: false };
     case "gig/update":
       return { ...state, updatedGig: action.payload, isLoading: false };
     case "loading":
@@ -31,13 +35,14 @@ const initialState = {
   isLoading: false,
   error: "",
   gig: {},
+  gigs: {},
   freelancerGigs: {},
   updatedGig: {},
   successMessage: "",
 };
 
 function GigProvider({ children }) {
-  const [{ isLoading, error, gig, freelancerGigs, successMessage }, dispatch] =
+  const [{ isLoading, error, gig, gigs, freelancerGigs, successMessage }, dispatch] =
     useReducer(reducer, initialState);
   const router = useRouter();
 
@@ -79,6 +84,44 @@ function GigProvider({ children }) {
     }
   };
 
+  const fetchGigsBySubCategory = async (id) => {
+    const token = window.localStorage.getItem("token");
+    dispatch({ type: "loading" });
+    try {
+      const response = await getData(`${BASE_URL}/gigs/fetch_by_subcategory/${id}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch({ type: "gigs/fetch_by_subcategory", payload: response.data });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
+    }
+  };
+
+  const fetchGigsByService = async (id) => {
+    const token = window.localStorage.getItem("token");
+    dispatch({ type: "loading" });
+    try {
+      const response = await getData(`${BASE_URL}/gigs/fetch_by_service/${id}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch({ type: "gigs/fetch_by_service", payload: response.data });
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        dispatch({ type: "rejected", payload: error?.message });
+      } else {
+        dispatch({ type: "rejected", payload: error?.response?.data.message });
+      }
+    }
+  };
+
   const postGig = async (data) => {
     const token = window.localStorage.getItem("token");
     dispatch({ type: "loading" });
@@ -100,7 +143,7 @@ function GigProvider({ children }) {
     }
   };
 
-  const updateGigOverview = async (data, id) => {
+  const updateGigOverview = async (id, data) => {
     const token = window.localStorage.getItem("token");
     dispatch({ type: "loading" });
     try {
@@ -179,6 +222,9 @@ function GigProvider({ children }) {
         successMessage,
         freelancerGigs,
         gig,
+        gigs,
+        fetchGigsByService,
+        fetchGigsBySubCategory,
         fetchFreelancerGigs,
         getGigById,
         postGig,

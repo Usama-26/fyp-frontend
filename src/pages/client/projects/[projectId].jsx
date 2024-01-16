@@ -38,6 +38,7 @@ dayjs.extend(relativeTime);
 
 function ViewProject() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, isConnected, connect, connector } = useAccounts();
   const [isCompleting, setIsCompleting] = useState(false);
   const {
     project,
@@ -47,7 +48,7 @@ function ViewProject() {
   } = useProjects();
   const { review } = useServices();
   const router = useRouter();
-  const { isSuccess, writeAsync, data } = useContractWrite({
+  const { writeAsync, data } = useContractWrite({
     abi: escrowABI,
     address: escrowAddress,
     functionName: "releasePayment",
@@ -56,24 +57,31 @@ function ViewProject() {
   const handleProjectComplete = async () => {
     setIsCompleting(true);
     try {
-      await writeAsync?.({ args: [project.data._id] });
+      const res = await writeAsync?.({ args: [project.data._id] });
+      const updatedProject = updateProject(project.data._id, {
+        released_transaction_id: res?.hash,
+        status: "completed",
+      });
+      if (updatedProject) {
+        setIsCompleting(false);
+        setIsOpen(false);
+      }
+      router.replace("/client/projects");
     } catch (error) {
+      setIsCompleting(false);
       console.log(error);
     }
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      updateProject(project.data._id, { status: "completed" });
-      setIsOpen(false);
-      setIsCompleting(false);
+    if (isConnected) {
+      handleProjectComplete();
     }
-  }, [isSuccess]);
+  }, [isConnected]);
 
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
     } else {
-
       return (
         <div className="text-xl font-medium text-center grid grid-cols-4 gap-x-2">
           <span>{`${zeroPad(days)}`}</span>
@@ -88,7 +96,6 @@ function ViewProject() {
       );
     }
   };
-
 
   useEffect(() => {
     getProjectById(router.query.projectId);
@@ -161,7 +168,10 @@ function ViewProject() {
                     </div>
                     <div className=" p-4">
                       <h2 className="font-medium mb-2">Project Description</h2>
-                      <p className="text-sm">{project.data.description}</p>
+                      <div
+                        className="prose"
+                        dangerouslySetInnerHTML={{ __html: project.data.description }}
+                      ></div>
                     </div>
                     <div className=" p-4">
                       <h2 className="font-medium mb-2">Required Skills</h2>
@@ -322,7 +332,7 @@ function ViewProject() {
                   setOpen={setIsOpen}
                   project={project.data}
                   isLoading={isCompleting}
-                  onComplete={handleProjectComplete}
+                  onComplete={connect}
                 />
               )}
             </div>

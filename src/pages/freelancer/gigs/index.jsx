@@ -1,4 +1,5 @@
 import WarningAlert from "@/components/Alerts/WarningAlert";
+import GigEmptyState from "@/components/EmptyStates/GigEmptyState";
 import ProjectCard from "@/components/ProjectCard";
 import ServiceCard from "@/components/ServiceCard";
 import Spinner from "@/components/Spinner";
@@ -24,7 +25,7 @@ function FreelancerGigs() {
     }
   }, [user]);
 
-  console.log(freelancerGigs);
+  console.log(freelancerGigs.length);
   return (
     <>
       <Head>
@@ -76,6 +77,14 @@ function FreelancerGigs() {
                     </h4>
                   </div>
                 )}
+
+                {freelancerGigs.length === 0 && (
+                  <GigEmptyState
+                    message={"Complete your profile to 100% before posting a Gig."}
+                    isDisabled={user.data.profile_completion !== 100}
+                  />
+                )}
+
                 <div className="grid grid-cols-4 gap-4">
                   {!isLoading &&
                     gigsData &&

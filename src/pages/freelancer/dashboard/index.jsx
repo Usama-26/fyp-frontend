@@ -42,7 +42,7 @@ function UserInfo({}) {
                   alt="Profile Picture"
                 />
               ) : (
-                <span className="w-20 h-20 flex justify-center items-center  rounded-full text-4xl text-center text-white font-semibold bg-primary-500">
+                <span className="flex justify-center items-center  rounded-full text-4xl text-center text-white font-semibold bg-primary-500">
                   {user.data.firstName[0]}
                 </span>
               )}

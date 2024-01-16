@@ -147,7 +147,7 @@ function ProjectProvider({ children }) {
         },
       });
       dispatch({ type: "project/postProject", payload: response.data.message });
-      router.push("/client/projects");
+      return response.data.data;
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
         dispatch({ type: "rejected", payload: error?.message });
@@ -167,7 +167,7 @@ function ProjectProvider({ children }) {
         },
       });
       dispatch({ type: "project/updateProject", payload: response.data.message });
-      router.push("/client/projects");
+      return response.data.data;
     } catch (error) {
       dispatch({ type: "rejected", payload: error.response.data.message });
     }

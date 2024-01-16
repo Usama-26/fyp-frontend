@@ -1,6 +1,5 @@
 import SearchBox from "@/components/SearchBox";
 import WebLayout from "@/layouts/WebLayout";
-import sampleSkills from "@/json/sample-skills.json";
 import { useEffect, useState } from "react";
 import Popup from "@/components/Popup";
 import ProfileCard from "@/components/ProfileCard";
@@ -17,15 +16,14 @@ const defaultFilters = {
 };
 
 export default function ExploreFreelancers() {
-  const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState(defaultFilters);
   const { freelancers, getAllFreelancers } = useFreelancer();
-  const { subCategories, languages } = useServices();
+  const { subCategories, languages, skills, fetchSkills } = useServices();
   const subCategoriesList = subCategories?.data;
   const languagesList = languages?.data;
   const router = useRouter();
-
+  const skillsArray = skills?.data?.map((skill) => skill.name) || null;
   let freelancersList = freelancers?.data;
   let searchStr = "";
   const handleSearch = (query = searchQuery) => {
@@ -83,8 +81,9 @@ export default function ExploreFreelancers() {
 
   useEffect(() => {
     getAllFreelancers();
+    fetchSkills();
   }, []);
-
+  // console.log(skillsArray);
   return (
     <>
       <Head>
@@ -99,13 +98,15 @@ export default function ExploreFreelancers() {
             Browse Freelancers on Our Marketplace that suit your need
           </p>
           <div className="max-w-5xl mx-auto mt-5">
-            <SearchBox
-              onSearch={handleSearch}
-              query={searchQuery}
-              setQuery={setSearchQuery}
-              searchArray={skills}
-              placeholder="Search Freelancers..."
-            />
+            {skillsArray && (
+              <SearchBox
+                onSearch={handleSearch}
+                query={searchQuery}
+                setQuery={setSearchQuery}
+                searchArray={skillsArray}
+                placeholder="Search Freelancers..."
+              />
+            )}
           </div>
         </section>
         <section className="my-8">

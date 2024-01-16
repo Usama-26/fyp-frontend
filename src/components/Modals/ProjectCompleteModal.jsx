@@ -1,6 +1,5 @@
 import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { useProjects } from "@/context/ProjectContext";
 import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 import Spinner from "../Spinner";
 
@@ -46,20 +45,21 @@ export default function ProjectCompleteModal({
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                 <div>
-                  {project.deliverables.length === 0 && (
+                  {(project.deliverables.length === 0 && (
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-warning-100">
                       <ExclamationTriangleIcon
                         className="h-6 w-6 text-warning-600"
                         aria-hidden="true"
                       />
                     </div>
+                  )) || (
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-100">
+                      <CheckCircleIcon
+                        className="h-6 w-6 text-success-600"
+                        aria-hidden="true"
+                      />
+                    </div>
                   )}
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-100">
-                    <CheckCircleIcon
-                      className="h-6 w-6 text-success-600"
-                      aria-hidden="true"
-                    />
-                  </div>
                   <div className="mt-3 text-center sm:mt-5">
                     <Dialog.Title
                       as="h3"

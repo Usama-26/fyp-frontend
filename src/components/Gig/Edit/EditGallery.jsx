@@ -6,18 +6,23 @@ import { useState } from "react";
 import Image from "next/image";
 
 export default function EditGallery({ step, gigData }) {
-  const { updateGigGallery, isLoading, gig, error } = useGigs();
+  const { updateGigGallery, isLoading } = useGigs();
   const [errorMessage, setErrorMessage] = useState("");
   const [gallery, setGallery] = useState([]);
+  const router = useRouter();
 
   const handleUpdate = () => {
-    if (gallery.length === 0) {
+    if (gigData.gallery.length === 0 && gallery.length === 0) {
       setErrorMessage("Select some images.");
       return;
+    } else if (gigData.gallery.length === 0 && gallery.length > 0) {
+      step.status = "complete";
+      updateGigGallery(gigData._id, { gallery: gallery });
+    } else {
+      step.status = "complete";
+      router.replace(`${gigData._id}?step=04`);
     }
-    updateGigGallery(gigData._id, { gallery: gallery });
   };
-  const router = useRouter();
 
   return (
     <div className="mt-4 p-4 rounded-md shadow-custom-md shadow-neutral-300 min-h-[24rem]">

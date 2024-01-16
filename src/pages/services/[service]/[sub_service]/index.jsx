@@ -5,11 +5,22 @@ import ServiceCard from "@/components/ServiceCard";
 import Popup from "@/components/Popup";
 import { useEffect, useState } from "react";
 import { useServices } from "@/context/ServiceContext";
+import { useGigs } from "@/context/GigContext";
 
 export default function ServicePage() {
   const router = useRouter();
   const [service, setService] = useState(null);
-  const { getService, error } = useServices();
+  const { getService } = useServices();
+
+  const { fetchGigsByService, gigs } = useGigs();
+
+  const gigsArray = gigs?.data || null;
+
+  useEffect(() => {
+    if (service) {
+      fetchGigsByService(service._id);
+    }
+  }, [service]);
 
   const fetchService = async () => {
     const data = await getService(router.query.sub_service);
@@ -62,11 +73,15 @@ export default function ServicePage() {
               </div>
               <div>
                 <div className="flex justify-between mb-4">
-                  <p className="text-sm">10 services available</p>
+                  <p className="text-sm">{`${gigs?.length} services available`}</p>
                 </div>
 
-                <section>
-                  <div className="grid grid-cols-4 gap-4">{/* <ServiceCard /> */}</div>
+                <section className="">
+                  <div className="grid grid-cols-4 gap-4">
+                    {gigsArray?.map((gig) => (
+                      <ServiceCard key={gig._id} gig={gig} />
+                    ))}
+                  </div>
                 </section>
               </div>
             </div>
