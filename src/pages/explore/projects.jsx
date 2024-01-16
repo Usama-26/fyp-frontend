@@ -1,24 +1,41 @@
 import ProjectCard from "@/components/ProjectCard";
 import SearchBox from "@/components/SearchBox";
 import WebLayout from "@/layouts/WebLayout";
-
-import sampleSkills from "@/json/sample-skills.json";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useProjects } from "@/context/ProjectContext";
+import { useServices } from "@/context/ServiceContext";
+import { useRouter } from "next/router";
 
 export default function ExploreProjects() {
-  const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
-
+  const { skills, fetchSkills } = useServices();
   const { projects, error, isLoading, fetchProjects } = useProjects();
+  const router = useRouter();
+  const skillsArray = skills?.data?.map((skill) => skill.name) || null;
+  let searchStr = "";
 
   const handleSearch = (query = searchQuery) => {
-    console.log("Actual Query :", query);
+    searchStr = query ? `tags[in]=${query}` : "";
+    applyFilters();
+  };
+
+  const applyFilters = () => {
+    let filter = `${searchStr && searchStr}`;
+
+    if (filter.startsWith("&")) {
+      filter = filter.slice(1, filter.length);
+    }
+    router.replace(`/explore/projects?${filter}`);
   };
 
   useEffect(() => {
+    router.asPath.split("?")[1] && fetchProjects(router.asPath.split("?")[1]);
+  }, [router.asPath]);
+
+  useEffect(() => {
     fetchProjects();
+    fetchSkills();
   }, []);
 
   return (
@@ -33,13 +50,15 @@ export default function ExploreProjects() {
           </h1>
           <p className="text-lg">Discover Freelance Projects to bid on</p>
           <div className="container max-w-5xl mx-auto mt-5">
-            <SearchBox
-              onSearch={handleSearch}
-              query={searchQuery}
-              setQuery={setSearchQuery}
-              searchArray={skills}
-              placeholder="Search Projects..."
-            />
+            {skillsArray && (
+              <SearchBox
+                onSearch={handleSearch}
+                query={searchQuery}
+                setQuery={setSearchQuery}
+                searchArray={skillsArray}
+                placeholder="Search Freelancers..."
+              />
+            )}
           </div>
         </section>
         <section className="my-8">
@@ -48,9 +67,15 @@ export default function ExploreProjects() {
               <h2 className="text-xl font-semibold">Filters</h2>
             </div>
             <div className="basis-9/12 space-y-2">
-              {projects?.data?.map((project, index) => (
-                <ProjectCard key={index} {...project} />
-              ))}
+              {projects.length === 0 && (
+                <p className="text-xl text-neutral-500 text-center italic">
+                  No Projects Found under {searchQuery}
+                </p>
+              )}
+              {projects?.data?.map(
+                (project, index) =>
+                  project.status === "listed" && <ProjectCard key={index} {...project} />
+              )}
             </div>
           </div>
         </section>

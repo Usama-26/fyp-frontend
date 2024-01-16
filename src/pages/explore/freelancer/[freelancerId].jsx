@@ -24,12 +24,20 @@ const projectsFilter = {
 };
 
 export default function FreelancerProfile() {
-  const { isLoggedIn, user } = useAccounts();
+  const { isLoggedIn, user, createChannel } = useAccounts();
   const { getFreelancerById, freelancer, error, isLoading } = useFreelancer();
   const { freelancerProjects, fetchFreelancerProjects } = useProjects();
   const [filteredProjects, setFilteredProjects] = useState(projectsFilter);
+
   const router = useRouter();
   const freelancerData = freelancer?.data || null;
+
+  const handleSendMessage = async () => {
+    await createChannel(`${user.data._id}_${freelancerData._id}`, {
+      name: `${user.data.firstName}_${freelancerData.firstName}`.toLowerCase(),
+      members: [`${user.data._id}`, `${freelancerData._id}`],
+    });
+  };
 
   useEffect(() => {
     if (router.query.freelancerId) {
@@ -123,12 +131,12 @@ export default function FreelancerProfile() {
                     </Link>
                   )}
                   {isLoggedIn && user?.data?.user_type === "client" && (
-                    <Link
-                      href={"/auth/signup"}
+                    <button
+                      onClick={handleSendMessage}
                       className="block w-full py-2 rounded-md uppercase font-medium text-white text-center bg-primary-500 hover:bg-primary-600"
                     >
                       CONTACT
-                    </Link>
+                    </button>
                   )}
                 </div>
               </>
@@ -167,6 +175,7 @@ export default function FreelancerProfile() {
                     {user?.data?.user_type === "client" && (
                       <button
                         type="button"
+                        onClick={handleSendMessage}
                         className="relative inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-700 shadow-sm ring-1 ring-inset ring-neutral-300 hover:ring-primary-300 hover:bg-primary-50 hover:text-primary-500"
                       >
                         <ChatBubbleOvalLeftEllipsisIcon

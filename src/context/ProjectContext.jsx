@@ -106,9 +106,9 @@ function ProjectProvider({ children }) {
     }
   };
 
-  const fetchProjects = async () => {
+  const fetchProjects = async (query) => {
     try {
-      const response = await getData(`${BASE_URL}/projects?status=listed`);
+      const response = await getData(`${BASE_URL}/projects${query ? `?${query}` : ""}`);
       dispatch({ type: "project/fetchProjects", payload: response?.data });
     } catch (error) {
       dispatch({ type: "rejected", payload: error?.response?.data?.message });

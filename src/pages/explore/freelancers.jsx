@@ -26,6 +26,7 @@ export default function ExploreFreelancers() {
   const skillsArray = skills?.data?.map((skill) => skill.name) || null;
   let freelancersList = freelancers?.data;
   let searchStr = "";
+
   const handleSearch = (query = searchQuery) => {
     searchStr = query ? `skills[in]=${query}` : "";
     applyFilters();
@@ -83,7 +84,7 @@ export default function ExploreFreelancers() {
     getAllFreelancers();
     fetchSkills();
   }, []);
-  // console.log(skillsArray);
+
   return (
     <>
       <Head>
