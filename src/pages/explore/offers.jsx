@@ -1,15 +1,12 @@
-import ProjectCard from "@/components/ProjectCard";
 import SearchBox from "@/components/SearchBox";
 import WebLayout from "@/layouts/WebLayout";
-
 import sampleSkills from "@/json/sample-skills.json";
 import { useState } from "react";
 import Popup from "@/components/Popup";
-import ProfileCard from "@/components/ProfileCard";
 import ServiceCard from "@/components/ServiceCard";
 import Head from "next/head";
 
-export default function ExploreFreelancers() {
+export default function ExploreOffers() {
   const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearch = (query = searchQuery) => {
@@ -65,9 +62,7 @@ export default function ExploreFreelancers() {
           </div>
         </section>
         <section className="container mx-auto my-10">
-          <grid className="grid grid-cols-4 gap-4">
-            <ServiceCard />
-          </grid>
+          <grid className="grid grid-cols-4 gap-4">{/* <ServiceCard /> */}</grid>
         </section>
       </WebLayout>
     </>

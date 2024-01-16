@@ -10,11 +10,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useProjects } from "@/context/ProjectContext";
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { useRouter } from "next/router";
 
 function ClientProjects() {
   const [projects, setProjects] = useState([]);
   const { clientProjects, fetchClientProjects, isLoading, error } = useProjects();
   const { user } = useAccounts();
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -28,6 +30,7 @@ function ClientProjects() {
     }
   }, [clientProjects]);
 
+  console.log(projects?.data?.filter((project) => project.status === "assigned")?.length);
   return (
     <>
       <Head>
@@ -48,21 +51,34 @@ function ClientProjects() {
               )}
             </div>
           )}
+
           <div className="container mx-auto m-4 p-4 rounded-md  ">
-            <h1 className="text-2xl font-display font-bold text-primary-950 mb-10">
-              My Projects
-            </h1>
+            <div className="flex justify-between">
+              <h1 className="text-2xl font-display font-bold text-primary-950 mb-10">
+                My Projects
+              </h1>
+              <h1 className="text-2xl font-display font-bold text-primary-950 mb-10">
+                <span>Projects in Queue:</span>{" "}
+                {`${
+                  projects?.data?.filter((project) => project.status === "assigned")
+                    ?.length
+                }/${user?.data?.max_project_queue}`}
+              </h1>
+            </div>
             <div className="my-8 flex justify-between">
               {projects?.length > 0 && (
-                <Link
-                  href={"/client/projects/create"}
-                  className="px-4 py-2 rounded-md border bg-primary-600 hover:bg-primary-500 text-white font-medium text-sm inline-flex gap-2 items-center"
+                <button
+                  onClick={() => router.replace("/client/projects/create")}
+                  disabled={
+                    projects?.length <= user?.data?.max_project_queue ? false : true
+                  }
+                  className="px-4 py-2 rounded-md border bg-primary-600 hover:bg-primary-500 text-white font-medium text-sm inline-flex gap-2 items-center disabled:bg-neutral-500"
                 >
                   <span>
                     <PlusIcon className="w-5 h-5" />
                   </span>
                   <span> New Project</span>
-                </Link>
+                </button>
               )}
             </div>
 

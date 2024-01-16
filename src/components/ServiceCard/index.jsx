@@ -7,7 +7,7 @@ export default function ServiceCard({ gig }) {
   console.log(gig);
 
   const renderSlides = () => {
-    return gig.gallery?.map((img) => (
+    return gig?.gallery?.map((img) => (
       <SplideSlide key={img.public_id}>
         <Image
           src={img.secure_url}

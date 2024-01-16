@@ -11,12 +11,13 @@ import { isEmpty } from "@/utils/generics";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 function FreelancerGigs() {
   const { user } = useAccounts();
   const { freelancerGigs, fetchFreelancerGigs, error, isLoading } = useGigs();
-
+  const router = useRouter();
   const gigsData = freelancerGigs?.data || null;
 
   useEffect(() => {
@@ -25,7 +26,6 @@ function FreelancerGigs() {
     }
   }, [user]);
 
-  console.log(freelancerGigs.length);
   return (
     <>
       <Head>
@@ -45,20 +45,27 @@ function FreelancerGigs() {
                 </WarningAlert>
               )}
               <div className="container mx-auto m-4 p-4 rounded-md  ">
-                <h1 className="text-2xl font-display font-bold text-primary-950 mb-10">
-                  My Gigs
-                </h1>
+                <div className="flex justify-between">
+                  <h1 className="text-2xl font-display font-bold text-primary-950 mb-10">
+                    My Gigs
+                  </h1>
+                  <h1 className="text-2xl font-display font-bold text-primary-950 mb-10">
+                    <span>Gig Slots : </span>
+                    {`${gigsData?.length}/${user?.data?.max_gigs}`}
+                  </h1>
+                </div>
                 <div className="my-8 flex justify-between">
                   {gigsData && gigsData.length > 0 && (
-                    <Link
-                      href={"/freelancer/gigs/create?step=01"}
-                      className="px-4 py-2 rounded-md border bg-primary-600 hover:bg-primary-500 text-white font-medium text-sm inline-flex gap-2 items-center"
+                    <button
+                      onClick={() => router.replace("/freelancer/gigs/create?step=01")}
+                      disabled={gigsData?.length <= user?.data?.max_gigs ? false : true}
+                      className="px-4 py-2 rounded-md border bg-primary-600 hover:bg-primary-500 text-white font-medium text-sm inline-flex gap-2 items-center disabled:bg-neutral-500"
                     >
                       <span>
                         <PlusIcon className="w-5 h-5" />
                       </span>
                       <span> New Gig</span>
-                    </Link>
+                    </button>
                   )}
                 </div>
 
