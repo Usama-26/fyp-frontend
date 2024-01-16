@@ -59,9 +59,8 @@ export default function CheckoutModal({ open, setOpen, project, freelancer, prop
       const update = await updateProject(updatedProject?._id, {
         transactions: { escrow_transaction_id: paymentRes?.hash },
       });
-
       setIsAssigning(false);
-      if (updatedProject) {
+      if (update) {
         router.push("/client/projects");
       }
     } catch (error) {
