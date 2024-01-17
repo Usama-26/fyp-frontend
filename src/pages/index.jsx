@@ -7,6 +7,11 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useAccounts } from "@/context/AccountContext";
 import Link from "next/link";
+import FeaturedFreelancers from "@/components/Home/FeaturedFreelancer";
+import CategoriesSection from "@/components/Home/CategoriesSection";
+import HowItWorks from "@/components/Home/HowItWorks";
+import FAQs from "@/components/Home/FAQs";
+import Testimonials from "@/components/Home/Testimonials";
 
 export default function Home() {
   const router = useRouter();
@@ -24,6 +29,11 @@ export default function Home() {
       </Head>
       <WebLayout>
         <Hero />
+        <FeaturedFreelancers />
+        <CategoriesSection />
+        <HowItWorks />
+        <FAQs />
+        <Testimonials />
       </WebLayout>
     </>
   );
@@ -32,8 +42,9 @@ export default function Home() {
 function Hero() {
   const { skills } = sampleSkills;
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
   const handleSearch = (query = searchQuery) => {
-    console.log("Actual Query :", query);
+    router.replace(`/explore/offers?tags[in]=${query}`);
   };
 
   return (

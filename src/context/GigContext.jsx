@@ -235,6 +235,10 @@ function GigProvider({ children }) {
     }
   };
 
+  const resetGigs = () => {
+    dispatch({ type: "reset" });
+  };
+
   return (
     <GigContext.Provider
       value={{
@@ -250,6 +254,7 @@ function GigProvider({ children }) {
         getGigById,
         getAllGigs,
         postGig,
+        resetGigs,
         updateGigOverview,
         updateGigPricing,
         updateGigGallery,

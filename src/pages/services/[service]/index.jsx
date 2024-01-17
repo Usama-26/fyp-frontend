@@ -12,7 +12,7 @@ export default function ServicePage() {
   const router = useRouter();
   const [subCategory, setSubCategory] = useState(null);
   const { getSubCategory } = useServices();
-  const { fetchGigsBySubCategory, gigs } = useGigs();
+  const { fetchGigsBySubCategory, gigs, resetGigs } = useGigs();
 
   const gigsArray = gigs?.data || null;
 
@@ -28,6 +28,7 @@ export default function ServicePage() {
   }, [subCategory]);
 
   useEffect(() => {
+    resetGigs();
     fetchSubCategory();
   }, [router]);
 

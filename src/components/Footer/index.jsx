@@ -78,7 +78,7 @@ export default function Footer() {
               className="text-neutral-500 font-medium
              text-sm text-center sm:text-left"
             >
-              © 2023 ChainWork, All Rights Reserved.
+              © 2024 ChainWork, All Rights Reserved.
             </p>
           </div>
         </div>

@@ -12,7 +12,7 @@ export default function ServicePage() {
   const [service, setService] = useState(null);
   const { getService } = useServices();
 
-  const { fetchGigsByService, gigs } = useGigs();
+  const { fetchGigsByService, gigs, resetGigs } = useGigs();
 
   const gigsArray = gigs?.data || null;
 
@@ -29,6 +29,7 @@ export default function ServicePage() {
 
   useEffect(() => {
     fetchService();
+    resetGigs();
   }, [router]);
 
   return (
