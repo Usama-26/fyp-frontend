@@ -17,7 +17,8 @@ function ClientProjects() {
   const { user } = useAccounts();
   const router = useRouter();
 
-  const inQueue = projects?.data?.filter((project) => project.status === "assigned") || 0;
+  const inQueue =
+    projects?.filter((project) => project.status === "assigned").length || 0;
 
   useEffect(() => {
     if (user) {
@@ -30,7 +31,7 @@ function ClientProjects() {
       setProjects(clientProjects.data);
     }
   }, [clientProjects]);
-
+  console.log(inQueue);
   return (
     <>
       <Head>

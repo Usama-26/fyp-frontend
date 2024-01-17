@@ -52,7 +52,9 @@ function ViewProject() {
     try {
       const res = await writeAsync?.({ args: [project.data._id] });
       const updatedProject = updateProject(project.data._id, {
-        released_transaction_id: res?.hash,
+        transactions: {
+          released_transaction_id: res?.hash,
+        },
         status: "completed",
       });
       if (updatedProject) {
@@ -322,6 +324,20 @@ function ViewProject() {
                       Project is Completed Successfully.
                     </h3>
                   </div>
+                  <h3 className="font-medium mt-4">Transactions</h3>
+                  <Link
+                    href={`https://sepolia.etherscan.io/tx/${project?.data?.transactions?.escrow_transaction_id}`}
+                    target="_blank"
+                  >
+                    Escrow Transaction{" "}
+                  </Link>
+                  <br />
+                  <Link
+                    href={`https://sepolia.etherscan.io/tx/${project?.data?.transactions?.released_transaction_id}`}
+                    target="_blank"
+                  >
+                    Released Transaction{" "}
+                  </Link>
                 </div>
               )}
 
