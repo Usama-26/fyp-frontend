@@ -6,7 +6,7 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import FreelancerDashboardLayout from "@/layouts/FreelancerDashboardLayout";
 import withRouteProtect from "@/helpers/withRouteProtect";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const statuses = {
   Complete: "text-green-700 bg-green-50 ring-green-600/20",
@@ -110,16 +110,6 @@ function FreelancerProjects() {
 export default withRouteProtect(FreelancerProjects, ["freelancer"]);
 
 function InProgressProjects({ projects }) {
-  return (
-    <ul role="list" className=" space-y-3">
-      {projects.map((project) => (
-        <ProjectCard key={project._id} project={project} />
-      ))}
-    </ul>
-  );
-}
-
-function ListedProjects({ projects }) {
   return (
     <ul role="list" className=" space-y-3">
       {projects.map((project) => (
