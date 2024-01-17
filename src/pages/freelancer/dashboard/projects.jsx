@@ -1,13 +1,9 @@
-import ClientDashboardLayout from "@/layouts/ClientDashboardLayout";
-import { Fragment, useEffect, useState } from "react";
-import { Menu, Tab, Transition } from "@headlessui/react";
-import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
+import { Tab } from "@headlessui/react";
 import { classNames, isEmpty } from "@/utils/generics";
 import { useAccounts } from "@/context/AccountContext";
 import { useProjects } from "@/context/ProjectContext";
 import Link from "next/link";
 import dayjs from "dayjs";
-import ProjectEmptyState from "@/components/EmptyStates/ProjectEmptyState";
 import FreelancerDashboardLayout from "@/layouts/FreelancerDashboardLayout";
 import withRouteProtect from "@/helpers/withRouteProtect";
 
@@ -96,10 +92,11 @@ function FreelancerProjects() {
                 </Tab.Panels>
               </Tab.Group>
             ) : (
-              <ProjectEmptyState
-                isDisabled={user?.data?.profile_completion !== 100}
-                message={"Complete your profile 100% to start posting projects. "}
-              />
+              <div>
+                <h1 className="text-lg font-medium text-center">
+                  {"You've currently no active projects"}
+                </h1>
+              </div>
             )}
           </div>
         </div>

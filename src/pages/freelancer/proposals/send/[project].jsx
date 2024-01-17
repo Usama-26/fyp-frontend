@@ -44,7 +44,7 @@ function SendProposal() {
   const { project, isLoading: isProjectLoading, getProjectById } = useProjects();
   const { user } = useAccounts();
   const { getClientById } = useClient();
-  const { proposal, isLoading } = useFreelancer();
+  const { proposal, isLoading, error } = useFreelancer();
 
   const router = useRouter();
 
