@@ -6,6 +6,7 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import FreelancerDashboardLayout from "@/layouts/FreelancerDashboardLayout";
 import withRouteProtect from "@/helpers/withRouteProtect";
+import { useState } from "react";
 
 const statuses = {
   Complete: "text-green-700 bg-green-50 ring-green-600/20",
